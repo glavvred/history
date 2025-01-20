@@ -6,10 +6,10 @@ page_title.new: 'Создать новый %entity_label_singular%'
 page_title.exception: Ошибка|Ошибки|Ошибок
 datagrid.hidden_results: 'Некоторые результаты не могут быть отображены, потому что вы не имеете достаточных привелегий'
 datagrid.no_results: 'Ничего не найдено.'
-paginator.first: Первая
-paginator.previous: Предыдущая
-paginator.next: Следующая
-paginator.last: Последняя
+paginator.first: '|<<'
+paginator.previous: '<<'
+paginator.next: '>>'
+paginator.last: '>>|'
 paginator.counter: '<strong>%start%</strong> - <strong>%end%</strong> из <strong>%results%</strong>'
 paginator.results: '<strong>%count%</strong> результат|<strong>%count%</strong> результата|<strong>%count%</strong> результатов'
 label.true: Да

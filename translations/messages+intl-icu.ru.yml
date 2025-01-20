@@ -11,3 +11,13 @@ events: >-
       =4    {# мероприятия}
       other {# мероприятий}
   }
+museum: 'Выставки'
+best: 'Популярные события'
+excursion : 'Экскурсии'
+masterclass : 'Мастер-классы'
+lecture  : 'Лекции'
+tournament   : 'Соревнования'
+festivity    : 'Народные праздники'
+market     : 'Ярмарки'
+festival      : 'Фестивали'
+concert      : 'Концерты'
