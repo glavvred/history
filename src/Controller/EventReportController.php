@@ -91,27 +91,31 @@ class EventReportController extends AbstractController
     #[Route('/api', name: 'app_event_report_api', methods: ['POST'])]
     public function newFromApi(Request $request, EntityManagerInterface $entityManager, Security $security, SluggerInterface $slugger): Response
     {
-        $data = $request->request->all();
-        try {
-            $startDate = DateTime::createFromFormat('Y-m-d', $data['startDate']);
-        } catch (\Exception $exception){
-            var_dump($exception->getMessage());
-            die;
+        $data = $request->getContent();
+        $data = json_decode($data);
+        if (empty($data)) {
+            return $this->json(['bad' => 'redo'], Response::HTTP_BAD_REQUEST);
         }
+
+        $startDate = DateTime::createFromFormat('Y-m-d', $data->startDate);
+        if (empty($startDate)) {
+            return $this->json(['bad' => 'Y-m-d'], Response::HTTP_BAD_REQUEST);
+        }
+
         $eventReport = new EventReport();
         $reporter = $entityManager->getRepository(User::class)->findOneBy(['email' => 'anonymous@reporter']);
         $eventReport->setReporter($reporter);
-        $eventReport->setName($data['name']);
-        $eventReport->setLink($data['link']);
+        $eventReport->setName($data->name);
+        $eventReport->setLink($data->link);
         $eventReport->setStartDate($startDate);
-        $eventReport->setAddress($data['address']);
+        $eventReport->setAddress($data->address);
         $eventReport->setCategory($entityManager->getRepository(Category::class)->find(5));
         $eventReport->setRegion($entityManager->getRepository(Region::class)->find(1));
         $eventReport->setMainPhoto('150-677287d0e0de6.jpg');
         $entityManager->persist($eventReport);
         $entityManager->flush();
 
-            return $this->json(['good' => 'thanks'], Response::HTTP_ACCEPTED);
+        return $this->json(['good' => 'thanks'], Response::HTTP_ACCEPTED);
 
     }
 
