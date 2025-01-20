@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Организации списком{% endblock %}
+
+{% block content %}
+    <div class="container main-section">
+        {% set first_crumb = '<a href="/organisation/list">Организации</a>' %}
+        {% set second_crumb = organisation_type %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        {% if flash is defined and flash is not null %}
+            <div class="alert alert-secondary alert-dismissible mt-4" role="alert">
+                <h4 class="alert-heading d-flex align-items-center mb-1">Уведомление</h4>
+                <p class="mb-0">{{ flash }}</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">закрыть</button>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="event-card-container">
+                    <ul class="event-card-content">
+                        {% for organisation in organisations %}
+                            <li class="event-card organisation">
+                                <div class="event-card-head">
+                                    {# getimagesize не умеет в свг :( #}
+                                    {% if organisation.mainPhotoDimensions is defined and organisation.mainPhotoDimensions != 0 %}
+                                        {% set imageWidth = organisation.mainPhotoDimensions[0] %}
+                                        {% set imageHeight = organisation.mainPhotoDimensions[1] %}
+                                    {% endif %}
+                                    <a href="{{ path('app_organisation_show_slug', {'slug': organisation.slug}) }}"><img
+                                                style="{% if imageHeight is defined and imageHeight < 200 %}top: 0!important;{% endif %}"
+                                                src="{{ asset('upload/images/' ~ organisation.mainPhoto ) }}"
+                                                alt="image"></a>
+                                    <div class="event-card-image-tag-list">
+                                        <a href="{{ path('app_organisation_list', {'type' : organisation.category.short}) }}"
+                                           class="event-card-tag-link active">{{ organisation.category.name }}</a>
+                                    </div>
+                                </div>
+                                <a href="{{ path('app_organisation_show_slug', {'slug': organisation.slug}) }}"><h3
+                                            class="event-card-title">{{ organisation.name }}</h3></a>
+                                <p class="event-card-caption">{{ organisation.shortDescription }}</p>
+                                {% if organisation.address is not empty %}
+                                <div class="event-card-location">
+                                    <a href="#">{{ organisation.address }}</a>
+                                </div>
+                                {% endif %}
+                            </li>
+                        {% else %}
+                            <li class="event-card">
+                                <div class="alert alert-secondary alert-dismissible mt-4" role="alert">
+                                    <h4 class="alert-heading d-flex align-items-center mb-1">Что то пошло не так</h4>
+                                    <p class="mb-0"> Еще нет организаций этого типа в нашей базе</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

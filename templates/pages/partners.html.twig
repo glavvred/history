@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: Партнеры{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .organization-container {
+            display: flex;
+            flex-direction: row;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .organization {
+            padding: 0;
+            margin-bottom: 40px;
+            font-size: 12px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            max-width: 280px;
+            width: 280px;
+        }
+
+        .organization img {
+            width: 220px;
+            margin: auto;
+        }
+
+        .organization a {
+            display: block;
+            margin-top: 15px;
+            color: #007bff;
+        }
+
+        .partner-img {
+            display: flex;
+            flex-direction: column;
+            min-height: 210px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .organization {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 575px) { 
+            .partner-img {
+                min-height: 160px;
+            }
+        }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %} 
+    <div class="container main-section">
+        {% set first_crumb = 'Партнеры' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="organization-container">
+            <div class="organization">
+                <div class="partner-img" id="asi"><img src="{{ asset('img/partners/asi.png') }}" alt="Агентство стратегических инициатив"></div>
+                <h4>Агентство стратегических инициатив</h4>
+                <p>Агентство стратегических инициатив по продвижению новых проектов — российская автономная некоммерческая организация, созданная Правительством России для реализации комплекса мер в экономической и социальной сферах. Агентство работает вместе с лидерами над масштабными инициативами и объединяющее усилия общества, бизнеса и государства.</p>
+                <a href="https://asi.ru/">Сайт агентства</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="vshe"><img src="{{ asset('img/partners/vshe.png') }}" alt="Высшая школа экономики"></div>
+                <h4>Высшая школа экономики</h4>
+                <p>Национальный исследовательский университет «Высшая школа экономики» (НИУ ВШЭ) — один из крупнейших университетов России. Федеральное государственное автономное образовательное учреждение
+                    высшего образования.</p>
+                <a href="https://www.hse.ru/">Сайт университета</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="irf"><img src="{{ asset('img/partners/istoria_rf.png') }}" alt="Российское военно-историческое общество"></div>
+                <h4>Российское военно-историческое общество</h4>
+                <p>Российское добровольное самоуправляемое общественно-государственное объединение, основанное в 2012 году указом президента России Владимира Путина. Деятельность организации направлена на изучение и популяризацию военной истории России, а также сохранение объектов военно-исторического культурного наследия страны.</p>
+                <a href="https://rvio.histrf.ru/">история.рф</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="znanie"><img src="{{ asset('img/partners/znanie.png') }}" alt="Логотип 5"></div>
+                <h4>Российское общество Знание</h4>
+                <p>Это общественная некоммерческая организация, осуществляющая просветительскую работу в регионах, формирование интеллектуального контента, организацию и проведение бесплатных лекций, а также разнообразных мероприятий в сфере воспитания, социальной поддержки и социальной защиты обучающихся и воспитанников образовательных учреждений и людей пожилого возраста</p>
+                <a href="https://znanierussia.ru/">Сайт общества</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="isb_russia"><img src="{{ asset('img/partners/isb_russia.png') }}" alt="Логотип 6"></div>
+                <h4>ИСБ России</h4>
+                <p>Общероссийская физкультурно-спортивная общественная организация исторического средневекового боя России</p>
+                <a href="https://hmbrussia.ru/">Сайт организации</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="vg"><img src="{{ asset('img/partners/ethernalcity.svg') }}" alt="Логотип 4"></div>
+                <h4>Вечный город</h4>
+                <p>Проекты команды основаны на реконструкции и экспертности в области истории. За более 17 лет работы агентство реализовало более 50 разноплановых исторических проектов.</p>
+                <a href="https://vechnygorod.com/">Сайт команды</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="mri"><img src="{{ asset('img/partners/mri_big.png') }}" alt="Логотип 6"></div>
+                <h4>Музей ратной истории</h4>
+                <p>Музей Ратной Истории Москвы проводит экскурсии для организованных групп. Утварь, предметы быта, оружие. Все это в формате “живой истории”. В основе экскурсий лежат точные копии вещей и костюмов старины, и их можно потрогать, использовать, примерить. Минимум теоретических данных, максимум эмоций, интересных мастер-классов, боев на безопасных муляжах оружия и веселых викторин.</p>
+                <a href="https://castle.moscow/">Сайт общества</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="pb"><img src="{{ asset('img/partners/pb_big.png') }}" alt="Логотип 6"></div>
+                <h4>Поле брани</h4>
+                <p>Фестиваль исторической реконструкции по Древней Руси 9-11 вв. Городище Старая Рязань - основная локация фестиваля. Атмосферное место силы, остатки исчезнувшего древнерусского города сожжённого Батыем в XIII веке. Первые поселения людей датируются X-XI вв</p>
+                <a href="https://vk.com/pole_brani_fest">Группа фестиваля</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="soyuz"><img src="{{ asset('img/partners/soyuz_big.png') }}" alt="Логотип 6"></div>
+                <h4>МОО "Союз"</h4>
+                <p>Межрегиональная общественная организация содействия поддержке семьи, материнства и детства «Союз». За более чем десятилетний опыт работы организация провела более тысячи мероприятий и экскурсий по истории для школьников. десятки городских событий и фестивалей.</p>
+                <a href="https://souzmaterinstva.ru/">Сайт общества</a>
+            </div>
+            <div class="organization">
+                <div class="partner-img" id="pm"><img src="{{ asset('img/partners/pm_big.png') }}" alt="Логотип 6"></div>
+                <h4>Путь меча</h4>
+                <p>Под единым брендом «Путь меча» объединены все проекты, связанные с владением мечом — спорт, военно-историческая реконструкция, благотворительность, фестивали и образование, HEMA, детское развивающее спортивное направление на мягком снаряжении. Выполняя свою миссию, фонд образует синергию интереса и любви к истории.</p>
+                <a href="https://www.wayofsword.ru">Сайт общества</a>
+            </div>
+        </div>
+
+
+    </div>
+        {% include('pages/news_row.html.twig') %}
+{% endblock %}

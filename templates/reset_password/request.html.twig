@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Сброс пароля{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .card {
+            width: 50% !important;
+        }
+
+        @media screen and (max-width: 500px) {
+            .card {
+                width: 95% !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Профиль' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Сброс пароля</h1>
+                        {% for flash_error in app.flashes('reset_password_error') %}
+                            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                        {% endfor %}
+
+                        {{ form_start(requestForm, {'method': 'POST'}) }}
+
+                        <form id="formProfile" class="mb-3 unselectable" method="POST">
+                            <div class="mb-3">
+                                {% if form_errors(requestForm.email) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(requestForm.email) }}</div>
+                                {% endif %}
+                                <label for="{{ field_name(requestForm.email) }}" class="form-label">Введите адрес электронной почты и мы отправим вам ссылку на сброс пароля <sup class='red'>*</sup></label>
+                                <input type="text" value="" name="{{ field_name(requestForm.email) }}" id="{{ field_name(requestForm.email) }}"
+                                       class="form-control" autocomplete="email" placeholder="Введите адрес почты"
+                                       required tabindex="2">
+                            </div>
+                            <div class="mb-3 flex-center">
+                                <button class="btn btn-primary d-grid" type="submit" tabindex="7">Отправить</button>
+                            </div>
+                            {{ form_rest(requestForm) }}
+                        </form>
+                        {{ form_end(requestForm) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock %}

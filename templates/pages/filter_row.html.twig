@@ -1,0 +1,84 @@
+<!--filter-->
+{% set filterData = filterList() %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="filter-container">
+            <ul class="filter-content flex-wrap mt-10">
+                <li class="filter-element selected">Все</li>
+                <li class="filter-element dropdown">
+                    <a class="dropdown-toggle" href="#" id="filterDropdownToll" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Бесплатно
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownToll">
+                        {% for filter in filterData %}
+                            {% if filter.category =='toll' %}
+                                <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="#" data-value="">Любая стоимость</a>
+                    </div>
+                </li>
+                <li class="filter-element">
+                    <a class="dropdown-toggle text-wrap" href="#" id="filterDropdownLocation" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        На свежем воздухе
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownLocation">
+                        {% for filter in filterData %}
+                            {% if filter.category =='location' %}
+                                <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="#" data-value="">Любая площадка</a>
+                    </div>
+                </li>
+                <li class="filter-element">
+                    <a class="dropdown-toggle" href="#" id="filterDropdownSocial" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        С детьми
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownSocial">
+                        {% for filter in filterData %}
+                            {% if filter.category =='social' %}
+                                <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="#" data-value="">Любая группа</a>
+                    </div>
+                </li>
+                <li class="filter-element dropdown">
+                    <a class="dropdown-toggle" href="#" id="filterDropdownAge" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Возраст
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownAge">
+                        {% for filter in filterData %}
+                            {% if filter.category =='age' %}
+                                <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="#" data-value="">Любой возраст</a>
+                    </div>
+                </li>
+                <li class="filter-element dropdown">
+                    <a class="dropdown-toggle" href="#" id="filterDropdownAge" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Идеи
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownAge">
+                        {% for filter in filterData %}
+                            {% if filter.category =='idea' %}
+                                <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="#" data-value="">Любая идея</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!--end filter-->

@@ -1,0 +1,11 @@
+<h1>Пожалуйста подтвердите свой адрес почты</h1>
+
+<p>
+    Для этого нажмите на ссылку: <br><br>
+    <a href="{{ signedUrl|raw }}">Подтверждение</a>.
+    Эта ссылка действительна {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+</p>
+
+<p>
+    С уважением, команда ГдеИстория.РФ
+</p>

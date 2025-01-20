@@ -1,0 +1,124 @@
+<!--banners-->
+<div class="banners-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{ include('pages/base/footer_partners.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+<!--end banners-->
+<footer>
+    <!--footer-->
+    <div class="footer-container pb-0">
+        <div class="container">
+            <div class="navbar-footer">
+                <ul class="navbar">
+                    <li class="d-flex align-items-center">
+                        <a class="navbar-brand" href="/">
+                            <img src="{{ asset('img/logo.svg') }}" alt="Где История">
+                        </a>
+                        <div class="d-flex d-sm-none">
+                            <a class="nav-link mr-2" href="https://vk.com/archaenomics">
+                                <img src="{{ asset('img/social-header-vk.svg') }}" alt="vk"/>
+                            </a>
+                            <a class="nav-link" href="https://t.me/archaenomics">
+                                <img src="{{ asset('img/social-header-tg.svg') }}" alt="tg"/>
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item header-spacer"></li>
+                    <li class="nav-item header-add-event">
+                        <a class="nav-link underline" href="/report"><i
+                                    class="nav-icon"></i>Добавить мероприятие</a>
+                    </li>
+                    <li class="nav-item header-spacer"></li>
+                    <li class="nav-item header-login">
+                        {% if app.user %}
+                            {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                <a class="nav-link underline" href="/admin"><i class="nav-icon"></i>Админка</a>
+                            {% else %}
+                                <a class="nav-link underline" href="{{ path('app_profile', {'profileUser' : app.user.id }) }}"><i class="nav-icon"></i>Профиль</a>
+                            {% endif %}
+                        {% else %}
+                            <a class="nav-link underline" href="/login"><i class="nav-icon"></i>Вход/Регистрация</a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item header-spacer"></li>
+                    <li class="nav-item dropdown header-location">
+                        <a class="nav-link dropdown-toggle" href="/#"
+                           id="locationFooterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">
+                            <i class="nav-icon"></i><span class="navbar-location-bottom-name">
+                            {{ locationCurrent().location }}
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="locationFooterDropdown">
+                            {% for location in locationList %}
+                                <a class="dropdown-item" href="#" data-location-id="{{ location.id }}">{{ location.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-expanded">
+                    <li class="nav-item bottom-nav-left">
+                        <ul class="navbar-vertical">
+                            <li class="navbar-item"><a href="/pages/about" class="nav-link underline">О проекте Археономика</a>
+                            </li>
+                            <li class="navbar-item"><a href="/pages/partners" class="nav-link underline">Партнёры</a></li>
+                            <li class="navbar-item"><a href="/news" class="nav-link underline">Новости</a></li>
+                            <li class="navbar-item flex-row d-none d-sm-flex">
+                                <a class="nav-link" href="https://vk.com/archaenomics">
+                                    <img src="{{ asset('img/social-header-vk.svg') }}" alt="vk"/>
+                                </a>
+                                <a class="nav-link" href="https://t.me/archaenomics">
+                                    <img src="{{ asset('img/social-header-tg.svg') }}" alt="tg"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item bottom-nav-right">
+                        <h3 class="nav-header">Мероприятия</h3>
+                        <ul class="navbar-vertical">
+                            {% for navbar in categories[:10] %}
+                                <li class="navbar-item"><a class="nav-link underline text-wrap" href="/event/list/{{ navbar[0].short }}">{{ navbar[0].name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item  bottom-nav-left">
+                        <h3 class="nav-header">Организации</h3>
+                        <ul class="navbar-vertical">
+                            {% for organisationCategory in organisationCategories[:10] %}
+                                <li class="navbar-item"><a class="nav-link underline text-wrap" href="/organisation/list/{{ organisationCategory[0].short }}">{{ organisationCategory[0].name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item  bottom-nav-right">
+                        <h3 class="nav-header">Информация</h3>
+                        <ul class="navbar-vertical d-flex">
+{#                            <li class="navbar-item"><a href="#" class="nav-link underline">Клубы</a></li>#}
+{#                            <li class="navbar-item"><a href="#" class="nav-link underline">Музеи</a></li>#}
+                            <li class="navbar-item" style="width: 200px;text-wrap: wrap; line-height: 1.20rem;">
+                                <span class="text-wrap">Календарь исторических событий «Где история» &copy; предоставляет информацию и описание мероприятий, полученные из внешних открытых источников, и не несет ответственности за их достоверность</span>
+                            </li>
+                        </ul>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--end footer-->
+    <div class="footer-container">
+        <hr/>
+        <div class="container">
+            <div class="copyright-content">
+                <div class="copyright-item">Москва · {{ "now"|date("Y") }}</div>
+                <div class="copyright-item align-center"><img src="{{ asset('img/footer-small-logo.svg') }}"/></div>
+                <div class="copyright-item align-right"><span title="design: @martney, layout: @lavarana, back: @glavvred ">©</span>  Где История</div>
+            </div>
+        </div>
+    </div>
+
+</footer>

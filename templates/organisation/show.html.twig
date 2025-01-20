@@ -1,0 +1,261 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: {{ organisation.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .user-profile-header-banner img {
+            width: 100%;
+            object-fit: cover;
+            height: 250px;
+        }
+
+        .user-profile-header {
+            margin-top: -2rem
+        }
+
+        .user-profile-header .user-profile-img {
+            border: 5px solid;
+            width: 120px
+        }
+
+        .dataTables_wrapper .card-header .dataTables_filter label {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important
+        }
+
+        .gallery-container .active-slide.organization-img-container {
+            overflow: hidden;
+            height: 285px;
+            gap: 10px;
+            border-radius: 8px;
+
+        }
+
+        .organization-map-container {
+            margin-top: 20px;
+            overflow: hidden;
+            height: 120px;
+            gap: 10px;
+            border-radius: 8px;
+
+        }
+
+        .organization-img-container img,
+        .organization-map-container img {
+            width: 100%;
+        }
+
+        .no-padding-left {
+            padding-left: 0;
+        }
+
+        .no-padding-top {
+            padding-top: 0;
+        }
+
+        .organization-page .slide-tag-list {
+            position: relative;
+        }
+
+        .event-card-container.past .event-card .event-card-head img {
+            filter: grayscale(1);
+        }
+
+        @media (max-width: 768px) {
+            .user-profile-header-banner img {
+                height: 150px
+            }
+
+            .user-profile-header .user-profile-img {
+                width: 100px
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section organization-page" itemscope itemtype="https://schema.org/Organization">
+        {% set first_crumb = '<a href="' ~ path('app_organisation_list') ~ '">Организации</a>' %}
+        {% set second_crumb = '<a href="' ~ path('app_organisation_list', {'type' : organisation.category.short}) ~ '">' ~ organisation_type ~ '</a>' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+
+        <div class="row gallery-container">
+            <div class="col-md-3">
+                <div class="organization-img-container active-slide" data-id="1" data-header="{{ organisation.name }}"
+                     style="background-image: url({{ asset('upload/images/' ~ organisation.mainPhoto) }});">
+                    <div class="blur-layer"></div>
+                    <img itemprop="image" src="{{ asset('upload/images/' ~ organisation.mainPhoto) }}" alt="{{ organisation.name }}">
+                </div>
+                {% if organisation.address is not empty %}
+                    <div class="organization-map-container"><a
+                                href="https://yandex.ru/maps/?mode=search&text={{ organisation.address }}"><img
+                                    {% if organisation.coordinates is not empty %}
+                                src="https://static-maps.yandex.ru/1.x/?ll={{ organisation.swapCoordinates }}&l=map&z=12&size=285,120"
+                            {% else %}
+                                src="{{ asset('img/event-card-map1.png') }}"
+                                    {% endif %}></a></div>
+                    <div class="event-card-location"><a
+                                href="https://yandex.ru/maps/?mode=search&text={{ organisation.address }}"
+                                itemprop="address">{{ organisation.address }}</a>
+                    </div>
+                {% endif %}
+                <div class="event-card-contacts mt-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled">
+                        {% for contact in organisation.contacts %}
+                            <li>
+                                {% set contact_splitted = contact|split('(') %}
+
+                                {% if contact matches '{^http}' %}
+                                    <a itemprop="url" href="{{ contact }}">{{ contact }}</a>
+                                {% elseif contact matches '/@/' %}
+                                    <a itemprop="email" href="mailto:{{ contact }}">{{ contact }}</a>
+                                {% elseif contact_splitted is iterable %}
+                                    {% set phone = contact_splitted[0]|trim %}
+                                    {% if contact_splitted[1] is defined %}
+                                        {% set info = contact_splitted[1]|replace({')':''})|trim %}
+                                        <a itemprop="telephone" href="tel:{{ phone|replace({' ': ''}) }}">{{ info }}: {{ phone }}</a>
+                                    {% else %}
+                                        <a itemprop="telephone" href="tel:{{ phone|replace({' ': ''}) }}">{{ phone }}</a>
+                                    {% endif %}
+                                {% else %}
+                                    {{ contact }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="slide-tag-list no-padding-left no-padding-top">
+                    <a class="event-card-tag-link active"
+                       href="{{ path('app_organisation_list', {'type' : organisation.category.short}) }}">{{ organisation_type }}</a>
+                </div>
+                <h2 itemprop="name">{{ organisation.name }}</h2>
+                {% if organisation.additionalPhotos|length > 0 %}
+                    <div class="slide-container">
+                        <ul class="slides">
+                            <li class="slide" data-id="1"
+                                style="background-image: url({{ asset('upload/images/' ~ organisation.mainPhoto) }});">
+                                <img src="{{ asset('upload/images/' ~ organisation.mainPhoto) }}" alt="main photo">
+                            </li>
+                            {% for additionalPhoto in organisation.additionalPhotos %}
+                                <li class="slide" data-id="{{ loop.index + 1 }}"
+                                    style="background-image: url({{ asset('upload/images/' ~ additionalPhoto) }});">
+                                    <img src="{{ asset('upload/images/' ~ additionalPhoto) }}"
+                                         alt="add photo {{ loop.index + 1 }}">
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="arrow-left"><img src="{{ asset('img/red-arrow-left.svg') }}" alt="arrow-left"></div>
+                        <div class="arrow-right"><img src="{{ asset('img/red-arrow-right.svg') }}" alt="arrow-right">
+                        </div>
+                    </div>
+                {% endif %}
+                <span itemprop="description">{{ organisation.description|raw }}</span>
+            </div>
+        </div>
+        {% set nextEvents = getNextEvents(organisation) %}
+        {% if nextEvents is not empty %}
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h2>Ближайшие события:</h2>
+
+                    <div class="event-card-container">
+                        <ul class="event-card-content">
+                            {% for event in nextEvents %}
+                                <li class="event-card">
+                                    <div class="event-card-head">
+                                        <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><img
+                                                    src="{{ asset('upload/images/' ~ event.mainPhoto ) }}"></a>
+                                        <div class="event-card-image-tag-list">
+                                            <a href="/event/list/{{ event.category.short }}"
+                                               class="event-card-tag-link active">{{ event.category.name }}</a>
+                                            {% set letter_count = event.category.name|length %}
+                                            {% for filter in event.filter %}
+                                                {% set letter_count = letter_count + filter.name|length %}
+                                                {% if letter_count <= 28 %}
+                                                    <a href="/filter/{{ filter.short == 'toll' ? filter.short ~ '/' ~ filter.id : filter.short }}"
+                                                       class="event-card-tag-link">{{ filter.name }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><h3
+                                                class="event-card-title">{{ event.name }}</h3></a>
+                                    <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><p
+                                                class="event-card-caption">{{ event.shortDescription }}</p></a>
+                                    <div class="event-card-dates">
+                                        {% if event.duration is not empty and event.duration != 0 %}
+                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                        {% else %}
+                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.getDurationEnding(event.duration) }}
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="event-card-location">
+                                        <a href="https://yandex.ru/maps/?mode=search&text={{ event.address }}">{{ event.address }}</a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% set pastEvents = getPastEvents(organisation) %}
+        {% if  pastEvents is not empty %}
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h2>Прошедшие события:</h2>
+
+                    <div class="event-card-container past">
+                        <ul class="event-card-content">
+                            {% for event in pastEvents %}
+                                <li class="event-card">
+                                    <div class="event-card-head">
+                                        <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><img
+                                                    src="{{ asset('upload/images/' ~ event.mainPhoto ) }}"></a>
+                                        <div class="event-card-image-tag-list">
+                                            <a href="/event/list/{{ event.category.short }}"
+                                               class="event-card-tag-link active">{{ event.category.name }}</a>
+                                            {% set letter_count = event.category.name|length %}
+                                            {% for filter in event.filter %}
+                                                {% set letter_count = letter_count + filter.name|length %}
+                                                {% if letter_count <= 28 %}
+                                                    <a href="/filter/{{ filter.short == 'toll' ? filter.short ~ '/' ~ filter.id : filter.short }}"
+                                                       class="event-card-tag-link">{{ filter.name }}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><h3
+                                                class="event-card-title">{{ event.name }}</h3></a>
+                                    <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><p
+                                                class="event-card-caption">{{ event.shortDescription }}</p></a>
+                                    <div class="event-card-dates">
+                                        {% if event.duration is not empty and event.duration != 0 %}
+                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                        {% else %}
+                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.getDurationEnding(event.duration) }}
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="event-card-location">
+                                        <div class="event-card-location"><a
+                                                    href="https://yandex.ru/maps/?mode=search&text={{ event.address }}">{{ event.address }}</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

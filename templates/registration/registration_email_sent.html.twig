@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Письмо отправлено{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Вход' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Письмо отправлено</h1>
+                        <p class="text-center">
+                            <span>Письмо с ссылкой для завершения регистрации отправлено, проверьте почтовый ящик</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock content %}
+
+

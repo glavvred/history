@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: {{ news_one.name }}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section event-page news-page" itemscope itemtype="https://schema.org/NewsArticle">
+        {% set first_crumb = '<a href="/news">Новости</a>' %}
+        {% set second_crumb = news_one.name %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+
+        <div class="row event-search-header">
+            <div class="col-sm-12">
+                <h2 itemprop="name">{{ news_one.name }}</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="event-card-dates" itemprop="dateCreated"
+                     style="margin-bottom:10px;">{{ news_one.createdAt ? news_one.createdAt|date('d-m-Y') : '' }}</div>
+            </div>
+        </div>
+
+        <div class="row event-gallery">
+            <div class="col-md-12">
+                <div class="container gallery-container no-popup">
+                    <div class="active-slide" data-id="1" data-header="{{ news_one.name }}"
+                         style="background-image: url({{ asset('upload/images/' ~ news_one.photo ) }} )">
+                        <div class="blur-layer"></div>
+                        <img itemprop="image" src="{{ asset('upload/images/' ~ news_one.photo ) }}" alt="{{ news_one.name }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" itemprop="text">
+                <p>&nbsp;</p>
+                <p>{{ news_one.description|raw }}</p>
+            </div>
+        </div>
+
+    </div>
+{% include('pages/news_row.html.twig') %}
+{% endblock %}

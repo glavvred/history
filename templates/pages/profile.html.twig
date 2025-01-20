@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ profile_user.name }} Где история: профиль {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Профиль' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Профиль</h1>
+                            {{ message|default('') }}
+                        {{ form_start(form, {'method': 'POST'}) }}
+                        <form id="formProfile" class="mb-3 unselectable" method="POST">
+                            <div class="mb-3">
+                                {% if form_errors(form.name) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(form.name) }}</div>
+                                {% endif %}
+                                <label for="{{ field_name(form.name) }}" class="form-label">Логин <sup class='red'>*</sup></label>
+                                <input type="text" value="{{ field_value(form.name) }}" name="{{ field_name(form.name) }}" id="{{ field_name(form.name) }}"
+                                       class="form-control" autocomplete="username"
+                                       placeholder="Введите имя пользователя"
+                                       required autofocus tabindex="1">
+                            </div>
+                            <div class="mb-3">
+                                {% if form_errors(form.email) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(form.email) }}</div>
+                                {% endif %}
+                                <label for="{{ field_name(form.email) }}" class="form-label">Адрес электронной почты. После изменения необходимо подтверждение письмом <sup class='red'>*</sup></label>
+                                <input type="text" value="{{ profile_user.email }}" name="{{ field_name(form.email) }}" id="{{ field_name(form.email) }}"
+                                       class="form-control" autocomplete="email" placeholder="Введите адрес почты"
+                                       required tabindex="2">
+                            </div>
+                            <div class="mb-3">
+                                {% if form_errors(form.avatarFile) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(form.avatarFile) }}</div>
+                                {% endif %}
+                                <label for="{{ field_name(form.avatarFile) }}" class="form-label">Аватар</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="file" aria-valuetext="{{ profile_user.avatar }}" name="{{ field_name(form.avatarFile) }}" id="{{ field_name(form.avatarFile) }}"
+                                           class="form-control"
+                                           tabindex="3">
+                                    <span class="input-group-text cursor-pointer"><img style="max-width: 100px; max-height: 100px;" alt='avatar' src="{{ asset('upload/images/' ~ profile_user.avatar) }}"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="{{ field_name(form.newsletter) }}" name="{{ field_name(form.newsletter) }}"
+                                            {% if profile_user.newsLetter %}
+                                                checked
+                                            {% endif %}
+                                           tabindex="6">
+                                    <label class="form-check-label" for="{{ field_name(form.newsletter) }}">Отправлять еженедельный дайджест на
+                                        почту</label>
+                                </div>
+                            </div>
+                            <div class="mb-3 flex-center">
+                                <button class="btn btn-primary d-grid" type="submit" tabindex="7">Сохранить</button>
+                            </div>
+                            {{ form_end(form) }}
+                        </form>
+                        <div class="mb-3 mt-5 form-password-toggle">
+                            <span>Для изменения пароля воспользуйтесь <a href="{{ path('app_forgot_password_request') }}">ссылкой</a> </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Регистрация{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .card {
+            width: 50% !important;
+        }
+
+        @media screen and (max-width: 500px) {
+            .card {
+                width: 95% !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    {{ parent() }}
+{% endblock %}
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Вход' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if app.user %}
+                            <div class="mb-3">
+                                Вы вошли в аккаунт {{ app.user.userIdentifier }}, <a
+                                        href="{{ path('app_logout') }}">Выйти</a>
+                            </div>
+                        {% endif %}
+                        <h1>Регистрация</h1>
+                        {{ form_start(registrationForm) }}
+                        <form id="formAuthentication" class="mb-3" method="POST">
+                            <div class="mb-3">
+                                {% if form_errors(registrationForm.name) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(registrationForm.name) }}</div>
+                                {% endif %}
+                                <label for="name" class="form-label">Логин</label>
+                                <input type="text" class="form-control" id="name" required
+                                       name="{{ field_name(registrationForm.name) }}"
+                                       placeholder="Введите свой будущий логин. Только английские буквы и цифры"
+                                       autofocus="">
+                            </div>
+
+                            <div class="mb-3">
+                                {% if form_errors(registrationForm.email) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(registrationForm.email) }}</div>
+                                {% endif %}
+                                <label for="email" class="form-label">Адрес почты</label>
+                                <input type="email" class="form-control" id="email" required
+                                       value="{{ field_value(registrationForm.email) }}"
+                                       name="{{ field_name(registrationForm.email) }}"
+                                       placeholder="Введите адрес электронной почты ">
+                            </div>
+
+                            <div class="mb-3 form-password-toggle">
+                                {% if form_errors(registrationForm.password) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(registrationForm.password, {'attr': {'class': 'testik_class'}}) }}</div>
+                                {% endif %}
+                                <label class="form-label" for="password">Пароль</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="password" class="form-control" required
+                                           name="{{ field_name(registrationForm.password) }}"
+                                           placeholder="минимальная длина - 6 символов"
+                                           aria-describedby="password">
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3">
+                                {% if form_errors(registrationForm.agreeTerms) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(registrationForm.agreeTerms) }}</div>
+                                {% endif %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms-conditions" required
+                                           name="{{ field_name(registrationForm.agreeTerms) }}">
+                                    <label class="form-check-label" for="terms-conditions">
+                                        Соглашаюсь с <a href="#">политикой сайта</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {% if form_errors(registrationForm.agreePolicy) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(registrationForm.agreePolicy) }}</div>
+                                {% endif %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="terms-conditions" required
+                                           name="{{ field_name(registrationForm.agreePolicy) }}">
+                                    <label class="form-check-label" for="terms-conditions">
+                                        Соглашаюсь с <a href="/upload/images/policy.pdf">политикой сбора персональных
+                                            данных</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary d-grid w-100">Зарегистрироваться</button>
+
+                            {{ form_end(registrationForm) }}
+
+                            <p class="text-center mt-4">
+                                <span>Уже есть аккаунт?</span>
+                                <a href="{{ path('app_login') }}">
+                                    <span>Войти</span>
+                                </a>
+                            </p>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock content %}
+
+

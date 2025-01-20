@@ -1,0 +1,174 @@
+@media (max-width: 575px) {
+    .xs\:ml-0 {
+        margin-left: 0;
+    }
+
+    #navbarNav .navbar-nav {
+        display: block;
+    }
+
+    #navbarNav .navbar-nav li a {
+        padding-left: 0 !important;
+    }
+
+    .rotate-button {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        outline: none !important;
+    }
+
+    .rotate-button svg {
+        min-width: 14px;
+        min-height: 12px;
+    }
+
+    .filter-element {
+        width: 33.3%;
+        margin-right: 0;
+        align-self: baseline;
+    }
+
+    .filter-element a {
+        white-space: wrap;
+    }
+
+    .main-section {
+        padding: 5px 50px !important;
+    }
+
+    #navbarNav {
+        margin-left: 30px;
+        margin-top: 10px;
+    }
+
+    #navbarNav #locationDropdown {
+        padding-left: 0;
+    }
+
+    .navbar.navbar-secondary {
+        padding: 0 30px;
+        padding-top: 20px;
+        min-height: initial;
+    }
+
+    .footer-container {
+        padding: 30px;
+    }
+
+    .footer-container .navbar {
+        align-items: start;
+    }
+
+    .navbar-footer .navbar .nav-item {
+        padding-left: 0;
+    }
+
+    .navbar-footer .navbar-expanded .nav-item {
+        width: 100%;
+        max-width: initial;
+    }
+
+    .navbar-footer .navbar-expanded .nav-item:nth-child(2),
+    .navbar-footer .navbar-expanded .nav-item:nth-child(4) {
+        text-align: start;
+    }
+
+    .navbar-footer .navbar-expanded {
+        margin: 0;
+    }
+
+    .navbar-footer .navbar-vertical {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .navbar-footer .navbar-vertical li {
+        width: 50%;
+    }
+
+    .main-filter-dates {
+        margin-left: 0;
+    }
+
+
+    /** map */
+    #map {
+        min-width: 280px;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        min-height: auto;
+    }
+
+    .map-page .card.mb-4.mt-4 {
+        position: relative;
+        padding-bottom: 100%;
+        width: 100%;
+    }
+
+    .news-item {
+        margin-bottom: 15px;
+    }
+
+    .news-container {
+        padding-top: 40px !important;
+    }
+
+    .event-page .event-card-dates {
+        display: none;
+    }
+
+    .event-page .event-card-dates-short {
+        color: #9B1616;
+    }
+
+    .breadcrumbs {
+        margin-top: 10px;
+    }
+
+    .breadcrumbs .col-md-3 {
+        display: none;
+    }
+
+    .event-card-tag-link {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .title-xs {
+        font-size: 24px;
+    }
+
+    .gallery-container {
+        margin-top: 20px;
+    }
+
+    .gallery-container span[itemprop="description"] {
+        font-size: 13px;
+    }
+
+    .arrow-right, .arrow-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .arrow-right {
+        justify-content: end;
+    }
+
+    .arrow-left {
+        justify-content: start;
+    }
+
+    .mission {
+        font-size: 16px !important;
+        line-height: 27px !important;
+    }
+
+    .about-list h5, .gray-container h5 {
+        font-size: 20px !important;
+    }
+}

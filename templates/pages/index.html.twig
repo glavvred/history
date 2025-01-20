@@ -1,0 +1,465 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: афиша событий{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/filter.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <!-- Calendar month template -->
+    {% verbatim %}
+    <script id="calendarMonth" type="text/x-jquery-tmpl">
+    <div>
+        <div class="calendar-month">
+            <div class="title">${name}</div>
+            <ul class="month-content">
+            {{each(i,v) days}}
+                {{if $data.currentDay==v}}
+                    {{if $data.weekday[i] ==5 || $data.weekday[i] ==6}}
+                        <li class="day selected holiday">
+                    {{else}}
+                        <li class="day selected">
+                    {{/if}}    
+                {{else}}
+                    {{if $data.weekday[i] ==5 || $data.weekday[i]==6}}
+                        <li class="day holiday">
+                    {{else}}
+                        <li class="day">
+                    {{/if}}    
+                {{/if}}
+                    <span class="calendar-day-round" data-month="${name}" data-monthi="${namei}">${v}</span>${$data.daysNames[i]}</li>
+            {{/each}}
+            </ul>
+        </div>
+    </div>
+    </script>
+    {% endverbatim %}
+
+        <!--EVENT Card template-->
+    {% verbatim %}
+    <script id="eventCardTemplate" type="text/x-jquery-tmpl">
+    <div>
+        <li class="event-card">
+            <div class="event-card-head">
+            <a href="${link}"><img src="${img}"/></a>
+                <div class="event-card-image-tag-list">
+                    {{each(i,v) tags}}
+                        <a href="#" class="event-card-tag-link ${v.status}">${v.name}</a>
+                    {{/each}}
+                </div>
+            </div>
+            <a href="${link}"><h3 class="event-card-title">${title}</h3></a>
+            <a href="${link}"><p class="event-card-caption">${description}</p></a>
+            </a>
+            <div class="event-card-org">
+                <div class="event-card-org-logo"><img src="${org.img}"/></div>
+                <div class="event-card-org-link"><a href="${org.link}">${org.title}</a></div>
+            </div>
+            <div class="event-card-dates">
+                ${startdate}
+                {{if $data.enddate}}
+                 &mdash; ${enddate}
+                {{/if}}
+                {{if $data.duration}}
+                  &middot; ${duration}
+                {{/if}}
+            </div>
+            {{if $data.location}}
+                <div class="event-card-location">
+                    <a href="${location.link}">${location.title}</a>
+                </div>
+            {{/if}}    
+        </li>        
+    </div>
+    </script>
+    {% endverbatim %}
+
+
+{% include('pages/base/navbar_second.html.twig') %}
+{% include('pages/carousel_row.html.twig') %}
+{% include('pages/events.html.twig') %}
+    {% include('pages/news_row.html.twig') %}
+   
+
+    <script>
+        /*CALENDAR*/
+
+        function daysInMonth(month, year) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function daysInYear(year) {
+            var days = 0;
+
+            for (var month = 1; month <= 12; month++) {
+                days += daysInMonth(month, year);
+            }
+
+            return days;
+        }
+
+        $(function () {
+            const myfilter = Window.myfilter;
+
+            $(".load-more-events").on("click touchend", function (ev) {
+                const showMore = $("#show-more")
+                showMore.show()
+                myfilter.changed = false;
+                myfilter.page++;
+
+                const query = new URLSearchParams();
+                query.set('region', myfilter.region)
+                query.set('dateFrom', myfilter.startdate)
+                query.set('dateTo', myfilter.enddate)
+                query.set('page', myfilter.page)
+                $.getJSON("/loadmore?" + query,function(response) {
+                    console.log(response.eventsShown);
+                    myfilter.lastPage <= myfilter.page ? showMore.hide() : showMore.show()
+                    let rhtml = "";
+                    myfilter.lastPage = response.lastPage
+                    $.each(response.data, function( key, val ) {
+                        console.log(val); 
+                        rhtml += $('#eventCardTemplate').tmpl(val).html();
+                    });
+                    $(".event-card-content.upcoming").append(rhtml);
+                });
+                ev.preventDefault();
+                return false;
+            });
+
+            var monthes = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            var monthesi = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+            var weekday = ['Пн', 'Вт', 'Ср', 'Чт', 'Птн', 'Сб', 'Вс'];
+            var currentdate = new Date();
+            var currentyear = currentdate.getFullYear();
+            var currentmonth = currentdate.getMonth();
+            var currentday = currentdate.getDate();
+
+            var monthesArr = {
+                0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {}, 7: {}, 8: {}, 9: {}, 10: {}, 11: {}
+            };
+
+            var yearBegin = new Date(currentyear, 0, 0);
+            var yearWeekBegin = yearBegin.getDay();
+
+            var retHTML = "";
+
+            var currentDayShift = 0;
+
+            const wSize = $("#mainCalendar").width();
+
+            var cindex=0;
+            var selectedIndex=cindex;
+            var selectedEndIndex=cindex;
+            var clientYcal = 0;
+
+            for (var i = 0; i < 12; i++) {
+                monthesArr[i].name = monthes[i];
+                monthesArr[i].namei = monthesi[i];
+                monthesArr[i].daysCount = daysInMonth(i, currentyear);
+                monthesArr[i].dateBegin = new Date(currentyear, i, 0);
+                monthesArr[i].dayOfWeekStart = monthesArr[i].dateBegin.getDay();
+                monthesArr[i].daysNames = new Array();
+                monthesArr[i].days = new Array();
+                monthesArr[i].weekday = new Array();
+                monthesArr[i].xsize = monthesArr[i].daysCount * (42 + 18);
+                if (i > 0)
+                    monthesArr[i].xoffset = monthesArr[i - 1].xoffset + monthesArr[i - 1].xsize + 18;
+                else
+                    monthesArr[i].xoffset = 0;
+                if (currentmonth > i) {
+                    currentDayShift += monthesArr[i].xsize + 18;
+                }
+                monthesArr[i].isCurrentMonth = (currentmonth == i);
+                if (monthesArr[i].isCurrentMonth)
+                    monthesArr[i].currentDay = currentday;
+                else
+                    monthesArr[i].currentDay = -1;
+
+                for (var n = 0; n < monthesArr[i].daysCount; n++) {
+                    monthesArr[i].days[n] = n + 1;
+                    monthesArr[i].weekday[n] = (monthesArr[i].dayOfWeekStart + n) % 7;
+                    monthesArr[i].daysNames[n] = weekday[monthesArr[i].weekday[n]];
+                    if (currentmonth == i && currentday - 1 > n) {
+                        currentDayShift += 60;
+                    }
+                    if (currentmonth == i && currentday == n+1) {
+                        selectedIndex = cindex;
+                        selectedEndIndex = cindex;
+                        if(currentmonth==11 && currentday+7>31) {
+                            selectedEndIndex = cindex - 1 + 31 - 7 - currentday;
+                        }else{
+                            selectedEndIndex = cindex + 6;
+                        }
+                    }
+                    cindex+=1;
+                }
+                monthesArr[i].html = $('#calendarMonth').tmpl(monthesArr[i]).html();
+
+                if (i > 0) {
+                    retHTML += "<div class=\"calendar-spacer\"></div> ";
+                }
+                retHTML += monthesArr[i].html;
+
+
+            }
+            currentDayShift -= wSize / 2;
+            const calObj = $("#mainCalendar .calendar-content");
+            const calParObj = $("#mainCalendar");
+            calObj.append(retHTML);
+            calObj.css("left", "-" + currentDayShift + "px");
+            const calAllWidth = monthesArr[11].xoffset + monthesArr[11].xsize;
+
+            $("#mainCalendar .arrow-left").on("click touchend", function (event) {
+                var coffset = calObj.offset().left - calParObj.offset().left;
+                if (coffset + wSize / 2 > 0)
+                    coffset = 60;
+                else
+                    coffset += wSize / 2;
+                calObj.css("left", coffset + "px");
+                // Scroll left
+            });
+
+            $("#mainCalendar .arrow-right").on("click touchend", function (event) {
+                var coffset = calObj.offset().left - calParObj.offset().left;
+                if (coffset - wSize / 2 < (-calAllWidth + wSize))
+                    coffset = (-calAllWidth + wSize - 60);
+                else
+                    coffset -= wSize / 2;
+                calObj.css("left", coffset + "px");
+                // Scroll left
+            });
+
+            const calendarDays = calObj.find(".day");
+            let isSelecting = false;
+            let isScrolling = false;
+            let startDate = null;
+            let endDate = null;
+
+            var clearSelection = function () {
+                calendarDays.each(function (i, el) {
+                    $(el).removeClass("selected");
+                });
+            }
+
+            var selectRange = function (sDate, eDate, initload=false) {
+                let startIndex = calendarDays.index(sDate);
+                let endIndex = calendarDays.index(eDate);
+
+                if (startIndex > endIndex) {
+                    [startIndex, endIndex] = [endIndex, startIndex];
+                }
+
+                for (let i = startIndex; i <= endIndex; i++) {
+                    $(calendarDays.get(i)).addClass('selected');
+                }
+
+                if(!isSelecting){
+                    var smonth = $(calendarDays.get(startIndex)).find("span").data("monthi");
+                    var sday = $(calendarDays.get(startIndex)).find("span").text();
+                    var emonth = $(calendarDays.get(endIndex)).find("span").data("monthi");
+                    var eday = $(calendarDays.get(endIndex)).find("span").text();
+                    if(smonth==emonth){
+                        if(sday==eday)
+                            $(".main-filter-dates").text(sday+" "+smonth);
+                        else    
+                            $(".main-filter-dates").text(sday+" - " +eday+" "+smonth);
+                    }else{
+                        $(".main-filter-dates").text(sday+" "+smonth+" - " +eday+" "+emonth);
+                    }
+                    myfilter.change(initload);                    
+                }
+            }
+
+            selectRange(calendarDays.get(selectedIndex),calendarDays.get(selectedEndIndex),true);
+
+            calendarDays.each(function (i, el) {
+                $(el).on("click ", function (ev) {
+                    if (isSelecting) {
+                        isSelecting = false;
+                        clearSelection();
+                        $(this).addClass("selected");
+                        endDate = $(this);
+                        selectRange(startDate, endDate);
+
+                    } else {
+                        isSelecting = true;
+                        startDate = $(this);
+                        endDate = null;
+                        clearSelection();
+                        $(this).addClass("selected");
+                    }
+                });
+
+/*
+                $(el).on("touchstart ", function (ev) {
+                        isSelecting = true;
+                        startDate = $(this);
+                        endDate = null;
+                        clearSelection();
+                        $(this).addClass("selected");
+                        clientYcal = ev.changedTouches[0].clientY
+                });
+
+                $(el).on("touchend ", function (ev) {
+                       isSelecting = false;
+                        clearSelection();
+                        $(this).addClass("selected");
+                        if(!endDate)endDate = $(this);
+                        selectRange(startDate, endDate);
+                });
+*/
+
+                $(el).on("mouseover", function (ev) {
+                    if (isSelecting && startDate) {
+                        clearSelection();
+                        $(this).addClass("selected");
+                        endDate = $(this);
+                        selectRange(startDate, endDate);
+                    }
+                });
+/*
+                $(el).on("touchmove", function (ev) {
+                    if (isSelecting && startDate) {
+                        var elm = document.elementFromPoint(ev.changedTouches[0].clientX,clientYcal);
+                        if($(elm).hasClass("day"))
+                        {
+                            clearSelection();
+                            $(elm).addClass("selected");
+                            endDate = $(elm);
+                            selectRange(startDate, endDate);
+                        }
+                    }
+                });
+*/
+            });
+
+            $(".calendar-container .arrow-left").on("mousedown touchstart",function(ev){
+                if(isSelecting)
+                    isScrolling = true;
+            })
+            $(".calendar-container .arrow-right").on("mousedown touchstart",function(ev){
+                if(isSelecting)
+                    isScrolling = true;
+            })
+
+            document.addEventListener('mouseup', (ev) => {
+                if(isSelecting&&!isScrolling)
+                {
+                    var tgel = ev.target;
+                    var cname = tgel.className;
+                    if(cname.startsWith("day") || cname == "calendar-day-round"){
+
+                    }else{
+                        isSelecting = false;
+                        clearSelection();
+                        selectRange(startDate, endDate);
+                    }
+                }
+                if(isScrolling)isScrolling=false;
+            });
+
+            /*
+                        $( ".draggable-element" ).draggable({axis: "x",
+                            start: function(event,ui){
+                                ui.helper.addClass("start-drag");
+                            },
+                            drag: function(event,ui){
+                                ui.helper.find(".swiper-slide").each(function(i,v){
+                                    var prnt = $(this).parent();
+                                    var oleft = $(this).offset().left;
+                                });
+                              //console.log(ui.position.left);
+                            },
+                            stop: function(event,ui){
+                                ui.helper.removeClass("start-drag");
+                            }
+                        });
+            */
+
+          
+
+        });
+    </script>
+
+<script>    
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownMenus = document.querySelectorAll('.filter-content .dropdown-menu');
+        const selectedValues = {};
+        let timer;
+
+
+        function updateSelections(groupId, value, text) {
+            var myfilter = Window.myfilter;
+            // Store the selected value along with the group ID
+            selectedValues[groupId] = {
+                value: value,
+                text: text
+            };
+
+            // Update the corresponding dropdown toggle text
+            document.getElementById(`filterDropdown${groupId}`).textContent = text;
+
+            $(".filter-content .filter-element").first().removeClass("selected");
+
+            // Clear the previous timer
+            clearTimeout(timer);
+
+            // Set a new timer to delay the request
+            timer = setTimeout(() => {
+                // Prepare the payload with group IDs and selected values
+                var payload = Object.keys(selectedValues).map(groupId => ({
+                    groupId: groupId,
+                    value: selectedValues[groupId].value
+                }));
+                myfilter.filterselected = payload;
+                myfilter.change();
+                
+                // Trigger the action based on the selected values after the delay
+                //console.log('Selected values:', payload);
+
+                // // Example: send the selected values to the server
+                // fetch('/your-server-endpoint', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify(payload)
+                // })
+                //     .then(response => response.json())
+                //     .then(data => {
+                //         // Handle the response data
+                //         console.log(data);
+                //     })
+                //     .catch(error => {
+                //         console.error('Error:', error);
+                //     });
+            }, 100); // Adjust the delay as needed (1000ms = 1s)
+        }
+
+        dropdownMenus.forEach(function(menu) {
+            const dropdownItems = menu.querySelectorAll('.dropdown-item');
+
+            dropdownItems.forEach(function(item) {
+                item.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    // Get the selected value and text
+                    const selectedValue = this.getAttribute('data-value');
+                    const selectedText = this.textContent;
+                    const groupId = menu.getAttribute('aria-labelledby').replace('filterDropdown', '');
+
+                    if(!this.parentNode.parentNode.classList.contains("selected"))this.parentNode.parentNode.classList.add("selected");
+                    if(selectedValue=="")this.parentNode.parentNode.classList.remove("selected");
+                    // Update selections and trigger the delayed request
+                    updateSelections(groupId, selectedValue, selectedText);
+                });
+            });
+        });
+    });
+
+</script>    
+{% endblock %}

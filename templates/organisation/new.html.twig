@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Подать заявку на создание новой организации{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Новая организация' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if form_errors(form) %}
+                            <div class="alert alert-danger">{{ form_errors(form) }}</div>
+                        {% endif %}
+
+                        <h1>Заявка на создание новой организации</h1>
+                        {{ form_start(form, {'method': 'POST'}) }}
+
+                        <form id="formAuthentication" class="mb-3 unselectable" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Название <sup class='red'>*</sup></label>
+                                <input type="text" name="{{ field_name(form.name) }}" id="{{ field_name(form.name) }}"
+                                       value="{{ field_value(form.name) }}"
+                                       class="form-control"
+                                       placeholder="Введите название организации"
+                                       required autofocus tabindex="1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.description) }}">Описание<sup
+                                            class='red'>*</sup></label>
+                                <input type="text" name="{{ field_name(form.description) }}"
+                                       id="{{ field_name(form.description) }}"
+                                       value="{{ field_value(form.description) }}"
+                                       class="form-control"
+                                       placeholder="Краткое описание в свободной форме"
+                                       required tabindex="2">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.address) }}">Адрес<sup
+                                            class='red'>*</sup></label>
+                                <input type="text" name="{{ field_name(form.address) }}"
+                                       id="{{ field_name(form.address) }}"
+                                       value="{{ field_value(form.address) }}"
+                                       class="form-control"
+                                       placeholder="Город, улица, дом, указания облегчающие добор"
+                                       required tabindex="3">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.address) }}">Координаты для
+                                    отображения на карте. Взять можно на <a href="https://yandex.ru/maps/213/moscow/">яндекс
+                                        карте</a>, правой кнопкой по точке, "что здесь", координаты будут слева </label>
+                                <input type="text" name="{{ field_name(form.coordinates) }}"
+                                       id="{{ field_name(form.coordinates) }}"
+                                       value="{{ field_value(form.coordinates) }}"
+                                       class="form-control"
+                                       placeholder="55.751955, 37.618785"
+                                       tabindex="4">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.contacts) }}">Контакты<sup
+                                            class='red'>*</sup></label>
+                                <input type="text" name="{{ field_name(form.contacts) }}"
+                                       id="{{ field_name(form.contacts) }}"
+                                       value="{{ field_value(form.contacts) }}"
+                                       class="form-control"
+                                       placeholder="Телефон, адрес электронной почты, в свободной форме"
+                                       required tabindex="5">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.category) }}">Категория<sup
+                                            class='red'>*</sup></label>
+                                <select required name="{{ field_name(form.category) }}" class="form-control" tabindex="6">
+                                    {% for label, value in field_choices(form.category) %}
+                                        <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.main_photo_file) }}">Основное фото (например логотип) <sup
+                                            class='red'>*</sup></label>
+                                <input type="file" name="{{ field_name(form.main_photo_file) }}"
+                                       id="{{ field_name(form.main_photo_file) }}"
+                                       value="{{ field_value(form.main_photo_file) }}"
+                                       class="form-control"
+                                       required tabindex="7">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field_name(form.additional_photos_file) }}">Дополнительные фото (фото помещения, команды, итп)</label>
+                                <input type="file" multiple name="{{ field_name(form.additional_photos_file) }}"
+                                       id="{{ field_name(form.additional_photos_file) }}"
+                                       value="{{ field_value(form.additional_photos_file) }}"
+                                       class="form-control"
+                                       tabindex="8">
+                            </div>
+                            <div class="mb-3 flex-center">
+                                <button class="btn btn-primary d-grid" type="submit" tabindex="10">Отправить</button>
+                            </div>
+                            {{ form_end(form) }}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

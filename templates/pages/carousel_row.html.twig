@@ -1,0 +1,12 @@
+<div class="container main-slider">
+    <div class="swiper">
+        <div class="swiper-wrapper draggable-element">
+            {% for event_collection in eventCollectionsTop %}
+                <div class="swiper-slide">
+                    <a href="{{ path('app_event_collection_show_slug', {'slug' : event_collection.slug }) }}"><span class="caption">{{ event_collection.name }}</span></a>
+                    <img src="/upload/images/{{ asset(event_collection.mainPhoto) }}" alt="{{ event_collection.name }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

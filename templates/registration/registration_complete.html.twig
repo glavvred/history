@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Регистрация успешно завершена{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Регистрация' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Аккаунт подтвержден</h1>
+                        <p class="text-center">
+                            <span>Регистрация завершена</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock content %}
+
+

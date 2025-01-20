@@ -1,0 +1,5 @@
+@media (min-width:992px) {
+    .rotate-button-xs, .navbar-expand-lg .bottom-collapse-xs, .nav-item-xs {
+        display: none !important;
+    }
+}

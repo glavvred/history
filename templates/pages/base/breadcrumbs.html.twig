@@ -1,0 +1,20 @@
+<div class="row breadcrumbs">
+    <div class="col-md-9">
+        <h4 class="fw-bold breadcrumbs">
+            <a href="/"><span class="fw-light">Календарь событий</span></a>
+
+            <span class="text-muted fw-light"> > </span>
+            {% if second_crumb is defined and second_crumb is not null %}
+                <span class="text-muted fw-light"> {{ first_crumb|raw }} ></span>
+                {{ second_crumb|raw }}
+            {% else %}
+                {{ first_crumb|raw }}
+            {% endif %}
+    </div>
+    {% if do_not_show_search is not defined %}
+    <div class="col-md-3">
+        {{ include('pages/base/search.html.twig') }}
+    </div>
+    {% endif %}
+
+</div>

@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: поиск{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section">
+        {% set first_crumb = 'Результаты поиска по запросу: ' ~ criteria %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            {% if organisations is not empty %}
+                <div class="col-md-12">
+                    <h3>Организации</h3>
+                    <div class="event-card-container">
+                        <ul class="event-card-content">
+                            {% for organisation in organisations %}
+                                <li class="event-card">
+                                    <div class="event-card-head">
+                                        <a href="{{ path('app_organisation_show_slug', {'slug': organisation.slug}) }}"><img
+                                                    src="{{ asset('upload/images/' ~ organisation.mainPhoto ) }}"
+                                                    alt="image"></a>
+                                        <div class="event-card-image-tag-list">
+                                            <a href="{{ path('app_organisation_list', {'type' : organisation.category.short}) }}"
+                                               class="event-card-tag-link active">{{ organisation.category.name }}</a>
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('app_organisation_show_slug', {'slug': organisation.slug}) }}"><h3
+                                                class="event-card-title">{{ organisation.name }}</h3></a>
+                                    <p class="event-card-caption">{{ organisation.shortDescription }}</p>
+                                    <div class="event-card-location">
+                                        <a href="#">{{ organisation.address }}</a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if events is not empty %}
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <h3>Мероприятия</h3>
+                    {% include('pages/events_row.html.twig') %}
+                </div>
+            </div>
+        {% endif %}
+        {% if pastEvents is not empty %}
+            {% include('pages/past_events_row.html.twig') %}
+        {% endif %}
+        {% if organisations is empty and events is empty %}
+            <h2>Список результатов пуст</h2>
+            <p>К сожалению, мы не смогли найти ни одного мероприятия или организатора, подходящего под запрос.
+                Попробуйте исправить опечатки или поискать что то другое</p>
+        {% endif %}
+
+    </div>
+    {% include('pages/news_row.html.twig') %}
+{% endblock %}

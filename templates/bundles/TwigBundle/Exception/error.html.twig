@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Что по пошло совсем не так</h1>
+
+    <p>
+        Статус {{ status_code }}<br/>
+        Текст {{ status_message }}<br/>
+        А еще можно вернуться на <a href="{{ path('app_index') }}">главную</a>.
+    </p>
+{% endblock %}

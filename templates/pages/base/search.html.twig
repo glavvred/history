@@ -1,0 +1,10 @@
+<form method="post" action="{{ path('app_search') }}">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <button type="submit" class="search-submit"><img src="{{ asset('img/red-button-search.svg') }}" alt="search"
+                                                             width="16px"
+                                                             height="16px"/></button>
+        </div>
+        <input name="criteria" type="text" class="form-control search-text" placeholder="Место, мероприятие...">
+    </div>
+</form>

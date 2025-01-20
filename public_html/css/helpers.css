@@ -1,0 +1,29 @@
+
+.d-flex {
+    display: flex;
+}
+
+.relative {
+    position: relative;
+}
+
+.space-around-container {
+    display: flex;
+    justify-content: space-around !important;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.ml-0 {
+    margin-left: 0;
+}
+
+.mr-2 {
+    margin-right: 2px;
+}
+
+.mr-20 {
+    margin-right: 20px;
+}

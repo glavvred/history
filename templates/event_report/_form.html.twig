@@ -1,0 +1,107 @@
+{{ form_start(form) }}
+<div class="card-body">
+    <div class="mb-3 row">
+        <label for="name" class="col-md-2 col-form-label">Название</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" id="name"
+                   name="{{ field_name(form.name) }}"
+                   placeholder="Название мероприятия" autofocus="" required="">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="event_report[category]" class="col-md-2 col-form-label">Категория</label>
+        <div class="col-md-10">
+            {{ form_widget(form.category) }}
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="event_report[region]" class="col-md-2 col-form-label">Регион</label>
+        <div class="col-md-10">
+            {{ form_widget(form.region) }}
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="start_date" class="col-md-2 col-form-label">Дата начала</label>
+        <div class="col-md-10">
+            <input class="form-control" type="date" required="" placeholder="2024-05-31" id="start_date"
+                   name="{{ field_name(form.startDate) }}">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="duration" class="col-md-2 col-form-label">Продолжительность, в днях</label>
+        <div class="col-md-10">
+            <input class="form-control" type="number" placeholder="3" id="duration" aria-describedby="durationHelp"
+                   name="{{ field_name(form.duration) }}">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div id="durationHelp" class="form-text">Если длительность равна 0 - будем считать что оно бесконечно
+            повторяется. Хороший пример - "тренировки каждую среду"
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="address" class="col-md-2 col-form-label">Адрес проведения, максимально подробно</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text"
+                   placeholder="Московская область, деревня Куликово, справа от церкви"
+                   id="address" name="{{ field_name(form.address) }}" required="">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="link" class="col-md-2 col-form-label">Ссылки</label>
+        <div class="col-md-10">
+            <input class="form-control" type="url" placeholder="https://kogda-igra.ru" id="link"
+                   name="{{ field_name(form.link) }}"
+                   required="">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="description" class="col-md-2 col-form-label">Описание, подробности</label>
+        <div class="col-md-10">
+            <textarea class="form-control" id="description" rows="3" name="{{ field_name(form.description) }}"
+                      placeholder="Замечательное мероприятие, вы должны о нем знать и рассказать всем"></textarea>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="main_photo" class="col-md-2 col-form-label">Заглавное фото</label>
+        <div class="col-md-10">
+            <input class="form-control" required="" type="file" id="main_photo"
+                   name="{{ field_name(form.mainPhoto) }}">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="additional_photos" class="col-md-2 col-form-label">Дополнительные фото</label>
+        <div class="col-md-10">
+            <input class="form-control" type="file" id="additional_photos" multiple=""
+                   name="{{ field_name(form.additionalPhotos) }}">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="prequisites" class="col-md-2 col-form-label">Условия участия</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text" required=""
+                   placeholder="Одежда на 15 век Европа, никаких мобильных устройств на виду" id="prequisites"
+                   aria-describedby="prequisitesHelp" name="{{ field_name(form.prequisites) }}">
+        </div>
+        <div id="prequisitesHelp" class="form-text">Если мероприятие предполагает дресс-код - укажите это
+            обязательно
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="toll" class="col-md-2 col-form-label">Оплата участия</label>
+        <div class="col-md-10">
+            <input class="form-control" type="text"
+                   placeholder="Любые варианты - '5000р', 'Бесплатно', 'За донат', итп" id="toll"
+                   name="{{ field_name(form.toll) }}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <button class="btn btn-primary" data-repeater-create="">
+                <span class="align-middle">{{ button_label|default('Отправить') }}</span>
+            </button>
+        </div>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+

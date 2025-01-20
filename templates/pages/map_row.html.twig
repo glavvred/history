@@ -1,0 +1,10 @@
+<!--map-->
+<div class="row">
+    <div class="col-md-12 text-center map-container">
+{#        <img src="{{ asset('img/map_index.png') }}"/>#}
+        {% set coordinates = locationCurrent().coordinates|split(',') %}
+        <img src="https://static-maps.yandex.ru/1.x/?ll={{ coordinates[1]|trim }},{{ coordinates[0]|trim }}&l=map&z=11&size=650,60&type=satellite"/>
+        <a href="/map/" class="map-show-around">Организации рядом со мной</a>
+    </div>
+</div>
+<!--end map-->

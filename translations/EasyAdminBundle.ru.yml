@@ -1,0 +1,93 @@
+page_title.dashboard: Дашборд
+page_title.detail: '%entity_label_singular% <small>(#%entity_short_id%)</small>'
+page_title.edit: '%entity_label_singular%'
+page_title.index: '%entity_label_plural%'
+page_title.new: 'Создать новый %entity_label_singular%'
+page_title.exception: Ошибка|Ошибки|Ошибок
+datagrid.hidden_results: 'Некоторые результаты не могут быть отображены, потому что вы не имеете достаточных привелегий'
+datagrid.no_results: 'Ничего не найдено.'
+paginator.first: Первая
+paginator.previous: Предыдущая
+paginator.next: Следующая
+paginator.last: Последняя
+paginator.counter: '<strong>%start%</strong> - <strong>%end%</strong> из <strong>%results%</strong>'
+paginator.results: '<strong>%count%</strong> результат|<strong>%count%</strong> результата|<strong>%count%</strong> результатов'
+label.true: Да
+label.false: Нет
+label.empty: Пусто
+label.null: 'Null'
+label.object: PHP-объект
+label.inaccessible: Недоступно
+label.inaccessible.explanation: 'Нет геттера для этого поля или свойство не общедоступно'
+label.form.empty_value: Пусто
+field.code_editor.view_code: 'Просмотреть код'
+field.text_editor.view_content: 'Просмотреть содержимое'
+action.entity_actions: Действия
+action.new: 'Создать %entity_label_singular%'
+action.search: Поиск
+action.detail: Показать
+action.edit: Редактировать
+action.delete: Удалить
+action.cancel: Отклонить
+action.index: 'Вернуться к списку'
+action.deselect: 'Снять выбор'
+action.add_new_item: 'Добавить новый элемент'
+action.remove_item: 'Удалить элемент'
+action.choose_file: 'Выберите файл'
+action.close: Закрыть
+action.create: Создать
+action.create_and_add_another: 'Создать и добавить еще'
+action.create_and_continue: 'Создать и продолжить'
+action.save: Сохранить
+action.save_and_continue: 'Сохранить и продолжить'
+batch_action_modal.title: 'Вы собираетесь выполнить действие "%action_name%" для выбранных строк (%num_items%)'
+batch_action_modal.content: 'Эту операцию нельзя отменить.'
+batch_action_modal.action: Продолжить
+delete_modal.title: 'Вы действительно хотите удалить этот объект?'
+delete_modal.content: 'Эту операцию нельзя отменить.'
+filter.title: Фильтры
+filter.button.clear: Очистить
+filter.button.apply: Применить
+filter.label.is_equal_to: равно
+filter.label.is_not_equal_to: 'не равно'
+filter.label.is_greater_than: 'больше чем'
+filter.label.is_greater_than_or_equal_to: 'больше или равно'
+filter.label.is_less_than: 'меньше чем'
+filter.label.is_less_than_or_equal_to: 'меньше или равно'
+filter.label.is_between: между
+filter.label.contains: содержит
+filter.label.not_contains: 'не содержит'
+filter.label.starts_with: 'начинается с'
+filter.label.ends_with: 'заканчивается на'
+filter.label.exactly: точно
+filter.label.not_exactly: 'не точно'
+filter.label.is_same: 'такой же'
+filter.label.is_not_same: 'не такой же'
+filter.label.is_after: после
+filter.label.is_after_or_same: 'после или соответствует'
+filter.label.is_before: до
+filter.label.is_before_or_same: 'до или соответствует'
+form.are_you_sure: 'Вы не сохранили сделанные изменения.'
+form.tab.error_badge_title: 'Один неверный ввод|%count% неверных ввода|%count% неверных вводов'
+form.slug.confirm_text: 'Если вы измените текстовый идентификатор, вы можете сломать ссылки на других страницах.'
+user.logged_in_as: 'Вы вошли как'
+user.unnamed: 'Безымянный пользователь'
+user.anonymous: 'Анонимный пользователь'
+user.sign_out: Выход
+user.exit_impersonation: 'Выйти из-под пользователя'
+settings.appearance.label: Оформление
+settings.appearance.light: Светлое
+settings.appearance.dark: Темное
+settings.appearance.auto: Автоматически
+settings.locale: Язык
+login_page.username: Логин
+login_page.password: Пароль
+login_page.sign_in: Войти
+login_page.forgot_password: 'Забыли пароль?'
+login_page.remember_me: 'Запомнить меня'
+exception.entity_not_found: 'Элемент больше не доступен.'
+exception.entity_remove: 'Элемент не может быть удалён, потому что другой элемент зависит от него.'
+exception.forbidden_action: 'Запрашиваемое действие запрещено для этого элемента.'
+exception.insufficient_entity_permission: 'У вас недостаточно прав для доступа к этому элементу.'
+autocomplete.no-results-found: 'Совпадений не найдено'
+autocomplete.loading-more-results: 'Загрузка данных…'

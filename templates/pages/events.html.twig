@@ -1,0 +1,43 @@
+<div class="container main-section">
+    <div class="row event-search-header">
+        <div class="col-md-12">
+            <h2 class="d-flex flex-wrap">
+                <span class="mr-2">События</span> 
+                <a href="#" class="text-red" id="city">
+                        <i class="nav-icon"></i>
+                    </a>
+                    <a
+                        class="dropdown-toggle text-red"
+                        href="/#" id="locationHeaderDropdown"
+                        role="button" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                            <span class="location-name">
+                                {{ locationCurrent().location_admin_name }}
+                            </span>
+                    </a>
+                <div class="dropdown-menu" aria-labelledby="locationHeaderDropdown">
+                    {% for location in locationList %}
+                        <a class="dropdown-item" href="#"
+                            data-location-id="{{ location.id }}">{{ location.name }}</a>
+                    {% endfor %}
+                </div>
+                <span class="main-filter-dates xs:ml-0">2-4 Июля</span>
+            </h2>
+
+        </div>
+    </div>
+
+    {% include('pages/calendar_row.html.twig') %}
+    {% include('pages/filter_row.html.twig') %}
+    {% include('pages/events_row.html.twig') %}
+    {% if canLoadMore is not null %}
+        {% include('pages/load_more_events.html.twig') %}
+    {% endif %}
+    {% if app.user and 'ROLE_SUPER_ADMIN' in app.user.roles %}
+        {% include('pages/constant_events_row.html.twig') %}
+    {% endif %}
+
+    {% include('pages/map_row.html.twig') %}
+    {% include('pages/base/bottom_carousel_row.html.twig') %}
+</div>

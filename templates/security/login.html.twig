@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Логин{% endblock %}
+{% block stylesheets %}
+    <style>
+        .card {
+            width: 40% !important;
+        }
+
+        @media screen and (max-width: 500px) {
+            .card {
+                width: auto !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    {{ parent() }}
+{% endblock %}
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Вход' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+
+                        {% if app.user %}
+                            <div class="mb-3">
+                                You are logged in as {{ app.user.userIdentifier }}, <a
+                                        href="{{ path('app_logout') }}">Logout</a>
+                            </div>
+                        {% endif %}
+                        <h1>Вход</h1>
+                        <form id="formAuthentication" class="mb-3 unselectable" method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Логин <sup class='red'>*</sup></label>
+                                <input type="text" value="{{ last_username }}" name="_username" id="username"
+                                       class="form-control" autocomplete="username" placeholder="Введите имя пользователя"
+                                       required autofocus tabindex="1">
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <div class="d-flex justify-content-between">
+                                    <label class="form-label" for="password">Пароль <sup class='red'>*</sup></label>
+                                    <a href="{{ path('app_forgot_password_request') }}">
+                                        <small>Забыли пароль?</small>
+                                    </a>
+                                </div>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" name="_password" id="password" class="form-control"
+                                           autocomplete="current-password" required placeholder="············"
+                                           aria-describedby="password"  tabindex="2">
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remember-me">
+                                    <label class="form-check-label" for="remember-me"><span title="https://www.youtube.com/watch?v=x2CeDY9Ywhs">Запомнить</span></a>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3 flex-center">
+                                <button class="btn btn-primary d-grid" type="submit"  tabindex="3">Войти</button>
+                            </div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        </form>
+
+                    </div>
+                </div>
+                <p class="text-center">
+                    <span>Нет аккаунта?</span>
+                    <a href="{{ path('app_register') }}">
+                        <span>Зарегистрируйтесь</span>
+                    </a>
+                </p>
+                <br/><br/><br/><br/><br/><br/>&nbsp;
+            </div>
+        </div>
+    </div>
+{% endblock %}

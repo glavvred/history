@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: Новости{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .news-list-page .news-container {
+            background: none;
+            margin-top: 0px;
+            padding-top: 0px;
+        }
+
+        .news-list-page .news-item {
+            margin-bottom: 40px;
+        }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section news-list-page">
+        {% set first_crumb = 'Новости' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row event-search-header">
+            <div class="col-sm-12">
+                <h2>Новости</h2>
+            </div>
+        </div>
+
+        <div class="row news-container">
+            <div class="col-md-12">
+                <ul class="news-content">
+                    {% for news in news_array %}
+                        <li class="news-item">
+                            <div class="news-item-img"><a href="{{ path('app_news_show', {'id' : news.id}) }}"><img
+                                            src="{{ asset('upload/images/'~ news.photo) }}" alt="{{ news.name }}"></a>
+                            </div>
+                            <p class="news-caption"><a
+                                        href="{{ path('app_news_show', {'id' : news.id}) }}">{{ news.name }}</a></p>
+                            <span class="news-date">{{ news.createdAt ? news.createdAt|date('d-m-Y') : '' }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

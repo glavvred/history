@@ -1,0 +1,54 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set route_params = app.request.attributes.get('_route_params') %}
+<nav class="navbar navbar-expand navbar-secondary">
+    <div class="container">
+        <div class="col-md-12">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavSecondary"
+                    aria-controls="navbarNavSecondary" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavSecondary">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item secondary-header-best {% if route == 'app_public_event_best' %}active{% endif %}">
+                        <a class="nav-link" href="{{ path('app_public_event_best') }}"><i class="nav-icon"></i> Лучшее</a>
+                    </li>
+                    <li class="nav-item nav-item-xs secondary-header-other dropdown">
+                        <a class="nav-link dropdown-toggle" href="/#" id="otherDropdown"
+                            role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Тип мероприятия
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end " aria-labelledby="otherDropdown">
+                            {% for navbar in categories %}
+                                <a class="dropdown-item"
+                                    href="/event/list/{{ navbar[0].short }}">{{ navbar[0].name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    {% for navbar in categories[:6] %}
+                        <li class="nav-item nav-item-lg secondary-header-{{ navbar[0].short }} {% if (route == 'app_event_list') and (route_params['category'] == navbar[0].short) %}active{% endif %}">
+                            <a class="nav-link"
+                               href="/event/list/{{ navbar[0].short }}">{{ navbar[0].name }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if categories|length > 6 %}
+                        <li class="nav-item nav-item-lg secondary-header-other dropdown">
+                            <a class="nav-link dropdown-toggle" href="/#" id="otherDropdown"
+                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Другое
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end " aria-labelledby="otherDropdown">
+                                {% for navbar in categories[6:] %}
+                                    <a class="dropdown-item"
+                                       href="/event/list/{{ navbar[0].short }}">{{ navbar[0].name }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item nav-item-lg">
+                        {{ include('pages/base/search.html.twig') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

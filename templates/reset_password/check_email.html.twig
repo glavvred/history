@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Письмо отправлено{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Профиль' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Письмо отправлено</h1>
+                        <p>Если аккаунт с таким адресом почты существует - мы отправим вам ссылку чтобы вы смогли
+                            сбросить свой
+                            пароль.</p>
+                        <p>Ссылка в письме будет
+                            действительна {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
+                            .</p>
+                        <p>Если вы не получили письмо - проверьте папку "спам" или попробуйте <a
+                                    href="{{ path('app_forgot_password_request') }}">еще раз</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include('pages/news_row.html.twig') %}
+{% endblock %}

@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+{% block title %}Где история: Карта организаций{% endblock %}
+{% set location = locationCurrent() %}
+{% set organisationCategories = organisationCategoriesList() %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .unselectable {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="https://yandex.st/jquery/2.2.3/jquery.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=b7221eed-1eca-44f8-b906-1b7ee8b7dd55&lang=ru_RU"
+            type="text/javascript"></script>
+
+    <!--COMPANIES Card template-->
+    {% verbatim %}
+    <script id="companyCardTemplate" type="text/x-jquery-tmpl">
+    <div>
+        <li class="event-card">
+            <div class="event-card-head">
+            <a href="${link}"><img src="${img}"/></a>
+                <div class="event-card-image-tag-list">
+                    {{each(i,v) tags}}
+                        <a href="#" class="event-card-tag-link ${v.status}">${v.name}</a>
+                    {{/each}}
+                </div>
+            </div>
+            <a href="${link}"><h3 class="event-card-title">${title}</h3></a>
+            <a href="${link}"><p class="event-card-caption">${description}</p></a>
+            </a>
+            <div class="event-card-org">
+                <div class="event-card-org-logo"><img src="${org.img}"/></div>
+                <div class="event-card-org-link"><a href="${org.link}">${org.title}</a></div>
+            </div>
+            {{if $data.location}}
+                <div class="event-card-location">
+                    <a href="${location.link}">${location.title}</a>
+                </div>
+            {{/if}}    
+        </li>        
+    </div>
+    </script>
+    {% endverbatim %}
+
+    <script type="text/javascript">
+        let categoriesList = [];
+        let myMap;
+
+        {% for organisationCategory in organisationCategories %}
+        categoriesList.push('{{ organisationCategory[0].short }}');
+        {% endfor %}
+
+        ymaps.ready(init);
+
+        function init() {
+            // Создание карты и заполнение (пока) всеми объектами
+            myMap = new ymaps.Map("map", {
+                center: [{{ location.coordinates }}],
+                zoom: 8,
+                controls: ['geolocationControl', 'zoomControl', 'fullscreenControl']
+            });
+
+            // Создаем кластеризатор c красной иконкой (по умолчанию используются синяя).
+            let clusterer = new ymaps.Clusterer({clusterDisableClickZoom: true}),
+                // Создаем коллекцию геообъектов.
+                collection = new ymaps.GeoObjectCollection();
+
+            // Добавляем кластеризатор на карту.
+            myMap.geoObjects.add(clusterer);
+            myMap.container.fitToViewport();
+
+            //собираем метки в массив из базы
+            let myGeoObjects = [];
+            // @formatter:off
+            {% for organisation in organisations %}
+                {% if organisation.coordinates is not empty %}
+                    {% set coordinates = organisation.coordinates|split(',') %}
+                    myGeoObjects.push(new ymaps.GeoObject({
+                        geometry: {
+                            type: "Point",
+                            coordinates: [{{ coordinates[0]|trim }}, {{ coordinates[1]|trim }}]
+                        },
+                        properties: {
+                            preset: 'islands#icon',
+                            iconColor: '#d40f33',
+                            type: "{{ organisation.category.short }}",
+                            balloonContentHeader: "{{ organisation.name }}",
+                            balloonContentBody: "{{ organisation.shortDescription }}",
+                            balloonContentFooter: "<a href=\"{{ path('app_organisation_show_slug', {'id': organisation.slug }) }}\">профиль организации</a>",
+                            hintContent: "{{ organisation.name }}"
+                        }
+                    }));
+                    {% endif %}
+            {% endfor %}
+            // @formatter:on
+
+            clusterer.add(myGeoObjects);
+            myMap.geoObjects.add(clusterer);
+
+
+            //фильтр по типу объекта
+            function setState(value) {
+                let filter = [];
+                filter.push(value);
+
+                filtredObjects = myGeoObjects.filter(el => (filter.includes(el.properties._data.type)));
+                clusterer.add(filtredObjects);
+
+                let doNotShow = myGeoObjects.filter(n => !filtredObjects.includes(n));
+
+                // Объекты, которые не попали в выборку, нужно убрать с карты.
+                clusterer.remove(doNotShow);
+            }
+
+
+            //смена центра карты по локации
+            const dropdowns = ['locationDropdown', 'locationHeaderDropdown', 'locationFooterDropdown'];
+            dropdowns.forEach(function (dropdown) {
+                const dropdownItems = document.getElementById(dropdown).nextElementSibling.querySelectorAll('.dropdown-item');
+                dropdownItems.forEach(function (item) {
+                    item.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        let selectedLocation = this.getAttribute('data-location-id');
+                        let location = cities.find(item => item.id == selectedLocation);
+                        myMap.setCenter([{{ location.coordinates }}]);
+                    });
+                });
+            });
+
+
+            const dropdownMenus = document.querySelectorAll('.filter-content .dropdown-menu');
+            const selectedValues = {};
+            let timer;
+
+            function updateSelections(groupId, value, text) {
+                // Store the selected value along with the group ID
+                selectedValues[groupId] = {
+                    value: value,
+                    text: text
+                };
+
+                // Update the corresponding dropdown toggle text
+                document.getElementById(`filterDropdown${groupId}`).textContent = text;
+
+                // Clear the previous timer
+                clearTimeout(timer);
+
+                // Set a new timer to delay the request
+                timer = setTimeout(() => {
+                    // Prepare the payload with group IDs and selected values
+                    const payload = Object.keys(selectedValues).map(groupId => ({
+                        groupId: groupId,
+                        value: selectedValues[groupId].value
+                    }));
+
+                    // Trigger the action based on the selected values after the delay
+                    console.log('Selected values:', payload);
+
+                    setState(payload[0].value);
+
+                }, 300); // Adjust the delay as needed (1000ms = 1s)
+            }
+
+            dropdownMenus.forEach(function (menu) {
+                const dropdownItems = menu.querySelectorAll('.dropdown-item');
+
+                dropdownItems.forEach(function (item) {
+                    item.addEventListener('click', function (event) {
+                        event.preventDefault();
+
+                        // Get the selected value and text
+                        const selectedValue = this.getAttribute('data-value');
+                        const selectedText = this.textContent;
+                        const groupId = menu.getAttribute('aria-labelledby').replace('filterDropdown', '');
+
+                        // Update selections and trigger the delayed request
+                        updateSelections(groupId, selectedValue, selectedText);
+                    });
+                });
+            });
+        }
+
+
+    </script>
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <!-- Content -->
+    <div class="container main-section map-page">
+        {% set first_crumb = 'Карта' %}
+        {% set do_not_show_search = true %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row event-search-header">
+            <div class="col-md-8">
+                <h2>Организации <a href="#" class="text-red" id="city"><i class="nav-icon"></i></a>
+                    <a class="dropdown-toggle text-red" href="/#" id="locationHeaderDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="location-name">
+                            {{ location.location_admin_name }}
+                            </span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="locationHeaderDropdown">
+                        {% for location in locationList() %}
+                            <a class="dropdown-item" href="#"
+                               data-location-id="{{ location.id }}">{{ location.name }}</a>
+                        {% endfor %}
+                    </div>
+                </h2>
+            </div>
+
+            <div class="col-md-4 pt-2 d-none d-sm-block">
+                {{ include('pages/base/search.html.twig') }}
+            </div>
+        </div>
+
+        {% include('pages/map_filter_row.html.twig') %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4 mt-4">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row event-search-header">
+            <div class="col-md-12">
+                <h2>Новые организации в нашем каталоге:</h2>
+            </div>
+        </div>
+
+        {% include('pages/organizations_row.html.twig') %}
+        {% include('pages/base/bottom_carousel_row.html.twig') %}
+    </div>
+    <!-- / Content -->
+
+{% endblock %}

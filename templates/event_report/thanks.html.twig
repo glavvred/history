@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Спасибо!{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = '<a href="/report/">Сообщение о мероприятии</a>' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Спасибо за сообщение!</h5>
+                        <div>
+                            <p>
+                                Весь контент создаем мы сами и ваша помощь очень нам нужна
+                            </p>
+                            <p>
+                                все молодцы, но текст еще не придумали
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include('pages/news_row.html.twig') %}
+{% endblock %}

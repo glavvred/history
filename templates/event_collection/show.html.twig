@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: подборка: {{ event_collection.name ? event_collection.name : criteria  }}{% endblock %}
+
+{% block content %}
+    <div class="container main-section">
+        {% set first_crumb = '<a href="' ~ path('app_event_collection_index') ~'">Все подборки</a>' %}
+        {% if event_collection.name is not empty %}
+            {% set second_crumb = event_collection.name %}
+        {% else %}
+            {% set second_crumb = 'Подборка по критерию: ' ~ criteria %}
+        {% endif %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+
+        {% if event_collection.name is not empty %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>{{ event_collection.name }}</h1>
+                    {% if event_collection.mainPhoto %}
+                    <div class="event-collection-cover-img"><div class="event-collection-cover-container">
+                    <img src="{{ asset('/upload/images/' ~ event_collection.mainPhoto) }}"
+                         alt="{{ event_collection.name }}">
+                    </div></div>
+                    {% endif %}
+                    <p class="card-text">
+                        {{ event_collection.description }}
+                    </p>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>{{ criteria }}</h1>
+                </div>
+            </div>
+        {% endif %}
+
+        {% set events = nextEvents %}
+        {% include('pages/events_row.html.twig') %}
+        
+        {% set events = pastEvents %}
+        {% include('pages/events_row.html.twig') %}
+
+    </div>
+{% endblock %}

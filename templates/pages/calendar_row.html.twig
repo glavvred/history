@@ -1,0 +1,18 @@
+<!--calendar-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="calendar-container unselectable" id="mainCalendar">
+            <div class="calendar-content">
+            </div>
+            <div class="arrow-left"><img src="{{ asset('img/red-arrow-left.svg') }}" alt=""/></div>
+            <div class="arrow-right"><img src="{{ asset('img/red-arrow-right.svg') }}" alt=""/></div>
+        </div>
+    </div>
+</div>
+<!--end calendar-->
+
+{#    {% for calendar_row in calendar_rows %}#}
+{#        <div class="calendar-day {% if calendar_row.date == current_day %}today{% endif %}" data-date="{{ calendar_row.date }}">#}
+{#            <span class="date">{{ calendar_row.day }}</span><span class="day">{{ calendar_row.day_of_week }}</span>#}
+{#        </div>#}
+{#    {% endfor %}#}

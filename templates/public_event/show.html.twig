@@ -1,0 +1,262 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: {{ public_event.name }}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Content -->
+    <div class="container main-section event-page" itemscope itemtype="https://schema.org/Event">
+        <span itemprop="startDate" content="{{ public_event.getStartDate|date("c") }}"></span>
+        <span itemprop="endDate" content="{{ public_event.getEndDate(true)|date("c") }}"></span>
+        {% set first_crumb = public_event.name %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row event-search-header" itemprop="name">
+            <div class="col-md-12">
+                <h2>{{ public_event.name }}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <div class="event-card-dates">
+                    {% set startDate = public_event.getStartDate %}
+
+
+                    {% if public_event.duration is not empty and public_event.duration != 0 %}
+                        {% if public_event.duration == 1 %}
+                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                        {% else %}
+                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &mdash; {{ public_event.getEndDate }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                        {% endif %}
+                    {% else %}
+                        {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }}
+                    {% endif %}
+                </div>
+                <div class="event-card-dates-short">
+                    {% if public_event.duration is not empty and public_event.duration != 0 %}
+                        {{ startDate ? startDate|date("m/d") : '' }} &mdash; {{ public_event.getEndDate(true)|date("m/d") }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                    {% else %}
+                        {{ startDate ? startDate|date("m/d") : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }}
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="col-md-5 text-left text-md-right mb-3 mb-md-0">
+                {% if public_event.vk is not empty or public_event.tg is not empty %}
+                    <span class='event-card-web-link'>Сайт мероприятия</span>
+                    {% if public_event.vk is not empty %}
+                        <a href='{{ public_event.vk }}' class='event-card-social-link'><img
+                                    src='{{ asset('img/social-red-vk.svg') }}' alt="vk"></a>
+                    {% endif %}
+                    {% if public_event.tg is not empty %}
+                        <a href='{{ public_event.tg }}' class='event-card-social-link'><img
+                                    src='{{ asset('img/social-red-tg.svg') }}' alt="tg"></a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row event-gallery">
+            <div class="col-md-12">
+                {% if app.user %}
+                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                        <div style="position: absolute; z-index: 1000; right: 25px; text-align: right;">
+                            просмотры: {{ public_event.views }}<br/>
+                            {% if statistics %}
+                                карта: {{ statistics.map|default(0) }}<br/>
+                                орг: {{ statistics.organisation|default(0) }}<br/>
+                                кнопка: {{ statistics.button|default(0) }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+                <div class="container gallery-container">
+                    <div class="active-slide" data-id="1" data-header="{{ public_event.name }}"
+                         style="background-image: url({{ asset('upload/images/') }}{{ public_event.mainPhoto }})">
+                        <div class="blur-layer"></div>
+                        <img itemprop="image" src="{{ asset('upload/images/') }}{{ public_event.mainPhoto }}"
+                             alt="{{ public_event.name }}">
+                        <div class="slide-tag-list">
+                            {# теги на первом фото #}
+                            <a href="{{ path('app_event_list', {'category': public_event.category.short}) }}"
+                               class="event-card-tag-link active">{{ public_event.category.name }}</a>
+                            {% for filter in public_event.filter %}
+                                <a href="{{ path('app_event_collection_parameter', {'parameterName': filter.short}) }}"
+                                   class="event-card-tag-link">{{ filter.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if public_event.additionalPhotos|length > 0 %}
+                        <div class="slide-container">
+                            <ul class="slides">
+                                {# повтор первого фото #}
+                                <li class="slide" data-id="1"
+                                    style="background-image: url({{ asset('upload/images/') }}{{ public_event.mainPhoto }})">
+                                    <img src="{{ asset('upload/images/') }}{{ public_event.mainPhoto }}"
+                                         alt="{{ public_event.name }}">
+                                    <div class="slide-tag-list">
+                                        {# теги на повторе первого фото #}
+                                        <a href="{{ path('app_event_list', {'category': public_event.category.short}) }}"
+                                           class="event-card-tag-link active">{{ public_event.category.name }}</a>
+                                        {% for filter in public_event.filter %}
+                                            <a href="{{ path('app_event_collection_parameter', {'parameterName': filter.short}) }}"
+                                               class="event-card-tag-link">{{ filter.name }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </li>
+
+                                {% for additional_photo in public_event.additionalPhotos %}
+                                    <li class="slide" data-id="{{ public_event.id }}"
+                                        style="background-image: url({{ asset('upload/images/') }}{{ additional_photo }})">
+                                        <img src="{{ asset('upload/images/') }}{{ additional_photo }}"
+                                             alt="{{ public_event.name }}">
+                                        <div class="slide-tag-list">
+                                            {# теги на остальных фото #}
+                                            <a href="{{ path('app_event_list', {'category': public_event.category.short}) }}"
+                                               class="event-card-tag-link active">{{ public_event.category.name }}</a>
+                                            {% for filter in public_event.filter %}
+                                                <a href="{{ path('app_event_collection_parameter', {'parameterName': filter.short}) }}"
+                                                   class="event-card-tag-link">{{ filter.name }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="arrow-left"><img src="{{ asset('img/red-arrow-left.svg') }}" alt="left"></div>
+                            <div class="arrow-right"><img src="{{ asset('img/red-arrow-right.svg') }}" alt="right">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row event-content">
+            <div class="col-md-6">
+                <h4 itemprop="description">{{ public_event.shortDescription }}</h4>
+                {{ public_event.description|raw }}
+                {% if public_event.prequisites is not empty %}
+                    <h5>Условия проведения и правила участия:</h5>
+                    {{ public_event.prequisites|raw }}
+                {% endif %}
+
+                <h5>Даты проведения:</h5>
+                <p>
+                    <span>{{ startDate ? public_event.getDayAndMonthName(startDate) : '' }}</span>
+                    {% if public_event.duration is not empty and public_event.duration != 0 %}
+                        {% if public_event.duration == 1 %}
+                            &middot; <span
+                                itemprop="duration">{{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}</span>
+                        {% else %}
+                            &mdash; <span>{{ public_event.getEndDate }}</span> &middot; <span
+                                itemprop="duration">{{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}</span>
+                        {% endif %}
+                    {% else %}
+                        &middot; {{ public_event.getDurationEnding(public_event.duration) }}
+                    {% endif %}</p>
+
+                {% if public_event.toll is not empty %}
+                    <h5>Оплата:</h5>
+                    <p>{{ public_event.toll|raw }}</p>
+                {% endif %}
+                <p>&nbsp;</p>
+                {% if public_event.url is not empty %}
+                    <a href="{{ public_event.url }}" style="background-color: #9B1616; color: white"
+                       onclick="outbound('button', '{{ public_event.url }}');"
+                       class="event-card-tickets-link">
+                        {% if public_event.urlText is not empty %}
+                            {{ public_event.urlText }}
+                        {% else %}
+                            Подробнее на сайте организатора
+                        {% endif %}
+                    </a>
+                {% else %}
+                    {% if public_event.vk is not empty or public_event.tg is not empty %}
+                        {% if public_event.vk is not empty %}
+                            <a href='{{ public_event.vk }}' style="background-color: #9B1616; color: white"
+                               class="event-card-tickets-link">Подробнее на сайте организатора</a>
+                        {% elseif public_event.tg is not empty %}
+                            <a href='{{ public_event.tg }}' style="background-color: #9B1616; color: white"
+                               class="event-card-tickets-link">Подробнее на сайте организатора</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <h4>Место проведения:</h4>
+                <div class="event-card-img-container"><a
+                            onclick="outbound('map', 'https://yandex.ru/maps/?mode=search&text={{ public_event.address }}')"
+                            href="https://yandex.ru/maps/?mode=search&text={{ public_event.address }}"><img
+                                src="{{ asset('img/event-card-map1.png') }}" alt="найти на яндекс картах"></a></div>
+                <div class="event-card-location" itemscope itemtype="https://schema.org/Place" itemprop="location">
+                    <a onclick="outbound('map', 'https://yandex.ru/maps/?mode=search&text={{ public_event.address }}')"
+                       href="https://yandex.ru/maps/?mode=search&text={{ public_event.address }}">{{ public_event.address }}</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                {% if public_event.organisation is not empty %}
+                    <h4 class="mt-3 mt-md-0">Организатор:</h4>
+                    <meta itemprop="organizer" itemscope itemtype="https://schema.org/Organization"/>
+                    <meta itemprop="name" content="{{ public_event.organisation.name }}"/>
+                    <div class="event-card-img-container">
+                        <a itemprop="url" onclick="outbound('org', '/organisation/{{ public_event.organisation.id }}')"
+                           href="/organisation/{{ public_event.organisation.id }}">
+                            <img itemprop="image" alt="{{ public_event.organisation.name }}"
+                                 src="{{ asset('upload/images/') }}{{ public_event.organisation.mainPhoto }}"/>
+                        </a>
+                    </div>
+                    <h4>
+                        <a onclick="outbound('org', '/organisation/{{ public_event.organisation.id }}')"
+                           href="/organisation/{{ public_event.organisation.id }}">{{ public_event.organisation.name }}</a>
+                    </h4>
+                    <p>{{ public_event.organisation.shortDescription }}</p>
+                    {% if public_event.organisation.address is not empty %}
+                        <div class="event-card-location"><a
+                                    onclick="outbound('org', 'https://yandex.ru/maps/?mode=search&text={{ public_event.organisation.address }}')"
+                                    href="https://yandex.ru/maps/?mode=search&text={{ public_event.organisation.address }}">
+                                <span itemprop="location" itemscope
+                                      itemtype="https://schema.org/Place">{{ public_event.organisation.address }}</span></a>
+                            <meta itemprop="address" content="{{ public_event.organisation.address }}"/>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+            {% if public_event.reviews is not empty %}
+                <div class="col-md-6 mb-4">
+                    <h2>Фотографии, видео, отчеты</h2>
+                    {% for review in public_event.reviews %}
+                        <a href="{{ review }}">{{ review }}</a><br/>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% set events = related_events %}
+
+        {% if events is not empty %}
+            <div class="row event-similar">
+                <div class="col-md-12">
+                    <h2 class="title-xs">Похожие события</h2>
+                </div>
+            </div>
+            {% include('pages/events_row.html.twig') %}
+        {% endif %}
+    </div>
+    <script>
+        function outbound(zone, href) {
+            ym(98219131, 'reachGoal', 'button_out');
+            setTimeout(function () {
+                const img = new Image(),
+                    url = href;
+                img.src = "/click/{{ public_event.id }}/" + zone;
+                img.onload = function () {
+                    window.location.href = url;
+                };
+                return false; // cancel the link url
+            }, 500);
+        }
+    </script>
+{% endblock %}

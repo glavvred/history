@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-lg main-nav relative">
+    <div class="container space-around-container">
+        <a class="navbar-brand" href="/">
+            <img src="{{ asset('img/logo.svg') }}" alt="Где История">
+        </a>
+        <div class="d-flex d-md-block">
+            <button type="button" class="rotate-button rotate-button-xs mr-20" data-toggle="collapse" data-target="#searchNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.35355 0.646447C6.15829 0.451184 5.84171 0.451184 5.64645 0.646447L0.646447 5.64645C0.451185 5.84171 0.451185 6.15829 0.646447 6.35355L2.79289 8.5L0.146447 11.1464C-0.0488155 11.3417 -0.0488155 11.6583 0.146447 11.8536C0.341709 12.0488 0.658291 12.0488 0.853553 11.8536L3.5 9.20711L5.64645 11.3536C5.84171 11.5488 6.15829 11.5488 6.35355 11.3536L11.3536 6.35355C11.5488 6.15829 11.5488 5.84171 11.3536 5.64645L6.35355 0.646447ZM6 10.2929L3.85355 8.14645L1.70711 6L6 1.70711L10.2929 6L6 10.2929ZM5.99999 7C6.55228 7 6.99999 6.55228 6.99999 6C6.99999 5.44772 6.55228 5 5.99999 5C5.44771 5 4.99999 5.44772 4.99999 6C4.99999 6.55228 5.44771 7 5.99999 7Z" fill="white"/>
+                </svg>
+            </button>
+            <button class="rotate-button rotate-button-xs" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="14" height="2" rx="1" fill="white"/>
+                    <rect y="4" width="14" height="2" rx="1" fill="white"/>
+                    <rect y="8" width="14" height="2" rx="1" fill="white"/>
+                </svg>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="header-icon social-header-vk">
+                    <a class="nav-link" href="https://vk.com/archaenomics"><img src="{{ asset('img/social-header-vk.svg') }}"/></a>
+                </li>
+                <li class="header-icon social-header-tg">
+                    <a class="nav-link" href="https://t.me/archaenomics"><img src="{{ asset('img/social-header-tg.svg') }}"/></a>
+                </li>
+                <li class="nav-item header-about">
+                    <a class="nav-link underline" href="/pages/about">О проекте
+                        «Археономика»</a>
+                </li>
+                <li class="nav-item header-partners">
+                    <a class="nav-link underline" href="/pages/partners">Партнёры</a>
+                </li>
+                <li class="nav-item header-spacer first-spacer"></li>
+                <li class="nav-item header-add-event">
+                    <a class="nav-link underline" href="/report"><i
+                                class="nav-icon"></i>Добавить мероприятие
+                    </a>
+                </li>
+                <li class="nav-item header-spacer"></li>
+                <li class="nav-item header-login">
+                    {% if app.user %}
+                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                            <a class="nav-link underline" href="/admin"><i class="nav-icon"></i>Админка</a>
+                        {% endif %}
+                        <a class="nav-link underline" href="{{ path('app_profile', {'profileUser' : app.user.id }) }}"><i class="nav-icon"></i>Профиль</a>
+                    {% else %}
+                        <a class="nav-link underline" href="/login"><i class="nav-icon"></i>Вход/Регистрация</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item header-spacer"></li>
+                <li class="nav-item dropdown header-location">
+                    <a class="nav-link dropdown-toggle" href="/#" id="locationDropdown"
+                       data-current-region-id="{{ locationCurrent().location_id }}"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="nav-icon"></i><span class="navbar-location-name">
+                        {{ locationCurrent().location }}
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="locationDropdown">
+                        {% for location in locationList %}
+                            <a class="dropdown-item" href="#" data-location-id="{{ location.id }}">{{ location.name }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+{#                <li class="nav-item dropdown header-language">#}
+{#                    <a class="nav-link dropdown-toggle" href="/#" id="languageDropdown"#}
+{#                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                        <i class="nav-icon"></i>#}
+{#                        Ru#}
+{#                    </a>#}
+{#                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">#}
+{#                        <a class="dropdown-item" href="/#">En</a>#}
+{#                        <a class="dropdown-item" href="/#">Fr</a>#}
+{#                        <a class="dropdown-item" href="/#">De</a>#}
+{#                    </div>#}
+{#                </li>#}
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse bottom-collapse bottom-collapse-xs" id="searchNav">
+            {{ include('pages/base/search.html.twig') }}
+        </div>
+    </div>
+</nav>

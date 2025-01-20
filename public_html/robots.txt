@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+Disallow: /admin
+Sitemap: https://xn--c1acdma9aogj7k.xn--p1ai/sitemap.xml
