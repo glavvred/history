@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Entity\PublicEvent;
 use App\Entity\Organisation;
 use App\Entity\OrganisationCategory;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -23,11 +24,18 @@ use Symfony\Component\Routing\Attribute\Route;
 class DashboardController extends AbstractDashboardController
 {
 
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->unusedReportCount =  $entityManager->getRepository(EventReport::class)->count(['used' => false]);
+
+    }
+
     #[Route('/admin/', name: 'admin')]
     public function index(): Response
     {
-         return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard.html.twig');
     }
+
 
     public function configureDashboard(): Dashboard
     {
@@ -42,9 +50,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+
         return [
             MenuItem::section('На модерацию')->setPermission('ROLE_SUPER_ADMIN'),
-            MenuItem::linkToCrud('События', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('События('.($this->unusedReportCount).')', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
 
             MenuItem::section('Опубликованные'),
             MenuItem::linkToCrud('События', 'fa fa-child', PublicEvent::class),

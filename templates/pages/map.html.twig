@@ -95,7 +95,7 @@
                             type: "{{ organisation.category.short }}",
                             balloonContentHeader: "{{ organisation.name }}",
                             balloonContentBody: "{{ organisation.shortDescription }}",
-                            balloonContentFooter: "<a href=\"{{ path('app_organisation_show_slug', {'id': organisation.slug }) }}\">профиль организации</a>",
+                            balloonContentFooter: "<a href=\"{{ path('app_organisation_show_slug', {'slug': organisation.slug }) }}\">профиль организации</a>",
                             hintContent: "{{ organisation.name }}"
                         }
                     }));

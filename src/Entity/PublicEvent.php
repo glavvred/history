@@ -152,7 +152,7 @@ class PublicEvent implements JsonSerializable
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(length=128, unique=true)
      */
-    #[ORM\Column(length: 128, unique: true)]
+    #[ORM\Column(length: 128, unique: true, nullable: true)]
     #[Gedmo\Slug(fields: ['name'])]
     private $slug;
 

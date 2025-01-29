@@ -68,6 +68,7 @@ class PagesController extends AbstractController
     {
         $eventIds = [];
         $region = $this->getRegion($session);
+
         /** @var User $user */
         $user = $this->security->getUser();
 
@@ -77,7 +78,9 @@ class PagesController extends AbstractController
         $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getConstantEventsQuery();
         $constantEvents = $paginator->paginate($eventsQuery, 1, 8);
 
-        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($region, $startDate, $endDate);
+        $regionWithChildren = $entityManager->getRepository(Region::class)->getChildren($region);
+
+        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($regionWithChildren, $startDate, $endDate);
         $pagination = $paginator->paginate($eventsQuery, 1, 8);
 
         $canLoadMore = null;
@@ -133,12 +136,14 @@ class PagesController extends AbstractController
         }
 
         $eventsShown = [];
-        if ($page > 1){
+        if ($page > 1) {
             $eventsShown = $session->get('eventsShown');
         }
 
+        $regionWithChildren = $entityManager->getRepository(Region::class)->getChildren($region);
+
         /** @var Query $eventsQuery */
-        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($region, $startDate, $endDate, $filters, $eventsShown, $category);
+        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($regionWithChildren, $startDate, $endDate, $filters, $eventsShown, $category);
         $paginated = $paginator->paginate($eventsQuery, $page, 8);
 
         $total = ceil($paginated->getTotalItemCount() / 8);
@@ -287,7 +292,7 @@ class PagesController extends AbstractController
     #[Route('/map/{type}', name: 'app_map', options: ['sitemap' => true])]
     public function map(OrganisationRepository $organisationRepository,
                         EntityManagerInterface $entityManager,
-                        string $type = 'all'): Response
+                        string                 $type = 'all'): Response
     {
         $user = $this->getUser();
         $eventCollectionsBottom = $entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);

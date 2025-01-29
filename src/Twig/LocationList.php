@@ -38,12 +38,12 @@ class LocationList extends AbstractExtension
     {
         if ($asJson) {
             return $this->serializer->serialize(
-                $this->managerRegistry->getRepository(Region::class)->findAll(),
+                $this->managerRegistry->getRepository(Region::class)->getTopLevel(),
                 format: 'json',
                 context: ['groups' => 'region']
             );
         }
-        return $this->managerRegistry->getRepository(Region::class)->findAll();
+        return $this->managerRegistry->getRepository(Region::class)->getTopLevel();
 
     }
 

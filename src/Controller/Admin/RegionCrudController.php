@@ -37,7 +37,7 @@ class RegionCrudController extends AbstractCrudController
             TextField::new('adminName', 'Название, местный падеж, напр. "в Москве"')->setRequired(true),
             TextField::new('lng', 'Широта')->setHelp('Берем из <a target="new" href="https://yandex.ru/maps/">яндекс-карт</a>, правой кнопкой по точке на карте, "что здесь", слева будут координаты'),
             TextField::new('lat', 'Долгота'),
-            AssociationField::new('parent', 'Регион выше')
+            AssociationField::new('parent', 'Выше')
                 ->setCrudController(Region::class),
         ];
     }
