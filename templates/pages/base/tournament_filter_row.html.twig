@@ -1,0 +1,23 @@
+<!--filter row on map-->
+{% set filterData = eventTags %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="filter-container">
+            <ul class="filter-content">
+                <li class="filter-element selected">Все</li>
+                <li class="filter-element dropdown">
+                    <a class="dropdown-toggle" href="#" id="filterDropdownOrganisationCategory" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Категории соревнования
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdownOrganisationCategory">
+                        {% for filter in filterData %}
+                            <a class="dropdown-item" href="#" data-value="{{ filter.short }}">{{ filter.name }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--end filter-->

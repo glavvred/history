@@ -340,7 +340,7 @@
 
     {% include('pages/base/navbar_second.html.twig') %}
     <div class="container main-section" style="padding-top: 0">
-        {% if flash %} <div><h3 class="title-xs">{{ flash }}</h3></div> {% endif %}
+{#        {% if flash %} <div><h3 class="title-xs">{{ flash }}</h3></div> {% endif %}#}
         <div class="row event-search-header">
             <div class="col-md-12 title-xs">
                 <h2>События <a href="#" class="text-red" id="city"><i class="nav-icon"></i><a
@@ -361,7 +361,7 @@
             </div>
         </div>
         {% include('pages/calendar_row.html.twig') %}
-{#        {% include('pages/filter_row.html.twig') %}#}
+        {% include('pages/base/tournament_filter_row.html.twig') %}
         {% include('pages/events_row.html.twig') %}
         {% if canLoadMore is not null %}
             {% include('pages/load_more_events.html.twig') %}

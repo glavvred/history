@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\PublicEvent;
+use App\Entity\Region;
 use App\Repository\CategoryRepository;
 use App\Repository\PublicEventRepository;
 use App\Repository\RegionRepository;
@@ -13,7 +14,6 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class PublicEventController extends AbstractController
@@ -163,7 +163,9 @@ class PublicEventController extends AbstractController
             $startDate = new DateTime();
             $endDate = (new DateTime())->modify('+7 day');
 
-            $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($region, $startDate, $endDate, null, null, $typeFound);
+            $regionWithChildren = $entityManager->getRepository(Region::class)->getChildren($region);
+
+            $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($regionWithChildren, $startDate, $endDate, null, null, $typeFound);
             $pagination = $paginator->paginate($eventsQuery, 1, 8);
 
             $canLoadMore = null;
