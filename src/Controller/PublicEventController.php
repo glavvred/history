@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Entity\Region;
 use App\Entity\Category;
 use App\Entity\PublicEvent;
-use App\Entity\Region;
+use App\Entity\EventCollection;
 use App\Repository\CategoryRepository;
 use App\Repository\PublicEventRepository;
 use App\Repository\RegionRepository;
@@ -12,12 +14,19 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class PublicEventController extends AbstractController
 {
+
+
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     #[Route('/event/geo', name: 'app_events_geo', methods: ['GET'])]
     public function geo(RegionRepository $regionRepository): Response
     {
@@ -83,15 +92,15 @@ class PublicEventController extends AbstractController
 
 
     #[Route('/{category}/{slug}', name: 'app_public_event_show_slug', methods: ['GET'])]
-    public function showBySlug(string $category,
-                               string $slug,
-                               CategoryRepository $categoryRepository,
-                               PublicEventRepository $publicEventRepository,
+    public function showBySlug(string                 $category,
+                               string                 $slug,
+                               CategoryRepository     $categoryRepository,
+                               PublicEventRepository  $publicEventRepository,
                                EntityManagerInterface $entityManager): Response
     {
         /** @var Category $category */
         $category = $categoryRepository->findByShort($category);
-        if (empty($category)){
+        if (empty($category)) {
             throw $this->createNotFoundException();
         }
 
@@ -106,7 +115,7 @@ class PublicEventController extends AbstractController
             ->getQuery()
             ->getOneOrNullResult();
 
-        if (empty($publicEvent)){
+        if (empty($publicEvent)) {
             throw $this->createNotFoundException();
         }
 
@@ -143,6 +152,7 @@ class PublicEventController extends AbstractController
                          ?string                $category = null): Response
     {
         $navbarSecond = $entityManager->getRepository(Category::class)->getCategoriesWithEventCount();
+        $eventCollectionsBottom = $entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);
 
         if (!empty($category)) {
             $typeFound = $entityManager->getRepository(Category::class)->findOneBy(['short' => $category]);
@@ -192,26 +202,35 @@ class PublicEventController extends AbstractController
                 [
                     'short' => 'msf',
                     'name' => 'СМБ'
+                ],
+                [
+                    'short' => '',
+                    'name' => 'Любой тип'
                 ]
             ];
 
+            /** @var User $user */
+            $user = $this->security->getUser();
 
             $session->set('eventsShown', $eventIds);
 
             return $this->render('public_event/list.html.twig', [
-                'eventTags' => $eventTags,
+                'eventCollectionsBottom' => $eventCollectionsBottom,
                 'canLoadMore' => $canLoadMore,
-                'event_type' => $typeFound->getName(),
                 'navbar_second' => $navbarSecond,
-                'events' => $pagination->getItems(),
+                'events' => $pagination,
                 'pastEvents' => $publicEventRepository->getPastEvents($typeFound),
                 'categoryObject' => $typeFound,
-                'category' => $category
+                'category' => $category,
+                'eventTags' => $eventTags,
+                'event_type' => $typeFound->getName(),
+                'user' => $user,
             ]);
         }
 
         return $this->render('public_event/list.html.twig', [
             'event_type' => 'Все',
+            'eventCollectionsBottom' => $eventCollectionsBottom,
             'navbar_second' => $navbarSecond,
             'events' => $publicEventRepository->getUpcomingEvents(null, 8),
             'pastEvents' => $publicEventRepository->getPastEvents(null, 8),

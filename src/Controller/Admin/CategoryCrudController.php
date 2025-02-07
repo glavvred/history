@@ -6,6 +6,7 @@ use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -60,6 +61,12 @@ class CategoryCrudController extends AbstractCrudController
                 ->setUploadDir('public_html/upload/images/')
                 ->setFileConstraints(new Image(maxSize: '50k', mimeTypes: ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp']))
                 ->setUploadedFileNamePattern('[contenthash].[extension]'),
+            TextField::new('title', 'Заголовок сео')
+                ->onlyOnForms(),
+            TextField::new('seoDescription', 'Описание сео')
+                ->onlyOnForms(),
+            ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
         ];
     }
 

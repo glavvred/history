@@ -20,17 +20,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 
+#[AdminDashboard(routePath: '/admin/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private $unusedReportCount;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->unusedReportCount =  $entityManager->getRepository(EventReport::class)->count(['used' => false]);
+        $this->unusedReportCount = $entityManager->getRepository(EventReport::class)->count(['used' => false]);
 
     }
 
-    #[Route('/admin/', name: 'admin')]
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig');
@@ -41,7 +43,6 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Археономика админка')
-            ->setTitle('Археономика <span class="text-small">админка</span>')
             ->renderContentMaximized()
             ->renderSidebarMinimized(false)
             ->disableDarkMode(false)
@@ -53,7 +54,7 @@ class DashboardController extends AbstractDashboardController
 
         return [
             MenuItem::section('На модерацию')->setPermission('ROLE_SUPER_ADMIN'),
-            MenuItem::linkToCrud('События('.($this->unusedReportCount).')', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('События(' . ($this->unusedReportCount) . ')', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
 
             MenuItem::section('Опубликованные'),
             MenuItem::linkToCrud('События', 'fa fa-child', PublicEvent::class),

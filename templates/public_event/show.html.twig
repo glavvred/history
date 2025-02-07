@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Где история: {{ public_event.name }}{% endblock %}
+{% block title %}
+    {% if public_event.title is not empty %}{{ public_event.title }}{% else %}Где история: {{ public_event.name }}{% endif %}
+{% endblock %}
+
+{% block description %}
+    {% if public_event.description  is not null %}{{ public_event.description|striptags }}{% endif %}
+{% endblock %}
+
+{% block keywords %}
+    {% if public_event.keywords is not null %}{{ public_event.keywords|join(', ') }}{% endif %}
+{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}

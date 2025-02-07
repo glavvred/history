@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -54,7 +55,7 @@ class EventCollectionCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[contenthash].[extension]')
                 ->setRequired($pageName !== Crud::PAGE_EDIT)
                 ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : []),
-            AssociationField::new('events', 'Количество')
+            AssociationField::new('events', 'События в коллекции')
                 ->setCrudController(PublicEvent::class),
             BooleanField::new('mainPage', 'Наверху главной')
                 ->renderAsSwitch(true),
@@ -63,7 +64,13 @@ class EventCollectionCrudController extends AbstractCrudController
             SlugField::new('slug', label: 'ссылка')
                 ->setTargetFieldName('name')
                 ->setUnlockConfirmationMessage('ссылки генерятся автоматически, но если нужно можно и вручную')
-                ->hideOnIndex()
+                ->hideOnIndex(),
+            TextField::new('title', 'Заголовок сео')
+                ->onlyOnForms(),
+            TextField::new('seoDescription', 'Описание сео')
+                ->onlyOnForms(),
+            ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
         ];
     }
 

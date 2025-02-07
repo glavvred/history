@@ -16,6 +16,7 @@ class LocationList extends AbstractExtension
     private $managerRegistry;
     private $requestStack;
     private $security;
+    private $serializer;
 
     public function __construct(ManagerRegistry     $managerRegistry, RequestStack $requestStack, Security $security,
                                 SerializerInterface $serializer)

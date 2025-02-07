@@ -34,6 +34,9 @@
     {% if canLoadMore is not null %}
         {% include('pages/load_more_events.html.twig') %}
     {% endif %}
+    {% if category is defined %}
+        {% include('pages/past_events_row.html.twig') %}
+    {% endif %}
     {% if app.user and 'ROLE_SUPER_ADMIN' in app.user.roles %}
         {% include('pages/constant_events_row.html.twig') %}
     {% endif %}

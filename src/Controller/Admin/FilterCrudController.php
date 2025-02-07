@@ -51,6 +51,12 @@ class FilterCrudController extends AbstractCrudController
                         'maxlength' => 255
                     ]
                 ]),
+            TextField::new('title', 'Заголовок сео')
+                ->onlyOnForms(),
+            TextField::new('seoDescription', 'Описание сео')
+                ->onlyOnForms(),
+            ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
         ];
     }
 
