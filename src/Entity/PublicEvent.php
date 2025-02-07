@@ -146,6 +146,15 @@ class PublicEvent implements JsonSerializable
     #[ORM\OneToOne(mappedBy: 'publicEvent', cascade: ['persist', 'remove'])]
     private ?PublicEventStatistic $statistic = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $seoDescription = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $keywords = null;
+
     /**
      * @var string|null
      *
@@ -827,6 +836,54 @@ class PublicEvent implements JsonSerializable
     public function setSlug(?string $slug): void
     {
         $this->slug = $slug;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoDescription(): ?string
+    {
+        return $this->seoDescription;
+    }
+
+    /**
+     * @param string|null $seoDescription
+     */
+    public function setSeoDescription(?string $seoDescription): void
+    {
+        $this->seoDescription = $seoDescription;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getKeywords(): ?array
+    {
+        return $this->keywords;
+    }
+
+    /**
+     * @param array|null $keywords
+     */
+    public function setKeywords(?array $keywords): void
+    {
+        $this->keywords = $keywords;
     }
 
 

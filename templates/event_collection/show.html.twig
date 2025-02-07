@@ -6,9 +6,7 @@
     {% endif %}
 {% endblock %}
 
-{% block description %}
-    {% if event_collection.description  is not null %}{{ event_collection.description|striptags }}{% endif %}
-{% endblock %}
+{% block description %}{% if event_collection.seoDescription  is not null %}{{ event_collection.seoDescription|striptags }}{% endif %}{% endblock %}
 
 {% block keywords %}
     {% if event_collection.keywords is not null %}{{ event_collection.keywords|join(', ') }}{% endif %}

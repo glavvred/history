@@ -1,6 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Где история: {{ organisation.name }}{% endblock %}
+{% block title %}
+    {% if organisation.title is not empty %}{{ organisation.title }}{% else %}
+        Где история: {{ organisation.name }}
+    {% endif %}
+{% endblock %}
+
+
+{% block description %}{% if organisation.seoDescription  is not null %}{{ organisation.seoDescription|striptags }}{% endif %}{% endblock %}
+
+{% block keywords %}
+    {% if organisation.keywords is not null %}{{ organisation.keywords|join(', ') }}{% endif %}
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
