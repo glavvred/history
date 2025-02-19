@@ -64,7 +64,9 @@ class PagesController extends AbstractController
     #[Route('/', name: 'app_index', options: ['sitemap' => true])]
     public function index(SessionInterface       $session,
                           EntityManagerInterface $entityManager,
-                          PaginatorInterface     $paginator): Response
+                          PaginatorInterface     $paginator,
+                          Request                $request
+    ): Response
     {
         $eventIds = [];
         $region = $this->getRegion($session);
@@ -100,7 +102,12 @@ class PagesController extends AbstractController
 
         $session->set('eventsShown', $eventIds);
 
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = '';
+        }
+
         return $this->render('pages/index.html.twig', [
+            'canonical' => $canonical ?? null,
             'user' => $user,
             'events' => $pagination,
             'constant_events' => $constantEvents,
@@ -169,15 +176,22 @@ class PagesController extends AbstractController
     }
 
     #[Route('/pages/about', name: 'app_about', options: ['sitemap' => true])]
-    public function about(): Response
+    public function about(Request $request): Response
     {
-        return $this->render('pages/about.html.twig', []);
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/about';
+        }
+
+        return $this->render('pages/about.html.twig', ['canonical' => $canonical ?? null]);
     }
 
     #[Route('/pages/partners', name: 'app_partners', options: ['sitemap' => true])]
-    public function partners(): Response
+    public function partners(Request $request): Response
     {
-        return $this->render('pages/partners.html.twig', []);
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/partners';
+        }
+        return $this->render('pages/partners.html.twig', ['canonical' => $canonical ?? null]);
     }
 
     #[Route('/profile/{profileUser}', name: 'app_profile', requirements: ['userId' => '\d+'], methods: ['GET', 'POST'])]
@@ -194,10 +208,15 @@ class PagesController extends AbstractController
         $form = $this->createForm(UserType::class, $profileUser);
         $form->handleRequest($request);
 
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/profile';
+        }
+
         //только админ может редактировать не свои профили
         if (in_array('ADMIN', $loggedUser->getRoles())) {
             if ($loggedUser !== $profileUser) {
                 return $this->render('pages/profile.html.twig', [
+                    'canonical' => $canonical ?? null,
                     'form' => $form,
                     'edit' => false,
                     'user' => $loggedUser,
@@ -292,6 +311,7 @@ class PagesController extends AbstractController
     #[Route('/map/{type}', name: 'app_map', options: ['sitemap' => true])]
     public function map(OrganisationRepository $organisationRepository,
                         EntityManagerInterface $entityManager,
+                        Request $request,
                         string                 $type = 'all'): Response
     {
         $user = $this->getUser();

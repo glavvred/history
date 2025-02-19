@@ -101,12 +101,20 @@
 {#                            <li class="navbar-item"><a href="#" class="nav-link underline">Музеи</a></li>#}
                             <li class="navbar-item" style="width: 200px;text-wrap: wrap; line-height: 1.20rem;">
                                 <span class="text-wrap">Календарь исторических событий «Где история» &copy; предоставляет информацию и описание мероприятий, полученные из внешних открытых источников, и не несет ответственности за их достоверность</span>
+                                <br/><br/>
+                                <span class="text-wrap"><a href="/upload/images/policy.pdf">Политика в отношении обработки персональных данных</a></span>
                             </li>
                         </ul>
 
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+    <div id="cookie-block" class="cookie-block" style="display: none;">
+        <div class="cookie-block-item">
+        <span class="cookie-text">Продолжая работу с сайтом, вы даете согласие на использование файлов cookie</span>
+            <button onclick="setCookie(); return false;" class="btn btn-primary d-grid">Принимаю</button>
         </div>
     </div>
     <!--end footer-->
@@ -121,4 +129,18 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function(){
+            let cookieDefined = document.cookie.indexOf('gdeistoria.ru');
+            if (cookieDefined === -1 ){
+                document.getElementById('cookie-block').style.display = 'block';
+            }
+        });
+
+        function setCookie(){
+            document.cookie = 'gdeistoria.ru';
+            document.getElementById('cookie-block').style.display = 'none';
+        }
+
+    </script>
 </footer>
