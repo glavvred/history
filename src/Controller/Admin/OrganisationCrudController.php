@@ -105,7 +105,7 @@ class OrganisationCrudController extends AbstractCrudController
                 ->setCrudController(OrganisationCategory::class)
                 ->setPermission('ROLE_SUPER_ADMIN'),
             ImageField::new('main_photo', 'Картинка')
-                ->setRequired($pageName  !== Crud::PAGE_EDIT)
+                ->setRequired($pageName !== Crud::PAGE_EDIT)
                 ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : [])
                 ->setHelp('макс 250кб, и и только jpeg, png, svg, webp')
                 ->setBasePath('upload/images/')
@@ -126,7 +126,13 @@ class OrganisationCrudController extends AbstractCrudController
             SlugField::new('slug', label: 'ссылка')
                 ->setTargetFieldName('name')
                 ->setUnlockConfirmationMessage('ссылки генерятся автоматически, но если нужно можно и вручную')
-                ->hideOnIndex()
+                ->hideOnIndex(),
+            TextField::new('title', 'Заголовок сео')
+                ->onlyOnForms(),
+            TextField::new('seoDescription', 'Описание сео')
+                ->onlyOnForms(),
+            ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
         ];
     }
 }

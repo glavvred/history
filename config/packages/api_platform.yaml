@@ -1,25 +1,7 @@
 api_platform:
-    title: 'API Когда История'
-    description: 'API Когда История'
-    version: 1.0.1
-    formats:
-        jsonld: ['application/json']
-    docs_formats:
-        jsonld: ['application/ld+json']
-        jsonopenapi: ['application/vnd.openapi+json']
-        html: ['text/html']
+    title: Hello API Platform
+    version: 1.0.0
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
-        extra_properties:
-            standard_put: true
-            rfc_7807_compliant_errors: true
-    keep_legacy_inflector: false
-    use_symfony_listeners: true
-    oauth:
-        # To enable or disable OAuth.
-        enabled: false
-    graphql:
-        # Enabled by default with installed webonyx/graphql-php.
-        enabled: false

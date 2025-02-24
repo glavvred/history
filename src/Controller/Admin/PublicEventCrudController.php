@@ -157,7 +157,7 @@ class PublicEventCrudController extends AbstractCrudController
                 ->setUploadDir('public_html/upload/images/')
                 ->setFileConstraints(new Image(maxSize: '3m', mimeTypes: ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp']))
                 ->setUploadedFileNamePattern('[contenthash].[extension]')
-                ->setRequired(true)
+                ->setRequired(false)
                 ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : []),
             TextField::new('vk', label: 'vk')
                 ->hideOnIndex()
@@ -196,7 +196,13 @@ class PublicEventCrudController extends AbstractCrudController
             SlugField::new('slug', label: 'ссылка')
                 ->setTargetFieldName('name')
                 ->setUnlockConfirmationMessage('ссылки генерятся автоматически, но если нужно можно и вручную')
-                ->hideOnIndex()
+                ->hideOnIndex(),
+            TextField::new('title', 'Заголовок сео')
+                ->onlyOnForms(),
+            TextField::new('seoDescription', 'Описание сео')
+                ->onlyOnForms(),
+            ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
         ];
 
     }

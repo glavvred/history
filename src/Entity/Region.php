@@ -5,11 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\RegionRepository;
 use Symfony\Component\Serializer\Attribute\Groups;
+use App\Repository\RegionRepository;
 
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: RegionRepository::class)]
 class Region
 {
     #[ORM\Id]
@@ -23,19 +23,10 @@ class Region
     private ?string $name = null;
 
     /**
-     * @var Collection<int, PublicEvent>
+     * @var Collection<PublicEvent>|null
      */
     #[ORM\OneToMany(targetEntity: PublicEvent::class, mappedBy: 'region')]
-    private Collection $publicEvents;
-
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
-    private ?self $children = null;
-
-    /**
-     * @var Collection<int, self>
-     */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'children')]
-    private Collection $parent;
+    private ?Collection $publicEvents;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['region'])]
@@ -55,11 +46,14 @@ class Region
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'region')]
     private Collection $users;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
+    private ?self $parent = null;
+
     public function __construct()
     {
         $this->publicEvents = new ArrayCollection();
-        $this->parent = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->parent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,48 +106,6 @@ class Region
     public function __toString(): string
     {
         return $this->name;
-    }
-
-    public function getChildren(): ?self
-    {
-        return $this->children;
-    }
-
-    public function setChildren(?self $children): static
-    {
-        $this->children = $children;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getParent(): Collection
-    {
-        return $this->parent;
-    }
-
-    public function addParent(self $parent): static
-    {
-        if (!$this->parent->contains($parent)) {
-            $this->parent->add($parent);
-            $parent->setChildren($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParent(self $parent): static
-    {
-        if ($this->parent->removeElement($parent)) {
-            // set the owning side to null (unless already changed)
-            if ($parent->getChildren() === $this) {
-                $parent->setChildren(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getLng(): ?string
@@ -221,5 +173,40 @@ class Region
 
         return $this;
     }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function addParent(self $parent): static
+    {
+        if (!$this->parent->contains($parent)) {
+            $this->parent->add($parent);
+            $parent->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParent(self $parent): static
+    {
+        if ($this->parent->removeElement($parent)) {
+            // set the owning side to null (unless already changed)
+            if ($parent->getParent() === $this) {
+                $parent->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 }

@@ -14,26 +14,35 @@ use App\Entity\User;
 use App\Entity\PublicEvent;
 use App\Entity\Organisation;
 use App\Entity\OrganisationCategory;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 
+#[AdminDashboard(routePath: '/admin/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private $unusedReportCount;
 
-    #[Route('/admin/', name: 'admin')]
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->unusedReportCount = $entityManager->getRepository(EventReport::class)->count(['used' => false]);
+
+    }
+
     public function index(): Response
     {
-         return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard.html.twig');
     }
+
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
             ->setTitle('Археономика админка')
-            ->setTitle('Археономика <span class="text-small">админка</span>')
             ->renderContentMaximized()
             ->renderSidebarMinimized(false)
             ->disableDarkMode(false)
@@ -42,9 +51,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+
         return [
             MenuItem::section('На модерацию')->setPermission('ROLE_SUPER_ADMIN'),
-            MenuItem::linkToCrud('События', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('События(' . ($this->unusedReportCount) . ')', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
 
             MenuItem::section('Опубликованные'),
             MenuItem::linkToCrud('События', 'fa fa-child', PublicEvent::class),

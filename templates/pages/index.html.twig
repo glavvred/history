@@ -37,8 +37,7 @@
     </div>
     </script>
     {% endverbatim %}
-
-        <!--EVENT Card template-->
+    <!--EVENT Card template-->
     {% verbatim %}
     <script id="eventCardTemplate" type="text/x-jquery-tmpl">
     <div>
@@ -77,12 +76,11 @@
     </script>
     {% endverbatim %}
 
-
-{% include('pages/base/navbar_second.html.twig') %}
-{% include('pages/carousel_row.html.twig') %}
-{% include('pages/events.html.twig') %}
+    {% include('pages/base/navbar_second.html.twig') %}
+    {% include('pages/carousel_row.html.twig') %}
+    {% include('pages/events.html.twig') %}
     {% include('pages/news_row.html.twig') %}
-   
+
 
     <script>
         /*CALENDAR*/
@@ -115,13 +113,13 @@
                 query.set('dateFrom', myfilter.startdate)
                 query.set('dateTo', myfilter.enddate)
                 query.set('page', myfilter.page)
-                $.getJSON("/loadmore?" + query,function(response) {
+                $.getJSON("/loadmore?" + query, function (response) {
                     console.log(response.eventsShown);
                     myfilter.lastPage <= myfilter.page ? showMore.hide() : showMore.show()
                     let rhtml = "";
                     myfilter.lastPage = response.lastPage
-                    $.each(response.data, function( key, val ) {
-                        console.log(val); 
+                    $.each(response.data, function (key, val) {
+                        console.log(val);
                         rhtml += $('#eventCardTemplate').tmpl(val).html();
                     });
                     $(".event-card-content.upcoming").append(rhtml);
@@ -151,9 +149,9 @@
 
             const wSize = $("#mainCalendar").width();
 
-            var cindex=0;
-            var selectedIndex=cindex;
-            var selectedEndIndex=cindex;
+            var cindex = 0;
+            var selectedIndex = cindex;
+            var selectedEndIndex = cindex;
             var clientYcal = 0;
 
             for (var i = 0; i < 12; i++) {
@@ -186,16 +184,16 @@
                     if (currentmonth == i && currentday - 1 > n) {
                         currentDayShift += 60;
                     }
-                    if (currentmonth == i && currentday == n+1) {
+                    if (currentmonth == i && currentday == n + 1) {
                         selectedIndex = cindex;
                         selectedEndIndex = cindex;
-                        if(currentmonth==11 && currentday+7>31) {
+                        if (currentmonth == 11 && currentday + 7 > 31) {
                             selectedEndIndex = cindex - 1 + 31 - 7 - currentday;
-                        }else{
+                        } else {
                             selectedEndIndex = cindex + 6;
                         }
                     }
-                    cindex+=1;
+                    cindex += 1;
                 }
                 monthesArr[i].html = $('#calendarMonth').tmpl(monthesArr[i]).html();
 
@@ -245,7 +243,7 @@
                 });
             }
 
-            var selectRange = function (sDate, eDate, initload=false) {
+            var selectRange = function (sDate, eDate, initload = false) {
                 let startIndex = calendarDays.index(sDate);
                 let endIndex = calendarDays.index(eDate);
 
@@ -257,24 +255,24 @@
                     $(calendarDays.get(i)).addClass('selected');
                 }
 
-                if(!isSelecting){
+                if (!isSelecting) {
                     var smonth = $(calendarDays.get(startIndex)).find("span").data("monthi");
                     var sday = $(calendarDays.get(startIndex)).find("span").text();
                     var emonth = $(calendarDays.get(endIndex)).find("span").data("monthi");
                     var eday = $(calendarDays.get(endIndex)).find("span").text();
-                    if(smonth==emonth){
-                        if(sday==eday)
-                            $(".main-filter-dates").text(sday+" "+smonth);
-                        else    
-                            $(".main-filter-dates").text(sday+" - " +eday+" "+smonth);
-                    }else{
-                        $(".main-filter-dates").text(sday+" "+smonth+" - " +eday+" "+emonth);
+                    if (smonth == emonth) {
+                        if (sday == eday)
+                            $(".main-filter-dates").text(sday + " " + smonth);
+                        else
+                            $(".main-filter-dates").text(sday + " - " + eday + " " + smonth);
+                    } else {
+                        $(".main-filter-dates").text(sday + " " + smonth + " - " + eday + " " + emonth);
                     }
-                    myfilter.change(initload);                    
+                    myfilter.change(initload);
                 }
             }
 
-            selectRange(calendarDays.get(selectedIndex),calendarDays.get(selectedEndIndex),true);
+            selectRange(calendarDays.get(selectedIndex), calendarDays.get(selectedEndIndex), true);
 
             calendarDays.each(function (i, el) {
                 $(el).on("click ", function (ev) {
@@ -294,24 +292,24 @@
                     }
                 });
 
-/*
-                $(el).on("touchstart ", function (ev) {
-                        isSelecting = true;
-                        startDate = $(this);
-                        endDate = null;
-                        clearSelection();
-                        $(this).addClass("selected");
-                        clientYcal = ev.changedTouches[0].clientY
-                });
+                /*
+                                $(el).on("touchstart ", function (ev) {
+                                        isSelecting = true;
+                                        startDate = $(this);
+                                        endDate = null;
+                                        clearSelection();
+                                        $(this).addClass("selected");
+                                        clientYcal = ev.changedTouches[0].clientY
+                                });
 
-                $(el).on("touchend ", function (ev) {
-                       isSelecting = false;
-                        clearSelection();
-                        $(this).addClass("selected");
-                        if(!endDate)endDate = $(this);
-                        selectRange(startDate, endDate);
-                });
-*/
+                                $(el).on("touchend ", function (ev) {
+                                       isSelecting = false;
+                                        clearSelection();
+                                        $(this).addClass("selected");
+                                        if(!endDate)endDate = $(this);
+                                        selectRange(startDate, endDate);
+                                });
+                */
 
                 $(el).on("mouseover", function (ev) {
                     if (isSelecting && startDate) {
@@ -321,45 +319,44 @@
                         selectRange(startDate, endDate);
                     }
                 });
-/*
-                $(el).on("touchmove", function (ev) {
-                    if (isSelecting && startDate) {
-                        var elm = document.elementFromPoint(ev.changedTouches[0].clientX,clientYcal);
-                        if($(elm).hasClass("day"))
-                        {
-                            clearSelection();
-                            $(elm).addClass("selected");
-                            endDate = $(elm);
-                            selectRange(startDate, endDate);
-                        }
-                    }
-                });
-*/
+                /*
+                                $(el).on("touchmove", function (ev) {
+                                    if (isSelecting && startDate) {
+                                        var elm = document.elementFromPoint(ev.changedTouches[0].clientX,clientYcal);
+                                        if($(elm).hasClass("day"))
+                                        {
+                                            clearSelection();
+                                            $(elm).addClass("selected");
+                                            endDate = $(elm);
+                                            selectRange(startDate, endDate);
+                                        }
+                                    }
+                                });
+                */
             });
 
-            $(".calendar-container .arrow-left").on("mousedown touchstart",function(ev){
-                if(isSelecting)
+            $(".calendar-container .arrow-left").on("mousedown touchstart", function (ev) {
+                if (isSelecting)
                     isScrolling = true;
             })
-            $(".calendar-container .arrow-right").on("mousedown touchstart",function(ev){
-                if(isSelecting)
+            $(".calendar-container .arrow-right").on("mousedown touchstart", function (ev) {
+                if (isSelecting)
                     isScrolling = true;
             })
 
             document.addEventListener('mouseup', (ev) => {
-                if(isSelecting&&!isScrolling)
-                {
+                if (isSelecting && !isScrolling) {
                     var tgel = ev.target;
                     var cname = tgel.className;
-                    if(cname.startsWith("day") || cname == "calendar-day-round"){
+                    if (cname.startsWith("day") || cname == "calendar-day-round") {
 
-                    }else{
+                    } else {
                         isSelecting = false;
                         clearSelection();
                         selectRange(startDate, endDate);
                     }
                 }
-                if(isScrolling)isScrolling=false;
+                if (isScrolling) isScrolling = false;
             });
 
             /*
@@ -380,86 +377,84 @@
                         });
             */
 
-          
 
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdownMenus = document.querySelectorAll('.filter-content .dropdown-menu');
+            const selectedValues = {};
+            let timer;
 
-<script>    
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdownMenus = document.querySelectorAll('.filter-content .dropdown-menu');
-        const selectedValues = {};
-        let timer;
 
+            function updateSelections(groupId, value, text) {
+                var myfilter = Window.myfilter;
+                // Store the selected value along with the group ID
+                selectedValues[groupId] = {
+                    value: value,
+                    text: text
+                };
 
-        function updateSelections(groupId, value, text) {
-            var myfilter = Window.myfilter;
-            // Store the selected value along with the group ID
-            selectedValues[groupId] = {
-                value: value,
-                text: text
-            };
+                // Update the corresponding dropdown toggle text
+                document.getElementById(`filterDropdown${groupId}`).textContent = text;
 
-            // Update the corresponding dropdown toggle text
-            document.getElementById(`filterDropdown${groupId}`).textContent = text;
+                $(".filter-content .filter-element").first().removeClass("selected");
 
-            $(".filter-content .filter-element").first().removeClass("selected");
+                // Clear the previous timer
+                clearTimeout(timer);
 
-            // Clear the previous timer
-            clearTimeout(timer);
+                // Set a new timer to delay the request
+                timer = setTimeout(() => {
+                    // Prepare the payload with group IDs and selected values
+                    var payload = Object.keys(selectedValues).map(groupId => ({
+                        groupId: groupId,
+                        value: selectedValues[groupId].value
+                    }));
+                    myfilter.filterselected = payload;
+                    myfilter.change();
 
-            // Set a new timer to delay the request
-            timer = setTimeout(() => {
-                // Prepare the payload with group IDs and selected values
-                var payload = Object.keys(selectedValues).map(groupId => ({
-                    groupId: groupId,
-                    value: selectedValues[groupId].value
-                }));
-                myfilter.filterselected = payload;
-                myfilter.change();
-                
-                // Trigger the action based on the selected values after the delay
-                //console.log('Selected values:', payload);
+                    // Trigger the action based on the selected values after the delay
+                    //console.log('Selected values:', payload);
 
-                // // Example: send the selected values to the server
-                // fetch('/your-server-endpoint', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     body: JSON.stringify(payload)
-                // })
-                //     .then(response => response.json())
-                //     .then(data => {
-                //         // Handle the response data
-                //         console.log(data);
-                //     })
-                //     .catch(error => {
-                //         console.error('Error:', error);
-                //     });
-            }, 100); // Adjust the delay as needed (1000ms = 1s)
-        }
+                    // // Example: send the selected values to the server
+                    // fetch('/your-server-endpoint', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Content-Type': 'application/json'
+                    //     },
+                    //     body: JSON.stringify(payload)
+                    // })
+                    //     .then(response => response.json())
+                    //     .then(data => {
+                    //         // Handle the response data
+                    //         console.log(data);
+                    //     })
+                    //     .catch(error => {
+                    //         console.error('Error:', error);
+                    //     });
+                }, 100); // Adjust the delay as needed (1000ms = 1s)
+            }
 
-        dropdownMenus.forEach(function(menu) {
-            const dropdownItems = menu.querySelectorAll('.dropdown-item');
+            dropdownMenus.forEach(function (menu) {
+                const dropdownItems = menu.querySelectorAll('.dropdown-item');
 
-            dropdownItems.forEach(function(item) {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
+                dropdownItems.forEach(function (item) {
+                    item.addEventListener('click', function (event) {
+                        event.preventDefault();
 
-                    // Get the selected value and text
-                    const selectedValue = this.getAttribute('data-value');
-                    const selectedText = this.textContent;
-                    const groupId = menu.getAttribute('aria-labelledby').replace('filterDropdown', '');
+                        // Get the selected value and text
+                        const selectedValue = this.getAttribute('data-value');
+                        const selectedText = this.textContent;
+                        const groupId = menu.getAttribute('aria-labelledby').replace('filterDropdown', '');
 
-                    if(!this.parentNode.parentNode.classList.contains("selected"))this.parentNode.parentNode.classList.add("selected");
-                    if(selectedValue=="")this.parentNode.parentNode.classList.remove("selected");
-                    // Update selections and trigger the delayed request
-                    updateSelections(groupId, selectedValue, selectedText);
+                        if (!this.parentNode.parentNode.classList.contains("selected")) this.parentNode.parentNode.classList.add("selected");
+                        if (selectedValue == "") this.parentNode.parentNode.classList.remove("selected");
+                        // Update selections and trigger the delayed request
+                        updateSelections(groupId, selectedValue, selectedText);
+                    });
                 });
             });
         });
-    });
 
-</script>    
+    </script>
 {% endblock %}

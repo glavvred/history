@@ -70,9 +70,18 @@ class Organisation
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(length=128, unique=true)
      */
-    #[ORM\Column(length: 128, unique: true)]
+    #[ORM\Column(length: 128, unique: true, nullable: true)]
     #[Gedmo\Slug(fields: ['name'])]
     private $slug;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $seoDescription = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $keywords = null;
 
     public function __construct()
     {
@@ -159,7 +168,7 @@ class Organisation
     public function swapCoordinates(): ?string
     {
         $coordinates = explode(',', $this->coordinates);
-        return trim($coordinates[1]).','.trim($coordinates[0]);
+        return trim($coordinates[1]) . ',' . trim($coordinates[0]);
     }
 
     /**
@@ -254,7 +263,7 @@ class Organisation
 
     public function __toString(): string
     {
-        return '('. $this->getId().') '. $this->getName();
+        return '(' . $this->getId() . ') ' . $this->getName();
     }
 
     public function getShortDescription(): ?string
@@ -300,5 +309,55 @@ class Organisation
     {
         $this->slug = $slug;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoDescription(): ?string
+    {
+        return $this->seoDescription;
+    }
+
+    /**
+     * @param string|null $seoDescription
+     */
+    public function setSeoDescription(?string $seoDescription): void
+    {
+        $this->seoDescription = $seoDescription;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getKeywords(): ?array
+    {
+        return $this->keywords;
+    }
+
+    /**
+     * @param array|null $keywords
+     */
+    public function setKeywords(?array $keywords): void
+    {
+        $this->keywords = $keywords;
+    }
+
+    
 
 }

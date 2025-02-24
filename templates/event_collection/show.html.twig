@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Где история: подборка: {{ event_collection.name ? event_collection.name : criteria  }}{% endblock %}
+{% block title %}
+    {% if event_collection.title is not empty %}{{ event_collection.title }}{% else %}
+        Где история: подборка: {{ event_collection.name ? event_collection.name : criteria }}
+    {% endif %}
+{% endblock %}
+
+{% block description %}{% if event_collection.seoDescription  is not null %}{{ event_collection.seoDescription|striptags }}{% endif %}{% endblock %}
+
+{% block keywords %}
+    {% if event_collection.keywords is not null %}{{ event_collection.keywords|join(', ') }}{% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="container main-section">
@@ -17,10 +27,12 @@
                 <div class="col-md-12">
                     <h1>{{ event_collection.name }}</h1>
                     {% if event_collection.mainPhoto %}
-                    <div class="event-collection-cover-img"><div class="event-collection-cover-container">
-                    <img src="{{ asset('/upload/images/' ~ event_collection.mainPhoto) }}"
-                         alt="{{ event_collection.name }}">
-                    </div></div>
+                        <div class="event-collection-cover-img">
+                            <div class="event-collection-cover-container">
+                                <img src="{{ asset('/upload/images/' ~ event_collection.mainPhoto) }}"
+                                     alt="{{ event_collection.name }}">
+                            </div>
+                        </div>
                     {% endif %}
                     <p class="card-text">
                         {{ event_collection.description }}
@@ -37,7 +49,7 @@
 
         {% set events = nextEvents %}
         {% include('pages/events_row.html.twig') %}
-        
+
         {% set events = pastEvents %}
         {% include('pages/events_row.html.twig') %}
 

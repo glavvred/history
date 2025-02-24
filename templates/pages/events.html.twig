@@ -1,3 +1,4 @@
+{% import 'pages/base/macros.twig' as macros %}
 <div class="container main-section">
     <div class="row event-search-header">
         <div class="col-md-12">
@@ -16,12 +17,7 @@
                                 {{ locationCurrent().location_admin_name }}
                             </span>
                     </a>
-                <div class="dropdown-menu" aria-labelledby="locationHeaderDropdown">
-                    {% for location in locationList %}
-                        <a class="dropdown-item" href="#"
-                            data-location-id="{{ location.id }}">{{ location.name }}</a>
-                    {% endfor %}
-                </div>
+                {{ macros.render_region_dropdown(locationList, "locationHeaderDropdown") }}
                 <span class="main-filter-dates xs:ml-0">2-4 Июля</span>
             </h2>
 
@@ -33,6 +29,9 @@
     {% include('pages/events_row.html.twig') %}
     {% if canLoadMore is not null %}
         {% include('pages/load_more_events.html.twig') %}
+    {% endif %}
+    {% if category is defined %}
+        {% include('pages/past_events_row.html.twig') %}
     {% endif %}
     {% if app.user and 'ROLE_SUPER_ADMIN' in app.user.roles %}
         {% include('pages/constant_events_row.html.twig') %}

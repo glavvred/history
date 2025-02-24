@@ -75,9 +75,12 @@ $(function () {
     const dropdowns = ['locationDropdown', 'locationHeaderDropdown', 'locationFooterDropdown'];
     dropdowns.forEach(function (dropdown) {
         if (document.getElementById(dropdown)) {
-            const dropdownItems = document.getElementById(dropdown).nextElementSibling.querySelectorAll('.dropdown-item');
+            const dropdownItems = document.getElementById(dropdown).nextElementSibling.querySelectorAll('.region-dropdown-item');
             dropdownItems.forEach(function (item) {
                 item.addEventListener('click', function (event) {
+                    if (event.target.closest('.region-toggle-arrow')) {
+                        return;
+                    }
                     var myfilter = Window.myfilter;
                     console.log('click');
                     event.preventDefault();

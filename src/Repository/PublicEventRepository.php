@@ -30,7 +30,7 @@ class PublicEventRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Region $region
+     * @param array $region
      * @param DateTime $startDate
      * @param DateTime $endDate
      * @param array|null $filters
@@ -38,7 +38,7 @@ class PublicEventRepository extends ServiceEntityRepository
      * @param Category|null $category
      * @return Query
      */
-    public function getQueryByCriteria(Region        $region,
+    public function getQueryByCriteria(array         $region,
                                        DateTime      $startDate = new DateTime(),
                                        DateTime      $endDate = new DateTime(),
                                        array|null    $filters = null,
@@ -53,7 +53,7 @@ class PublicEventRepository extends ServiceEntityRepository
         $eventsQuery = $this->createQueryBuilder('pe')
             ->leftJoin('pe.filter', 'f')
             ->leftJoin('pe.category', 'c')
-            ->where('pe.region = :region')
+            ->where('pe.region IN (:region)')
             ->andWhere("
                (:startDate >= pe.startDate AND :startDate <= DATE_ADD(pe.startDate, (pe.duration -1) , 'DAY')) 
             OR (:endDate >= pe.startDate AND :endDate <= DATE_ADD(pe.startDate, (pe.duration -1) , 'DAY'))
@@ -82,25 +82,6 @@ class PublicEventRepository extends ServiceEntityRepository
                 $filterName = strtolower($filter->groupId);
 
                 switch ($filterName) {
-//                    case 'age':
-//                        switch ($filter->value) {
-//                            case 21:
-//                                $filterValue = 'f.short = 21';
-//                                break;
-//                            case 18:
-//                                $filterValue = 'f.short = 21 OR f.short = 18';
-//                                break;
-//                            case 12:
-//                                $filterValue = 'f.short IN (21,18,12)';
-//                                break;
-//                            case 6:
-//                                $filterValue = 'f.short IN (21,18,12,6)';
-//                                break;
-//                            case 0:
-//                                $filterValue = 'f.short IN (21,18,12,6,0)';
-//                                break;
-//                        }
-//                        break;
                     case 'toll':
                         switch ($filter->value) {
                             case 5001:
@@ -129,9 +110,6 @@ class PublicEventRepository extends ServiceEntityRepository
                 if (strpos($filterValue, ':filterValue')) {
                     $eventsQuery->setParameter(key: 'filterValue', value: $filter->value);
                 }
-
-//                var_dump($filterName, $filterValue);
-
             }
         }
 
@@ -192,7 +170,7 @@ class PublicEventRepository extends ServiceEntityRepository
     {
         $eventsQuery = $this->createQueryBuilder('pe')
             ->where('pe.constant IS NOT NULL');
-        
+
         return $eventsQuery->orderBy('pe.startDate', 'ASC')
             ->getQuery();
     }

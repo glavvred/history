@@ -5,6 +5,21 @@
         <div class="filter-container">
             <ul class="filter-content flex-wrap mt-10">
                 <li class="filter-element selected">Все</li>
+                {% if category is defined and category == 'tournament' %}
+                    <li class="filter-element dropdown">
+                        <a class="dropdown-toggle" href="#" id="filterDropdownActivity"
+                           role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Категории соревнования
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="filterDropdownActivity">
+                            {% for filter in eventTags %}
+                                <a class="dropdown-item" href="#"
+                                   data-value="{{ filter.short }}">{{ filter.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% endif %}
                 <li class="filter-element dropdown">
                     <a class="dropdown-toggle" href="#" id="filterDropdownToll" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

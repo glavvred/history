@@ -16,6 +16,7 @@ class LocationList extends AbstractExtension
     private $managerRegistry;
     private $requestStack;
     private $security;
+    private $serializer;
 
     public function __construct(ManagerRegistry     $managerRegistry, RequestStack $requestStack, Security $security,
                                 SerializerInterface $serializer)
@@ -36,15 +37,17 @@ class LocationList extends AbstractExtension
 
     public function locationList($asJson = false): string|array
     {
+        $nestedRegions = $this->managerRegistry->getRepository(Region::class)->getNestedRegions();
+
         if ($asJson) {
             return $this->serializer->serialize(
-                $this->managerRegistry->getRepository(Region::class)->findAll(),
+                $nestedRegions,
                 format: 'json',
                 context: ['groups' => 'region']
             );
         }
-        return $this->managerRegistry->getRepository(Region::class)->findAll();
 
+        return $nestedRegions;
     }
 
     public function locationCurrent(): array

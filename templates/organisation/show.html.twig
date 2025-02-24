@@ -1,6 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Где история: {{ organisation.name }}{% endblock %}
+{% block title %}
+    {% if organisation.title is not empty %}{{ organisation.title }}{% else %}
+        Где история: {{ organisation.name }}
+    {% endif %}
+{% endblock %}
+
+
+{% block description %}{% if organisation.seoDescription  is not null %}{{ organisation.seoDescription|striptags }}{% endif %}{% endblock %}
+
+{% block keywords %}
+    {% if organisation.keywords is not null %}{{ organisation.keywords|join(', ') }}{% endif %}
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -104,13 +115,13 @@
                 {% endif %}
                 <div class="event-card-contacts mt-4">
                     <h5>Контакты</h5>
-                    <ul class="list-unstyled">
+                    <ul class="list-unstyled" style="white-space: nowrap;">
                         {% for contact in organisation.contacts %}
                             <li>
                                 {% set contact_splitted = contact|split('(') %}
 
                                 {% if contact matches '{^http}' %}
-                                    <a itemprop="url" href="{{ contact }}">{{ contact }}</a>
+                                    <a itemprop="url" href="{{ contact }}">{{ contact|length > 45 ? contact|slice(0, 45) ~ '...' : contact }}</a>
                                 {% elseif contact matches '/@/' %}
                                     <a itemprop="email" href="mailto:{{ contact }}">{{ contact }}</a>
                                 {% elseif contact_splitted is iterable %}

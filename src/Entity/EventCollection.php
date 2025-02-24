@@ -52,6 +52,15 @@ class EventCollection
     #[Gedmo\Slug(fields: ['name'])]
     private $slug;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $seoDescription = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $keywords = null;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -184,5 +193,44 @@ class EventCollection
         $this->slug = $slug;
     }
 
-    
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getKeywords(): ?array
+    {
+        return $this->keywords;
+    }
+
+    public function setKeywords(?array $keywords): static
+    {
+        $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSeoDescription(): ?string
+    {
+        return $this->seoDescription;
+    }
+
+    /**
+     * @param string|null $seoDescription
+     */
+    public function setSeoDescription(?string $seoDescription): void
+    {
+        $this->seoDescription = $seoDescription;
+    }
+
 }
