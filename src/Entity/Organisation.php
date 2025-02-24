@@ -11,6 +11,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 
 #[ORM\Entity(repositoryClass: OrganisationRepository::class)]
+#[ORM\Index(name: 'organisation_fulltext_idx', columns: ['name', 'description'], flags: ['fulltext'])]
 class Organisation
 {
     #[ORM\Id]
@@ -19,6 +20,7 @@ class Organisation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]

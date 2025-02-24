@@ -12,8 +12,11 @@ use App\Entity\PublicEvent;
 use App\Entity\EventCollection;
 use App\Repository\PublicEventRepository;
 use App\Repository\OrganisationRepository;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -311,7 +314,7 @@ class PagesController extends AbstractController
     #[Route('/map/{type}', name: 'app_map', options: ['sitemap' => true])]
     public function map(OrganisationRepository $organisationRepository,
                         EntityManagerInterface $entityManager,
-                        Request $request,
+                        Request                $request,
                         string                 $type = 'all'): Response
     {
         $user = $this->getUser();
@@ -325,6 +328,8 @@ class PagesController extends AbstractController
         ]);
     }
 
+    /**
+     */
     #[Route('/search', name: 'app_search', options: ['sitemap' => true])]
     public function search(OrganisationRepository $organisationRepository,
                            PublicEventRepository  $publicEventRepository,
@@ -333,42 +338,47 @@ class PagesController extends AbstractController
     {
         $criteria = $request->get('criteria');
 
-        $organisations = $organisationRepository->createQueryBuilder('o')
-            ->where('o.verified = true')
-            ->andWhere('lower(o.name) LIKE lower(:name) OR lower(o.short_description) LIKE lower(:name)')
-            ->setParameter('name', '%' . $criteria . '%')
-            ->setMaxResults(6)
-            ->getQuery()
-            ->getResult();
+        $rsm = new ResultSetMappingBuilder($this->entityManager);
+        $rsm->addRootEntityFromClassMetadata('App\Entity\Organisation', 'o0_');
+        $selectClause = $rsm->generateSelectClause();
+        $sql = 'SELECT '.$selectClause.', MATCH (o0_.name, o0_.description) AGAINST (:criteria) as score
+                FROM organisation AS o0_
+                WHERE o0_.verified = 1 
+                ORDER BY score DESC
+                LIMIT 6;';
 
-        $events = $publicEventRepository->createQueryBuilder('pe')
-            ->where('pe.organisation IN (:organisations)')
-            ->orWhere('lower(pe.name) LIKE lower(:name)')
-            ->orWhere('lower(pe.shortDescription) LIKE lower(:name)')
-            ->orWhere('lower(pe.description) LIKE lower(:name)')
-            ->andWhere("CURRENT_DATE() < DATE_ADD(pe.startDate, pe.duration, 'day')")
-            ->andWhere('pe.duration != 0')
-            ->setParameter('name', '%' . $criteria . '%')
-            ->setParameter('organisations', $organisations)
-            ->orderBy('pe.createdAt', 'DESC')
-            ->setMaxResults(6)
-            ->getQuery()
-            ->getResult();
+        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+        $query->setParameter('criteria', $criteria);
+        $organisations = $query->getResult();
 
-        $pastEvents = $publicEventRepository->createQueryBuilder('pe')
-            ->where('pe.organisation IN (:organisations)')
-            ->orWhere('lower(pe.name) LIKE lower(:name)')
-            ->orWhere('lower(pe.shortDescription) LIKE lower(:name)')
-            ->orWhere('lower(pe.description) LIKE lower(:name)')
-            ->andWhere("CURRENT_DATE() > DATE_ADD(pe.startDate, pe.duration, 'day')")
-            ->andWhere('pe.duration != 0')
-            ->setParameter('name', '%' . $criteria . '%')
-            ->setParameter('organisations', $organisations)
-            ->orderBy('pe.createdAt', 'DESC')
-            ->setMaxResults(6)
-            ->getQuery()
-            ->getResult();
 
+        $rsm = new ResultSetMappingBuilder($this->entityManager);
+        $rsm->addRootEntityFromClassMetadata('App\Entity\PublicEvent', 'pe');
+        $selectClause = $rsm->generateSelectClause();
+        $sql = "SELECT ".$selectClause.", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
+                FROM public_event AS pe
+                WHERE CURRENT_DATE() < DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
+                AND pe.duration != 0
+                ORDER BY score DESC
+                LIMIT 6;";
+
+        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+        $query->setParameter('criteria', $criteria);
+        $events = $query->getResult();
+
+        $rsm = new ResultSetMappingBuilder($this->entityManager);
+        $rsm->addRootEntityFromClassMetadata('App\Entity\PublicEvent', 'pe');
+        $selectClause = $rsm->generateSelectClause();
+        $sql = "SELECT ".$selectClause.", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
+                FROM public_event AS pe
+                WHERE CURRENT_DATE() > DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
+                AND pe.duration != 0
+                ORDER BY score DESC
+                LIMIT 6;";
+
+        $query = $this->entityManager->createNativeQuery($sql, $rsm);
+        $query->setParameter('criteria', $criteria);
+        $pastEvents = $query->getResult();
 
         return $this->render('pages/search.html.twig', [
             'criteria' => $criteria,

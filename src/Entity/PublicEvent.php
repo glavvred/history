@@ -48,6 +48,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
     paginationEnabled: true,
     paginationItemsPerPage: 10,
 )]
+#[ORM\Index(name: 'event_fulltext_idx', columns: ['name', 'description'], flags: ['fulltext'])]
+
 class PublicEvent implements JsonSerializable
 {
     #[ORM\Id]
