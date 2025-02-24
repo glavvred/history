@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="container main-section">
-        {% set first_crumb = 'Результаты поиска по запросу: ' ~ criteria %}
+        {% set first_crumb = 'Результаты поиска по запросу: ' ~ criteria|join(' ') %}
         {% include ('pages/base/breadcrumbs.html.twig') %}
         <div class="row">
             {% if organisations is not empty %}

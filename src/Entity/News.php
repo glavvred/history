@@ -32,6 +32,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )]
+#[ORM\Index(name: 'news_fulltext_idx', columns: ['name', 'description'], flags: ['fulltext'])]
+
 class News
 {
     #[ORM\Id]
