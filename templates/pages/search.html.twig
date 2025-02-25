@@ -11,6 +11,14 @@
     <div class="container main-section">
         {% set first_crumb = 'Результаты поиска по запросу: ' ~ criteria|join(' ') %}
         {% include ('pages/base/breadcrumbs.html.twig') %}
+        {% if events is not empty %}
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <h3>Мероприятия</h3>
+                    {% include('pages/events_row.html.twig') %}
+                </div>
+            </div>
+        {% endif %}
         <div class="row">
             {% if organisations is not empty %}
                 <div class="col-md-12">
@@ -41,14 +49,6 @@
                 </div>
             {% endif %}
         </div>
-        {% if events is not empty %}
-            <div class="row">
-                <div class="col-md-12 mt-4">
-                    <h3>Мероприятия</h3>
-                    {% include('pages/events_row.html.twig') %}
-                </div>
-            </div>
-        {% endif %}
         {% if pastEvents is not empty %}
             {% include('pages/past_events_row.html.twig') %}
         {% endif %}

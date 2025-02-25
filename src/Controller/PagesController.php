@@ -360,7 +360,7 @@ class PagesController extends AbstractController
                 WHERE CURRENT_DATE() < DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
                 ORDER BY score DESC
-                LIMIT 6;";
+                LIMIT 30;";
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);
@@ -373,8 +373,9 @@ class PagesController extends AbstractController
                 FROM public_event AS pe
                 WHERE CURRENT_DATE() > DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
+                AND MATCH (pe.name, pe.description) AGAINST (:criteria) > 0
                 ORDER BY score DESC
-                LIMIT 6;";
+                LIMIT 30;";
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);

@@ -157,7 +157,7 @@
             for (var i = 0; i < 12; i++) {
                 monthesArr[i].name = monthes[i];
                 monthesArr[i].namei = monthesi[i];
-                monthesArr[i].daysCount = daysInMonth(i, currentyear);
+                monthesArr[i].daysCount = daysInMonth(i + 1, currentyear);
                 monthesArr[i].dateBegin = new Date(currentyear, i, 0);
                 monthesArr[i].dayOfWeekStart = monthesArr[i].dateBegin.getDay();
                 monthesArr[i].daysNames = new Array();
@@ -195,6 +195,7 @@
                     }
                     cindex += 1;
                 }
+
                 monthesArr[i].html = $('#calendarMonth').tmpl(monthesArr[i]).html();
 
                 if (i > 0) {

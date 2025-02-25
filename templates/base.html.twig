@@ -10,7 +10,7 @@
     {% block stylesheets %}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        {% if canonical is not null %}
+        {% if canonical is defined %}
             <link rel="canonical" href="https://gdeistoriya.ru/{{ canonical }}">
         {% endif %}
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">

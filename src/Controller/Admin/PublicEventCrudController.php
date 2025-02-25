@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\PublicEventController;
 use App\Entity\EventReport;
 use App\Entity\Filter;
 use App\Entity\PublicEvent;
@@ -10,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -24,7 +27,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Image;
 
@@ -33,8 +38,10 @@ class PublicEventCrudController extends AbstractCrudController
     private $request;
     private $em;
 
-    public function __construct(RequestStack           $requestStack,
-                                EntityManagerInterface $entityManager)
+    public function __construct(RequestStack               $requestStack,
+                                EntityManagerInterface     $entityManager,
+                                readonly RouterInterface $router
+    )
     {
         $this->request = $requestStack;
         $this->em = $entityManager;
@@ -43,6 +50,23 @@ class PublicEventCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return PublicEvent::class;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $preview = Action::new('preview', 'Посмотреть', 'fa fa-eye')
+            ->linkToUrl(function(PublicEvent $event) {
+
+                return $this->router->generate('app_public_event_show_slug', [
+                        'category' => $event->getCategory()->getShort(),
+                        'slug' => $event->getSlug()
+                    ]);
+            });
+
+
+        return $actions
+            ->add(Crud::PAGE_EDIT, $preview)
+            ->add(Crud::PAGE_DETAIL, $preview);
     }
 
 
@@ -135,7 +159,7 @@ class PublicEventCrudController extends AbstractCrudController
                 ->hideOnIndex(),
             DateField::new('startDate', label: 'Дата начала')->setRequired(true),
             IntegerField::new('duration', label: 'Продолжительность'),
-            BooleanField::new('constant', label: 'Постоянное мероприятие'),
+            BooleanField::new('constant', label: 'Постоянное мероприятие')->hideOnIndex(),
             AssociationField::new('region', label: 'Регион')
                 ->autocomplete()
                 ->setCrudController(RegionCrudController::class)
