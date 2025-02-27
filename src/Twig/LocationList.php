@@ -37,15 +37,17 @@ class LocationList extends AbstractExtension
 
     public function locationList($asJson = false): string|array
     {
+        $nestedRegions = $this->managerRegistry->getRepository(Region::class)->getNestedRegions();
+
         if ($asJson) {
             return $this->serializer->serialize(
-                $this->managerRegistry->getRepository(Region::class)->getTopLevel(),
+                $nestedRegions,
                 format: 'json',
                 context: ['groups' => 'region']
             );
         }
-        return $this->managerRegistry->getRepository(Region::class)->getTopLevel();
 
+        return $nestedRegions;
     }
 
     public function locationCurrent(): array

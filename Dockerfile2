@@ -1,0 +1,60 @@
+# Используем официальный PHP образ с версией 8.2 и поддержкой Apache
+FROM php:8.2-apache
+
+# Устанавливаем системные зависимости
+RUN apt-get update && apt-get install -y \
+    libicu-dev \
+    libpq-dev \
+    libzip-dev \
+    unzip \
+    git \
+    curl \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libevent-dev \
+    libidn2-0-dev \
+    zlib1g-dev \
+    && docker-php-ext-install -j$(nproc) \
+    intl \
+    pdo \
+    pdo_pgsql \
+    zip \
+    && docker-php-ext-enable intl pdo zip
+
+# Устанавливаем PECL-расширения (http)
+RUN pecl install pecl_http \
+    && docker-php-ext-enable http
+
+# Устанавливаем Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Устанавливаем Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash \
+    && mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
+
+# Настраиваем права доступа для Apache
+RUN chown -R www-data:www-data /var/www \
+    && a2enmod rewrite
+
+# Копируем файлы проекта
+WORKDIR /var/www/html
+COPY . /var/www/html
+
+# Устанавливаем зависимости Composer
+RUN if [ -f composer.lock ]; then \
+        composer install --no-dev --optimize-autoloader; \
+    else \
+        composer update --no-dev --optimize-autoloader; \
+    fi
+
+# Устанавливаем зависимости проекта через Composer
+# RUN composer install --no-dev --optimize-autoloader
+
+# Указываем права для папок кеша и логов
+RUN mkdir -p var/cache var/log && chown -R www-data:www-data var
+
+# Открываем порт
+EXPOSE 80
+
+# Запускаем Apache
+CMD ["apache2-foreground"]

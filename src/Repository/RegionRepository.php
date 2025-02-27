@@ -18,6 +18,12 @@ class RegionRepository extends ServiceEntityRepository
 
     public function getChildren(Region $parentRegion)
     {
+        if ($parentRegion->getName() === 'Все регионы') {
+            return $this->createQueryBuilder('r')
+                ->getQuery()
+                ->getResult();
+        }
+
         return $this->createQueryBuilder('r')
             ->where('r.id = :val')
             ->orWhere('r.parent = :val')
@@ -34,4 +40,35 @@ class RegionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getNestedRegions(): array
+    {
+        $regions = $this->createQueryBuilder('r')
+            ->select('r')
+            ->orderBy('r.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $regionMap = [];
+        foreach ($regions as $region) {
+            $regionMap[$region->getId()] = [
+                'region' => $region,
+                'children' => []
+            ];
+        }
+
+        $nestedRegions = [];
+
+        foreach ($regions as $region) {
+            if ($region->getParent() === null) {
+                $nestedRegions[] = &$regionMap[$region->getId()];
+            } else {
+                $parentId = $region->getParent()->getId();
+                if (isset($regionMap[$parentId])) {
+                    $regionMap[$parentId]['children'][] = &$regionMap[$region->getId()];
+                }
+            }
+        }
+
+        return $nestedRegions;
+    }
 }

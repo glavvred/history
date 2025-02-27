@@ -1,3 +1,4 @@
+{% import 'pages/base/macros.twig' as macros %}
 <!--banners-->
 <div class="banners-container">
     <div class="container">
@@ -54,11 +55,7 @@
                             {{ locationCurrent().location }}
                             </span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="locationFooterDropdown">
-                            {% for location in locationList %}
-                                <a class="dropdown-item" href="#" data-location-id="{{ location.id }}">{{ location.name }}</a>
-                            {% endfor %}
-                        </div>
+                        {{ macros.render_region_dropdown(locationList, "locationFooterDropdown") }}
                     </li>
                 </ul>
                 <ul class="navbar-expanded">

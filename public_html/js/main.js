@@ -339,4 +339,44 @@ $(function(){
         }
     });
 
+    $(document).on("click", ".region-toggle-arrow", function (event) {
+        console.log('arrow click');
+        event.stopPropagation(); // Останавливаем всплытие клика
+        event.preventDefault();
+
+        let $parentItem = $(this).closest(".region-dropdown-item");
+        let currentLevel = parseInt($parentItem.data("level"), 10);
+        if (isNaN(currentLevel)) return; // Если data-level не число, выходим
+
+        let isOpen = $parentItem.toggleClass("region-open").hasClass("region-open");
+
+        let $nextSibling = $parentItem.next();
+
+        // Перебираем следующие элементы и скрываем/показываем их
+        while ($nextSibling.length && parseInt($nextSibling.data("level"), 10) > currentLevel) {
+            if (isOpen) {
+                $nextSibling.removeClass("region-hidden");
+            } else {
+                $nextSibling.addClass("region-hidden");
+            }
+            $nextSibling = $nextSibling.next();
+        }
+    });
+
+    $(document).ready(function () {
+        $(".region-dropdown-menu").each(function () {
+            let $menu = $(this);
+            let rect = this.getBoundingClientRect();
+
+            if (rect.left < 0) {
+                $menu.css("left", "0px"); // Не даем уйти влево
+            }
+
+            if (rect.right > $(window).width()) {
+                let offset = rect.right - $(window).width() + 10; // Оставляем небольшой отступ
+                $menu.css("left", ($menu.position().left - offset) + "px");
+            }
+        });
+    });
+
 });
