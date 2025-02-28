@@ -14,16 +14,19 @@
 {% endmacro %}
 
 {% macro render_location(location, level=0) %}
-    <div class="region-dropdown-item {% if level > 0 %}region-hidden{% endif %}" data-location-id="{{ location.region.id }}" data-level="{{ level }}">
-        {% if location.children is not empty %}
-            <span class="region-toggle-arrow">▶</span>
-        {% endif %}
-        <a href="#">{{ location.region.name }}</a>
-    </div>
+    {% if location is not empty %}
+        <div class="region-dropdown-item {% if level > 0 %}region-hidden{% endif %}"
+             data-location-id="{{ location.region.id }}" data-level="{{ level }}">
+            {% if location.children is not empty %}
+                <span class="region-toggle-arrow">▶</span>
+            {% endif %}
+            <a href="#">{{ location.region.name }}</a>
+        </div>
 
-    {% if location.children is not empty %}
-        {% for child in location.children %}
-            {{ _self.render_location(child, level + 1) }}
-        {% endfor %}
+        {% if location.children is not empty %}
+            {% for child in location.children %}
+                {{ _self.render_location(child, level + 1) }}
+            {% endfor %}
+        {% endif %}
     {% endif %}
 {% endmacro %}

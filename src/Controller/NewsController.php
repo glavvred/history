@@ -13,9 +13,13 @@ class NewsController extends AbstractController
 {
 
     #[Route('/{id}', name: 'app_news_show', methods: ['GET'])]
-    public function show(News $news): Response
+    public function show(News $news, NewsRepository $newsRepository): Response
     {
-
+        if (!$news->isPublished()){
+            return $this->render('news/list.html.twig', [
+                'news_array' => $newsRepository->findBy(['published' => true], ['createdAt' => 'DESC']),
+            ]);
+        }
         return $this->render('news/show.html.twig', [
             'news_one' => $news,
         ]);
@@ -25,7 +29,7 @@ class NewsController extends AbstractController
     public function list(NewsRepository $newsRepository): Response
     {
         return $this->render('news/list.html.twig', [
-            'news_array' => $newsRepository->findBy([], ['createdAt' => 'DESC']),
+            'news_array' => $newsRepository->findBy(['published' => true], ['createdAt' => 'DESC']),
         ]);
     }
 
