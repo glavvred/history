@@ -14,9 +14,11 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+#[Cache(maxage: 3600, public: true, mustRevalidate: true)]
 class OrganisationController extends AbstractController
 {
     #[Route('/organisation/', name: 'app_organisation_index', methods: ['GET'])]

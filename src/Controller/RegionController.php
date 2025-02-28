@@ -11,8 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Cache(maxage: 3600, public: true, mustRevalidate: true)]
 class RegionController extends AbstractController
 {
     #[Route('/region/set', name: 'app_region_set', methods: ['POST'])]
@@ -29,7 +31,7 @@ class RegionController extends AbstractController
         $session->set('location', $location->getName());
         $session->set('location_admin_name', $location->getAdminName());
         $session->set('location_id', $location->getId());
-        $session->set('coordinates', $location->getLng(). ','. $location->getLat());
+        $session->set('coordinates', $location->getLng() . ',' . $location->getLat());
 
         /** @var User $currentUser */
         $currentUser = $security->getUser();
@@ -45,7 +47,7 @@ class RegionController extends AbstractController
                 'location' => $location->getName(),
                 'location_id' => $location->getId(),
                 'location_admin_name' => $location->getAdminName(),
-                'coordinates' => $location->getLng(). ','. $location->getLat()
+                'coordinates' => $location->getLng() . ',' . $location->getLat()
             ]);
     }
 

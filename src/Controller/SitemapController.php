@@ -15,9 +15,11 @@ use App\Repository\PublicEventRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[Cache(maxage: 3600, public: true, mustRevalidate: true)]
 class SitemapController extends AbstractController
 {
     public function __construct(PublicEventRepository     $publicEventRepository,

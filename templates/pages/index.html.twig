@@ -114,7 +114,6 @@
                 query.set('dateTo', myfilter.enddate)
                 query.set('page', myfilter.page)
                 $.getJSON("/loadmore?" + query, function (response) {
-                    console.log(response.eventsShown);
                     myfilter.lastPage <= myfilter.page ? showMore.hide() : showMore.show()
                     let rhtml = "";
                     myfilter.lastPage = response.lastPage

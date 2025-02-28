@@ -10,9 +10,11 @@ use App\Repository\PublicEventRepository;
 use Doctrine\Common\Collections\Criteria;
 use App\Repository\EventCollectionRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Cache(maxage: 3600, public: true, mustRevalidate: true)]
 class EventCollectionController extends AbstractController
 {
     #[Route('/collections', name: 'app_event_collection_index', methods: ['GET'])]
