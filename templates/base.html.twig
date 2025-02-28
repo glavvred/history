@@ -16,14 +16,14 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
         <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/all.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/demo.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/main.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/login.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/helpers.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/lg.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/xs.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/region_selector.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/all.min.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/demo.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/main.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/login.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/helpers.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/lg.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/xs.css?v=' ~ app_version) }}" rel="stylesheet">
+        <link href="{{ asset('css/region_selector.css?v=' ~ app_version) }}" rel="stylesheet">
     {% endblock %}
     {% block javascripts %}
         <script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
@@ -32,8 +32,8 @@
         <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/jquery.tmpl.min.js') }}"></script>
         <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('js/main.js') }}"></script>
-        <script src="{{ asset('js/geo.js') }}"></script>
+        <script src="{{ asset('js/main.js?v=' ~ app_version) }}"></script>
+        <script src="{{ asset('js/geo.js?v=' ~ app_version) }}"></script>
         <script>
             const cities = JSON.parse('{{ locationList(true) |  raw }}');
 
