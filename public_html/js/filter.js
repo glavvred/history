@@ -41,11 +41,11 @@ myfilter.change = function(initialload = false){
 
         if (selectedcalendarObj.length > 1)
         {
-            this.startdate = addDays(startdate,calendardays.index(selectedcalendarObj[0])).yyyymmdd();
-            this.enddate = addDays(startdate,calendardays.index(selectedcalendarObj[selectedcalendarObj.length-1])).yyyymmdd();
+            this.startdate = addDays(startdate,calendardays.index(selectedcalendarObj[0]) + 1).yyyymmdd();
+            this.enddate = addDays(startdate,calendardays.index(selectedcalendarObj[selectedcalendarObj.length-1]) + 1).yyyymmdd();
         }
         if (selectedcalendarObj.length === 1) {
-            this.startdate = addDays(startdate,calendardays.index(selectedcalendarObj[0])).yyyymmdd();
+            this.startdate = addDays(startdate,calendardays.index(selectedcalendarObj[0]) + 1).yyyymmdd();
             this.enddate = this.startdate;
         }
     
