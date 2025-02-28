@@ -180,6 +180,16 @@ class PagesController extends AbstractController
         ]);
     }
 
+    #[Route('/pages/about_archeo', name: 'app_about_archeo', options: ['sitemap' => true])]
+    public function about_archeo(Request $request): Response
+    {
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/about';
+        }
+
+        return $this->render('pages/about_archeo.html.twig', ['canonical' => $canonical ?? null]);
+    }
+
     #[Route('/pages/about', name: 'app_about', options: ['sitemap' => true])]
     public function about(Request $request): Response
     {

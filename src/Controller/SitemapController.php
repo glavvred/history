@@ -47,6 +47,11 @@ class SitemapController extends AbstractController
                 'priority' => 1
             ],
             [
+                'loc' => $this->generateUrl('app_about_archeo', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                'lastmod' => (new DateTime())->format('Y-m-d'),
+                'priority' => '0.7'
+            ],
+            [
                 'loc' => $this->generateUrl('app_about', [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'lastmod' => (new DateTime())->format('Y-m-d'),
                 'priority' => '0.7'
