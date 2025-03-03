@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Organisation;
 use App\Entity\Region;
 use App\Form\UserType;
 use App\Security\EmailVerifier;
@@ -184,20 +185,36 @@ class PagesController extends AbstractController
     public function about_archeo(Request $request): Response
     {
         if ($request->getHost() != 'gdeistoriya.ru') {
-            $canonical = 'pages/about';
+            $canonical = 'pages/about_archeo';
         }
 
         return $this->render('pages/about_archeo.html.twig', ['canonical' => $canonical ?? null]);
     }
 
+    #[Route('/pages/welcome', name: 'app_welcome', options: ['sitemap' => true])]
+    public function welcome(Request $request): Response
+    {
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/welcome';
+        }
+
+        return $this->render('pages/welcome.html.twig', ['canonical' => $canonical ?? null]);
+    }
+
     #[Route('/pages/about', name: 'app_about', options: ['sitemap' => true])]
-    public function about(Request $request): Response
+    public function about(Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($request->getHost() != 'gdeistoriya.ru') {
             $canonical = 'pages/about';
         }
 
-        return $this->render('pages/about.html.twig', ['canonical' => $canonical ?? null]);
+        $events = $entityManager->getRepository(PublicEvent::class)->count();
+        $orgs = $entityManager->getRepository(Organisation::class)->count();
+
+        return $this->render('pages/about.html.twig', [
+            'active_events' => $events,
+            'active_organisations' => $orgs,
+            'canonical' => $canonical ?? null]);
     }
 
     #[Route('/pages/partners', name: 'app_partners', options: ['sitemap' => true])]
