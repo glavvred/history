@@ -6,9 +6,9 @@
                 <ul class="news-content">
                     {% for news_item in news %}
                         <li class="news-item">
-                            <div class="news-item-img"><a href="{{ path('app_news_show', {'id': news_item.id}) }}"><img src="{{ asset('upload/images/') }}{{ news_item.photo }}"
+                            <div class="news-item-img"><a href="{{ path('app_news_show_slug', {'slug': news_item.slug}) }}"><img src="{{ asset('upload/images/') }}{{ news_item.photo }}"
                                                             alt="{{ news_item.name }}"/></a></div>
-                            <p class="news-caption"><a href="{{ path('app_news_show', {'id': news_item.id}) }}">{{ news_item.name }}</a></p>
+                            <p class="news-caption"><a href="{{ path('app_news_show_slug', {'slug': news_item.slug}) }}">{{ news_item.name }}</a></p>
                             <span class="news-date">{{ news_item.createdAt ? news_item.createdAt|date('d.m.Y') : '' }}</span>
                         </li>
                     {% else %}

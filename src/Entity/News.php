@@ -10,6 +10,7 @@ use App\Repository\NewsRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: NewsRepository::class)]
 #[ApiResource(
@@ -62,6 +63,16 @@ class News
 
     #[ORM\Column]
     private ?bool $published = null;
+
+    /**
+     * @var string|null
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=128, unique=true)
+     */
+    #[ORM\Column(length: 128, unique: true, nullable: true)]
+    #[Gedmo\Slug(fields: ['name'])]
+    private $slug;
 
     public function getId(): ?int
     {
@@ -139,4 +150,21 @@ class News
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string|null $slug
+     */
+    public function setSlug(?string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
 }
