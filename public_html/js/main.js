@@ -241,7 +241,7 @@ $(function(){
      // init
      if ($(".gallery-container") )
      {
-        $("body").append('<div class="gallery-popup"><div class="gallery-popup-container"><h3 class="popup-header"></h3><div class="gallery-close"><a href="#"><img src="/img/red-close.svg"></a></div><div class="gallery-container"></div></div></div>');
+        $("body").append('<div class="gallery-popup"><div class="gallery-popup-container"><h3 class="popup-header"></h3><div class="gallery-close"><a href="#"><img src="/img/close_black.png"></a></div><div class="gallery-container"></div></div></div>');
 
      }
 
