@@ -174,6 +174,11 @@ class PublicEventCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->hideOnIndex(),
             TextEditorField::new('description', label: 'Описание')
+                ->setTrixEditorConfig([
+                    'blockAttributes' => [
+                        'default' => ['tagName' => 'p'],
+                    ]
+                ])
                 ->hideOnIndex(),
             ImageField::new('mainPhoto', 'Картинка')
                 ->setHelp('макс 3мб, и и только jpeg, png, svg, webp')
@@ -208,10 +213,20 @@ class PublicEventCrudController extends AbstractCrudController
                 ->setRequired(false)
                 ->hideOnIndex(),
             TextEditorField::new('prequisites', label: 'Требования')
-                ->setHelp('255')
+                ->setHelp('512')
+                ->setTrixEditorConfig([
+                    'blockAttributes' => [
+                        'default' => ['tagName' => 'p'],
+                    ]
+                ])
                 ->hideOnIndex(),
             TextEditorField::new('toll', label: 'Платное?')
                 ->setHelp('512')
+                ->setTrixEditorConfig([
+                    'blockAttributes' => [
+                        'default' => ['tagName' => 'p'],
+                    ]
+                ])
                 ->hideOnIndex(),
             AssociationField::new('filter', label: 'Фильтры')
                 ->setCrudController(FilterController::class)

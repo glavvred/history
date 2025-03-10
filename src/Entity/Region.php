@@ -53,7 +53,6 @@ class Region
     {
         $this->publicEvents = new ArrayCollection();
         $this->users = new ArrayCollection();
-        $this->parent = new ArrayCollection();
     }
 
     public function getId(): ?int

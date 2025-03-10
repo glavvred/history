@@ -78,6 +78,11 @@ class OrganisationCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->hideOnIndex(),
             TextEditorField::new('description', 'Описание')
+                ->setTrixEditorConfig([
+                    'blockAttributes' => [
+                        'default' => ['tagName' => 'p'],
+                    ]
+                ])
                 ->setRequired(true)
                 ->hideOnIndex(),
             TextField::new('address', 'Адрес')
