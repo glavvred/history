@@ -61,10 +61,11 @@
                 <ul class="navbar-expanded">
                     <li class="nav-item bottom-nav-left">
                         <ul class="navbar-vertical">
-                            <li class="navbar-item"><a href="/pages/about" class="nav-link underline">О проекте Археономика</a>
-                            </li>
-                            <li class="navbar-item"><a href="/pages/partners" class="nav-link underline">Партнёры</a></li>
-                            <li class="navbar-item"><a href="/news" class="nav-link underline">Новости</a></li>
+                            <li class="navbar-item"><a href="{{ path('app_about') }}" class="nav-link underline">О проекте</a></li>
+                            <li class="navbar-item"><a href="{{ path('app_welcome') }}" class="nav-link underline">Добро пожаловать</a></li>
+                            <li class="navbar-item"><a href="{{ path('app_partners') }}" class="nav-link underline">Партнёры</a></li>
+                            <li class="navbar-item"><a href="{{ path('app_news_list') }}" class="nav-link underline">Новости</a></li>
+                            <li class="navbar-item"><a href="{{ path('app_about_archeo') }}" class="nav-link underline">О проекте Археономика</a></li>
                             <li class="navbar-item flex-row d-none d-sm-flex">
                                 <a class="nav-link" href="https://vk.com/archaenomics">
                                     <img src="{{ asset('img/social-header-vk.svg') }}" alt="vk"/>
@@ -99,7 +100,7 @@
                             <li class="navbar-item" style="width: 200px;text-wrap: wrap; line-height: 1.20rem;">
                                 <span class="text-wrap">Календарь исторических событий «Где история» &copy; предоставляет информацию и описание мероприятий, полученные из внешних открытых источников, и не несет ответственности за их достоверность</span>
                                 <br/><br/>
-                                <span class="text-wrap"><a href="/upload/images/policy.pdf">Политика в отношении обработки персональных данных</a></span>
+                                <span class="text-wrap"><a class="underline" href="/upload/images/policy.pdf">Политика в отношении обработки персональных данных</a></span>
                             </li>
                         </ul>
 

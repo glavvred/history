@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -60,6 +61,10 @@ class NewsCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[contenthash].[extension]')
                 ->setRequired($pageName !== Crud::PAGE_EDIT)
                 ->setFormTypeOptions($pageName == Crud::PAGE_EDIT ? ['allow_delete' => false] : []),
+            SlugField::new('slug', label: 'ссылка')
+                ->setTargetFieldName('name')
+                ->setUnlockConfirmationMessage('ссылки генерятся автоматически, но если нужно можно и вручную')
+                ->hideOnIndex(),
             BooleanField::new('published', label: 'Опубликовано')->setRequired(true)
         ];
     }

@@ -31,6 +31,7 @@ class RegionController extends AbstractController
         $session->set('location', $location->getName());
         $session->set('location_admin_name', $location->getAdminName());
         $session->set('location_id', $location->getId());
+        $session->set('location_slug', $location->getSlug());
         $session->set('coordinates', $location->getLng() . ',' . $location->getLat());
 
         /** @var User $currentUser */
@@ -47,6 +48,7 @@ class RegionController extends AbstractController
                 'location' => $location->getName(),
                 'location_id' => $location->getId(),
                 'location_admin_name' => $location->getAdminName(),
+                'location_slug' => $location->getSlug(),
                 'coordinates' => $location->getLng() . ',' . $location->getLat()
             ]);
     }
@@ -59,6 +61,7 @@ class RegionController extends AbstractController
                 'location' => $session->get('location', 'not set'),
                 'location_id' => $session->get('location_id', 'not set'),
                 'location_admin_name' => $session->get('location_admin_name', 'not set'),
+                'location_slug' => $session->get('location_slug', 'msk'),
                 'coordinates' => $session->get('coordinates', 'not set'),
             ]);
     }

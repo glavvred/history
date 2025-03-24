@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\News;
 use App\Repository\NewsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
@@ -17,7 +18,23 @@ class NewsController extends AbstractController
     #[Route('/{id}', name: 'app_news_show', methods: ['GET'])]
     public function show(News $news, NewsRepository $newsRepository): Response
     {
-        if (!$news->isPublished()){
+        if (!$news->isPublished()) {
+            return $this->render('news/list.html.twig', [
+                'news_array' => $newsRepository->findBy(['published' => true], ['createdAt' => 'DESC']),
+            ]);
+        }
+        return $this->render('news/show.html.twig', [
+            'news_one' => $news,
+        ]);
+    }
+
+    #[Route('/slug/{slug}', name: 'app_news_show_slug', methods: ['GET'])]
+    public function showSlug(string $slug, EntityManagerInterface $entityManager): Response
+    {
+        $newsRepository = $entityManager->getRepository(News::class);
+
+        $news = $newsRepository->findOneBySlug($slug);
+        if (empty($news) || !$news->isPublished()) {
             return $this->render('news/list.html.twig', [
                 'news_array' => $newsRepository->findBy(['published' => true], ['createdAt' => 'DESC']),
             ]);
@@ -39,7 +56,7 @@ class NewsController extends AbstractController
     public function sendEmails(string $name): Response
     {
         return $this->render('admin/dashboard.html.twig', [
-            'message' => 'Рассылка "'.$name.'" успешно отправлена',
+            'message' => 'Рассылка "' . $name . '" успешно отправлена',
         ]);
     }
 

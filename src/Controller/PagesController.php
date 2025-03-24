@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Organisation;
 use App\Entity\Region;
 use App\Form\UserType;
 use App\Security\EmailVerifier;
@@ -73,20 +74,71 @@ class PagesController extends AbstractController
                           Request                $request
     ): Response
     {
-        $eventIds = [];
+        // Получаем регион из сессии или дефолтный
         $region = $this->getRegion($session);
 
-        /** @var User $user */
-        $user = $this->security->getUser();
-
+        // Устанавливаем даты на текущую неделю
         $startDate = new DateTime();
         $endDate = (new DateTime())->modify('+7 day');
 
-        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getConstantEventsQuery();
-        $constantEvents = $paginator->paginate($eventsQuery, 1, 8);
+        // Формируем и отображаем страницу
+        return $this->renderIndexPage($session, $entityManager, $paginator, $request, $region, $startDate, $endDate);
+    }
 
+    #[Route('/{region}/events/{dateRange}', name: 'app_index_with_params', options: ['sitemap' => true])]
+    public function indexWithParams(
+        SessionInterface $session,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator,
+        string $region,
+        string $dateRange
+    ): Response
+    {
+        // Проверяем, соответствует ли dateRange допустимому формату
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}(?:_\d{4}-\d{2}-\d{2})?$/', $dateRange)) {
+            // Если формат неверный, перенаправляем на дефолтный роут
+            return $this->redirectToRoute('app_index');
+        }
+
+        if (strpos($dateRange, '_') !== false) {
+            [$startDateStr, $endDateStr] = explode('_', $dateRange);
+        } else {
+            // Если не содержит, то это одна дата
+            $startDateStr = $dateRange;
+            $endDateStr = $dateRange;
+        }
+        $startDate = DateTime::createFromFormat('Y-m-d', $startDateStr);
+        $endDate = DateTime::createFromFormat('Y-m-d', $endDateStr);
+
+        if (!$startDate || !$endDate) {
+            return $this->redirectToRoute('app_index');
+        }
+
+        $regionEntity = $entityManager->getRepository(Region::class)->findOneBy(['slug' => ucfirst($region)]);
+        if (!$regionEntity) {
+            $regionEntity = $this->getRegion($session);
+        }
+
+        $session->set('location', $regionEntity->getName());
+        $session->set('location_admin_name', $regionEntity->getAdminName());
+        $session->set('location_id', $regionEntity->getId());
+        $session->set('location_slug', $regionEntity->getSlug());
+        $session->set('coordinates', $regionEntity->getLng() . ',' . $regionEntity->getLat());
+
+        return $this->renderIndexPage($session, $entityManager, $paginator, $request, $regionEntity, $startDate, $endDate);
+    }
+
+    private function renderIndexPage(SessionInterface $session,
+                                     EntityManagerInterface $entityManager,
+                                     PaginatorInterface $paginator,
+                                     Request $request,
+                                     Region $region,
+                                     DateTime $startDate,
+                                     DateTime $endDate
+    ): Response
+    {
         $regionWithChildren = $entityManager->getRepository(Region::class)->getChildren($region);
-
         $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($regionWithChildren, $startDate, $endDate);
         $pagination = $paginator->paginate($eventsQuery, 1, 8);
 
@@ -95,9 +147,10 @@ class PagesController extends AbstractController
             $canLoadMore = true;
         }
 
-        $eventCollectionsTop = $entityManager->getRepository(EventCollection::class)->findBy(['mainPage' => true]);
-        $eventCollectionsBottom = $entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);
+        $eventCollectionsTop = $this->entityManager->getRepository(EventCollection::class)->findBy(['mainPage' => true]);
+        $eventCollectionsBottom = $this->entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);
 
+        $eventIds = [];
         foreach ($pagination->getItems() as $id => $event) {
             if ($id > 7) {
                 continue;
@@ -113,13 +166,16 @@ class PagesController extends AbstractController
 
         return $this->render('pages/index.html.twig', [
             'canonical' => $canonical ?? null,
-            'user' => $user,
+            'user' => $this->security->getUser(),
             'events' => $pagination,
-            'constant_events' => $constantEvents,
+            'constant_events' => $entityManager->getRepository(PublicEvent::class)->getConstantEventsQuery(),
             'eventCollectionsTop' => $eventCollectionsTop,
             'eventCollectionsBottom' => $eventCollectionsBottom,
             'current_day' => (new DateTime())->format('Y-m-d'),
-            'canLoadMore' => $canLoadMore
+            'canLoadMore' => $canLoadMore,
+            'region' => $region,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
@@ -180,14 +236,40 @@ class PagesController extends AbstractController
         ]);
     }
 
+    #[Route('/pages/about_archeo', name: 'app_about_archeo', options: ['sitemap' => true])]
+    public function about_archeo(Request $request): Response
+    {
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/about_archeo';
+        }
+
+        return $this->render('pages/about_archeo.html.twig', ['canonical' => $canonical ?? null]);
+    }
+
+    #[Route('/pages/welcome', name: 'app_welcome', options: ['sitemap' => true])]
+    public function welcome(Request $request): Response
+    {
+        if ($request->getHost() != 'gdeistoriya.ru') {
+            $canonical = 'pages/welcome';
+        }
+
+        return $this->render('pages/welcome.html.twig', ['canonical' => $canonical ?? null]);
+    }
+
     #[Route('/pages/about', name: 'app_about', options: ['sitemap' => true])]
-    public function about(Request $request): Response
+    public function about(Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($request->getHost() != 'gdeistoriya.ru') {
             $canonical = 'pages/about';
         }
 
-        return $this->render('pages/about.html.twig', ['canonical' => $canonical ?? null]);
+        $events = $entityManager->getRepository(PublicEvent::class)->count();
+        $orgs = $entityManager->getRepository(Organisation::class)->count();
+
+        return $this->render('pages/about.html.twig', [
+            'active_events' => $events,
+            'active_organisations' => $orgs,
+            'canonical' => $canonical ?? null]);
     }
 
     #[Route('/pages/partners', name: 'app_partners', options: ['sitemap' => true])]

@@ -33,11 +33,11 @@
                 <ul class="news-content">
                     {% for news in news_array %}
                         <li class="news-item">
-                            <div class="news-item-img"><a href="{{ path('app_news_show', {'id' : news.id}) }}"><img
+                            <div class="news-item-img"><a href="{{ path('app_news_show_slug', {'slug' : news.slug}) }}"><img
                                             src="{{ asset('upload/images/'~ news.photo) }}" alt="{{ news.name }}"></a>
                             </div>
                             <p class="news-caption"><a
-                                        href="{{ path('app_news_show', {'id' : news.id}) }}">{{ news.name }}</a></p>
+                                        href="{{ path('app_news_show_slug', {'slug' : news.slug}) }}">{{ news.name }}</a></p>
                             <span class="news-date">{{ news.createdAt ? news.createdAt|date('d-m-Y') : '' }}</span>
                         </li>
                     {% endfor %}
