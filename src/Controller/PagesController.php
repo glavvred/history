@@ -74,20 +74,71 @@ class PagesController extends AbstractController
                           Request                $request
     ): Response
     {
-        $eventIds = [];
+        // Получаем регион из сессии или дефолтный
         $region = $this->getRegion($session);
 
-        /** @var User $user */
-        $user = $this->security->getUser();
-
+        // Устанавливаем даты на текущую неделю
         $startDate = new DateTime();
         $endDate = (new DateTime())->modify('+7 day');
 
-        $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getConstantEventsQuery();
-        $constantEvents = $paginator->paginate($eventsQuery, 1, 8);
+        // Формируем и отображаем страницу
+        return $this->renderIndexPage($session, $entityManager, $paginator, $request, $region, $startDate, $endDate);
+    }
 
+    #[Route('/{region}/events/{dateRange}', name: 'app_index_with_params', options: ['sitemap' => true])]
+    public function indexWithParams(
+        SessionInterface $session,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator,
+        string $region,
+        string $dateRange
+    ): Response
+    {
+        // Проверяем, соответствует ли dateRange допустимому формату
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}(?:_\d{4}-\d{2}-\d{2})?$/', $dateRange)) {
+            // Если формат неверный, перенаправляем на дефолтный роут
+            return $this->redirectToRoute('app_index');
+        }
+
+        if (strpos($dateRange, '_') !== false) {
+            [$startDateStr, $endDateStr] = explode('_', $dateRange);
+        } else {
+            // Если не содержит, то это одна дата
+            $startDateStr = $dateRange;
+            $endDateStr = $dateRange;
+        }
+        $startDate = DateTime::createFromFormat('Y-m-d', $startDateStr);
+        $endDate = DateTime::createFromFormat('Y-m-d', $endDateStr);
+
+        if (!$startDate || !$endDate) {
+            return $this->redirectToRoute('app_index');
+        }
+
+        $regionEntity = $entityManager->getRepository(Region::class)->findOneBy(['slug' => ucfirst($region)]);
+        if (!$regionEntity) {
+            $regionEntity = $this->getRegion($session);
+        }
+
+        $session->set('location', $regionEntity->getName());
+        $session->set('location_admin_name', $regionEntity->getAdminName());
+        $session->set('location_id', $regionEntity->getId());
+        $session->set('location_slug', $regionEntity->getSlug());
+        $session->set('coordinates', $regionEntity->getLng() . ',' . $regionEntity->getLat());
+
+        return $this->renderIndexPage($session, $entityManager, $paginator, $request, $regionEntity, $startDate, $endDate);
+    }
+
+    private function renderIndexPage(SessionInterface $session,
+                                     EntityManagerInterface $entityManager,
+                                     PaginatorInterface $paginator,
+                                     Request $request,
+                                     Region $region,
+                                     DateTime $startDate,
+                                     DateTime $endDate
+    ): Response
+    {
         $regionWithChildren = $entityManager->getRepository(Region::class)->getChildren($region);
-
         $eventsQuery = $entityManager->getRepository(PublicEvent::class)->getQueryByCriteria($regionWithChildren, $startDate, $endDate);
         $pagination = $paginator->paginate($eventsQuery, 1, 8);
 
@@ -96,9 +147,10 @@ class PagesController extends AbstractController
             $canLoadMore = true;
         }
 
-        $eventCollectionsTop = $entityManager->getRepository(EventCollection::class)->findBy(['mainPage' => true]);
-        $eventCollectionsBottom = $entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);
+        $eventCollectionsTop = $this->entityManager->getRepository(EventCollection::class)->findBy(['mainPage' => true]);
+        $eventCollectionsBottom = $this->entityManager->getRepository(EventCollection::class)->findBy(['bottomPage' => true]);
 
+        $eventIds = [];
         foreach ($pagination->getItems() as $id => $event) {
             if ($id > 7) {
                 continue;
@@ -114,13 +166,16 @@ class PagesController extends AbstractController
 
         return $this->render('pages/index.html.twig', [
             'canonical' => $canonical ?? null,
-            'user' => $user,
+            'user' => $this->security->getUser(),
             'events' => $pagination,
-            'constant_events' => $constantEvents,
+            'constant_events' => $entityManager->getRepository(PublicEvent::class)->getConstantEventsQuery(),
             'eventCollectionsTop' => $eventCollectionsTop,
             'eventCollectionsBottom' => $eventCollectionsBottom,
             'current_day' => (new DateTime())->format('Y-m-d'),
-            'canLoadMore' => $canLoadMore
+            'canLoadMore' => $canLoadMore,
+            'region' => $region,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
