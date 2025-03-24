@@ -49,6 +49,10 @@ class Region
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
     private ?self $parent = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['region'])]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->publicEvents = new ArrayCollection();
@@ -203,6 +207,18 @@ class Region
                 $parent->setParent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

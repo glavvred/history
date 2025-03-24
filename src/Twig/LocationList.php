@@ -52,6 +52,30 @@ class LocationList extends AbstractExtension
 
     public function locationCurrent(): array
     {
+        // Получаем текущий запрос
+        $request = $this->requestStack->getCurrentRequest();
+        $pathInfo = $request->getPathInfo(); // Получаем путь URL, например "/moscow/events/2023-10-01"
+
+        preg_match('/^\/([^\/]+)\/events\/(.+)/', $pathInfo, $matches);
+        $regionFromUrl = $matches[1] ?? null;
+
+        // Если регион найден в URL, используем его
+        if ($regionFromUrl) {
+            $regionFromUrl = urldecode($regionFromUrl); // Декодируем URL-encoded строку
+            $regionEntity = $this->managerRegistry->getRepository(Region::class)->findOneBy(['slug' => $regionFromUrl]);
+
+            if ($regionEntity) {
+                return [
+                    'refresh' => false,
+                    'location_id' => $regionEntity->getId(),
+                    'location_slug' => $regionEntity->getSlug(),
+                    'location' => $regionEntity->getName(),
+                    'location_admin_name' => $regionEntity->getAdminName(),
+                    'coordinates' => $regionEntity->getLng() . ', ' . $regionEntity->getLat(),
+                ];
+            }
+        }
+
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
 
@@ -61,6 +85,7 @@ class LocationList extends AbstractExtension
                     'refresh' => false,
                     'location_id' => $currentUser->getRegion()->getId(),
                     'location' => $currentUser->getRegion()->getName(),
+                    'location_slug' => $currentUser->getRegion()->getSlug(),
                     'location_admin_name' => $currentUser->getRegion()->getAdminName(),
                     'coordinates' => $currentUser->getRegion()->getLng().','. $currentUser->getRegion()->getLat(),
                 ];
@@ -70,6 +95,7 @@ class LocationList extends AbstractExtension
         //пытаемся найти локацию из сессии
         $location = $this->requestStack->getSession()->get('location');
         $location_id = $this->requestStack->getSession()->get('location_id');
+        $location_slug = $this->requestStack->getSession()->get('location_slug');
         $locationAdmin = $this->requestStack->getSession()->get('location_admin_name');
 
         if (empty($location)) {
@@ -78,6 +104,7 @@ class LocationList extends AbstractExtension
                 'refresh' => true,
                 'location_id' => 2,
                 'location' => 'Москва',
+                'location_slug' => 'msk',
                 'location_admin_name' => 'в Москве',
                 'coordinates' => '55.76, 37.64'
             ];
@@ -89,6 +116,7 @@ class LocationList extends AbstractExtension
             'refresh' => false,
             'location' => $location,
             'location_id' => $location_id,
+            'location_slug' => $location_slug,
             'location_admin_name' => $locationAdmin,
             'coordinates' => $locationCoordinates ? $locationCoordinates->getLng().', '. $locationCoordinates->getLat() : '55.76, 37.64'
         ];

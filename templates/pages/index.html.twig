@@ -91,32 +91,65 @@
 
         function daysInYear(year) {
             var days = 0;
-
             for (var month = 1; month <= 12; month++) {
                 days += daysInMonth(month, year);
             }
-
             return days;
         }
 
         $(function () {
             const myfilter = Window.myfilter;
 
+            // Функция для парсинга URL на наличие даты в формате /{region}/events/{date}
+            function parseUrlForDates() {
+                const path = window.location.pathname;
+                const dateRegex = /\/([^\/]+)\/events\/(\d{4}-\d{1,2}-\d{1,2})(?:_(\d{4}-\d{1,2}-\d{1,2}))?/;
+                const match = path.match(dateRegex);
+
+                if (match) {
+                    const region = match[1];
+                    const startDateStr = match[2];
+                    const endDateStr = match[3] || startDateStr; // Если вторая дата отсутствует, используем первую
+
+                    // Парсинг дат из URL
+                    const startDate = new Date(startDateStr);
+                    const endDate = new Date(endDateStr);
+
+                    // Проверка валидности дат
+                    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                        return {
+                            region: region,
+                            startDate: startDate,
+                            endDate: endDate
+                        };
+                    }
+                }
+                return null;
+            }
+
+            // Функция для форматирования даты в формат YYYY-MM-DD
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
             $(".load-more-events").on("click touchend", function (ev) {
-                const showMore = $("#show-more")
-                showMore.show()
+                const showMore = $("#show-more");
+                showMore.show();
                 myfilter.changed = false;
                 myfilter.page++;
 
                 const query = new URLSearchParams();
-                query.set('region', myfilter.region)
-                query.set('dateFrom', myfilter.startdate)
-                query.set('dateTo', myfilter.enddate)
-                query.set('page', myfilter.page)
+                query.set('region', myfilter.region);
+                query.set('dateFrom', myfilter.startdate);
+                query.set('dateTo', myfilter.enddate);
+                query.set('page', myfilter.page);
                 $.getJSON("/loadmore?" + query, function (response) {
-                    myfilter.lastPage <= myfilter.page ? showMore.hide() : showMore.show()
+                    myfilter.lastPage <= myfilter.page ? showMore.hide() : showMore.show();
                     let rhtml = "";
-                    myfilter.lastPage = response.lastPage
+                    myfilter.lastPage = response.lastPage;
                     $.each(response.data, function (key, val) {
                         console.log(val);
                         rhtml += $('#eventCardTemplate').tmpl(val).html();
@@ -129,7 +162,7 @@
 
             var monthes = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
             var monthesi = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
-            var weekday = ['Пн', 'Вт', 'Ср', 'Чт', 'Птн', 'Сб', 'Вс'];
+            var weekday = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
             var currentdate = new Date();
             var currentyear = currentdate.getFullYear();
             var currentmonth = currentdate.getMonth();
@@ -153,6 +186,26 @@
             var selectedEndIndex = cindex;
             var clientYcal = 0;
 
+            // Получение параметров из URL, если они там есть
+            const urlDates = parseUrlForDates();
+            let useWeekAsDefault = true;
+
+            // Даты для центрирования карусели
+            let centerMonth = currentmonth;
+            let centerDay = currentday;
+
+            // Если параметры из URL получены успешно, то устанавливаем их
+            if (urlDates) {
+                useWeekAsDefault = false;
+                // Обновляем фильтр датами из URL
+                myfilter.startdate = formatDate(urlDates.startDate);
+                myfilter.enddate = formatDate(urlDates.endDate);
+
+                // Обновляем дату для центрирования карусели на первом дне промежутка
+                centerMonth = urlDates.startDate.getMonth();
+                centerDay = urlDates.startDate.getDate();
+            }
+
             for (var i = 0; i < 12; i++) {
                 monthesArr[i].name = monthes[i];
                 monthesArr[i].namei = monthesi[i];
@@ -167,7 +220,7 @@
                     monthesArr[i].xoffset = monthesArr[i - 1].xoffset + monthesArr[i - 1].xsize + 18;
                 else
                     monthesArr[i].xoffset = 0;
-                if (currentmonth > i) {
+                if (centerMonth > i) {
                     currentDayShift += monthesArr[i].xsize + 18;
                 }
                 monthesArr[i].isCurrentMonth = (currentmonth == i);
@@ -180,16 +233,19 @@
                     monthesArr[i].days[n] = n + 1;
                     monthesArr[i].weekday[n] = (monthesArr[i].dayOfWeekStart + n) % 7;
                     monthesArr[i].daysNames[n] = weekday[monthesArr[i].weekday[n]];
-                    if (currentmonth == i && currentday - 1 > n) {
+                    if (centerMonth == i && centerDay - 1 > n) {
                         currentDayShift += 60;
                     }
-                    if (currentmonth == i && currentday == n + 1) {
-                        selectedIndex = cindex;
-                        selectedEndIndex = cindex;
-                        if (currentmonth == 11 && currentday + 7 > 31) {
-                            selectedEndIndex = cindex - 1 + 31 - 7 - currentday;
-                        } else {
-                            selectedEndIndex = cindex + 6;
+
+                    if (useWeekAsDefault) {
+                        if (currentmonth == i && currentday == n + 1) {
+                            selectedIndex = cindex;
+                            selectedEndIndex = cindex;
+                            if (currentmonth == 11 && currentday + 7 > 31) {
+                                selectedEndIndex = cindex - 1 + 31 - 7 - currentday;
+                            } else {
+                                selectedEndIndex = cindex + 6;
+                            }
                         }
                     }
                     cindex += 1;
@@ -201,9 +257,8 @@
                     retHTML += "<div class=\"calendar-spacer\"></div> ";
                 }
                 retHTML += monthesArr[i].html;
-
-
             }
+
             currentDayShift -= wSize / 2;
             const calObj = $("#mainCalendar .calendar-content");
             const calParObj = $("#mainCalendar");
@@ -218,7 +273,6 @@
                 else
                     coffset += wSize / 2;
                 calObj.css("left", coffset + "px");
-                // Scroll left
             });
 
             $("#mainCalendar .arrow-right").on("click touchend", function (event) {
@@ -228,7 +282,6 @@
                 else
                     coffset -= wSize / 2;
                 calObj.css("left", coffset + "px");
-                // Scroll left
             });
 
             const calendarDays = calObj.find(".day");
@@ -251,6 +304,41 @@
                     [startIndex, endIndex] = [endIndex, startIndex];
                 }
 
+                // Если у нас есть URL даты и это первая загрузка
+                if (!useWeekAsDefault && urlDates && initload) {
+                    // Найти правильные индексы для наших дат из URL
+                    const startMonth = urlDates.startDate.getMonth();
+                    const startDay = urlDates.startDate.getDate();
+                    const endMonth = urlDates.endDate.getMonth();
+                    const endDay = urlDates.endDate.getDate();
+
+                    // Поиск соответствующих элементов календаря
+                    let foundStartIndex = -1;
+                    let foundEndIndex = -1;
+
+                    calendarDays.each(function(i, el) {
+                        const dayEl = $(el);
+                        const daySpan = dayEl.find("span");
+                        const dayNum = parseInt(daySpan.text());
+                        const monthIndex = monthes.indexOf(daySpan.data("month"));
+
+                        if (monthIndex === startMonth && dayNum === startDay) {
+                            foundStartIndex = i;
+                        }
+
+                        if (monthIndex === endMonth && dayNum === endDay) {
+                            foundEndIndex = i;
+                        }
+                    });
+
+                    if (foundStartIndex >= 0 && foundEndIndex >= 0) {
+                        startIndex = foundStartIndex;
+                        endIndex = foundEndIndex;
+                        startDate = $(calendarDays.get(startIndex));
+                        endDate = $(calendarDays.get(endIndex));
+                    }
+                }
+
                 for (let i = startIndex; i <= endIndex; i++) {
                     $(calendarDays.get(i)).addClass('selected');
                 }
@@ -260,6 +348,8 @@
                     var sday = $(calendarDays.get(startIndex)).find("span").text();
                     var emonth = $(calendarDays.get(endIndex)).find("span").data("monthi");
                     var eday = $(calendarDays.get(endIndex)).find("span").text();
+
+                    // Обновление текста с выбранными датами
                     if (smonth == emonth) {
                         if (sday == eday)
                             $(".main-filter-dates").text(sday + " " + smonth);
@@ -268,11 +358,23 @@
                     } else {
                         $(".main-filter-dates").text(sday + " " + smonth + " - " + eday + " " + emonth);
                     }
+
+                    // Обновление дат в фильтре
+                    const startDateObj = new Date(currentyear, $(calendarDays.get(startIndex)).find("span").data("month"), parseInt(sday));
+                    const endDateObj = new Date(currentyear, $(calendarDays.get(endIndex)).find("span").data("month"), parseInt(eday));
+                    myfilter.startdate = formatDate(startDateObj);
+                    myfilter.enddate = formatDate(endDateObj);
+
                     myfilter.change(initload);
                 }
             }
 
-            selectRange(calendarDays.get(selectedIndex), calendarDays.get(selectedEndIndex), true);
+            if (useWeekAsDefault) {
+                selectRange(calendarDays.get(selectedIndex), calendarDays.get(selectedEndIndex), true);
+            } else if (urlDates) {
+                calendarDays.removeClass("selected");
+                selectRange(null, null, true);
+            }
 
             calendarDays.each(function (i, el) {
                 $(el).on("click ", function (ev) {
@@ -282,7 +384,6 @@
                         $(this).addClass("selected");
                         endDate = $(this);
                         selectRange(startDate, endDate);
-
                     } else {
                         isSelecting = true;
                         startDate = $(this);
@@ -292,25 +393,6 @@
                     }
                 });
 
-                /*
-                                $(el).on("touchstart ", function (ev) {
-                                        isSelecting = true;
-                                        startDate = $(this);
-                                        endDate = null;
-                                        clearSelection();
-                                        $(this).addClass("selected");
-                                        clientYcal = ev.changedTouches[0].clientY
-                                });
-
-                                $(el).on("touchend ", function (ev) {
-                                       isSelecting = false;
-                                        clearSelection();
-                                        $(this).addClass("selected");
-                                        if(!endDate)endDate = $(this);
-                                        selectRange(startDate, endDate);
-                                });
-                */
-
                 $(el).on("mouseover", function (ev) {
                     if (isSelecting && startDate) {
                         clearSelection();
@@ -319,20 +401,6 @@
                         selectRange(startDate, endDate);
                     }
                 });
-                /*
-                                $(el).on("touchmove", function (ev) {
-                                    if (isSelecting && startDate) {
-                                        var elm = document.elementFromPoint(ev.changedTouches[0].clientX,clientYcal);
-                                        if($(elm).hasClass("day"))
-                                        {
-                                            clearSelection();
-                                            $(elm).addClass("selected");
-                                            endDate = $(elm);
-                                            selectRange(startDate, endDate);
-                                        }
-                                    }
-                                });
-                */
             });
 
             $(".calendar-container .arrow-left").on("mousedown touchstart", function (ev) {
@@ -358,26 +426,6 @@
                 }
                 if (isScrolling) isScrolling = false;
             });
-
-            /*
-                        $( ".draggable-element" ).draggable({axis: "x",
-                            start: function(event,ui){
-                                ui.helper.addClass("start-drag");
-                            },
-                            drag: function(event,ui){
-                                ui.helper.find(".swiper-slide").each(function(i,v){
-                                    var prnt = $(this).parent();
-                                    var oleft = $(this).offset().left;
-                                });
-                              //console.log(ui.position.left);
-                            },
-                            stop: function(event,ui){
-                                ui.helper.removeClass("start-drag");
-                            }
-                        });
-            */
-
-
         });
     </script>
     <script>
