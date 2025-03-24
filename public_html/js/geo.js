@@ -99,6 +99,10 @@ $(function () {
                             if(document.querySelector(".location-name"))document.querySelector(".location-name").textContent = data.location_admin_name;
                             if(document.querySelector(".navbar-location-name"))document.querySelector(".navbar-location-name").textContent = data.location;
                             if(document.querySelector(".navbar-location-bottom-name"))document.querySelector(".navbar-location-bottom-name").textContent = data.location;
+
+                            $("#locationDropdown").attr("data-current-region-slug", data.location_slug);
+                            $("#locationDropdown").attr("data-current-region-id", data.location_id);
+
                             if(myfilter)myfilter.change();
                             if (myMap){
                                 latLong = data.coordinates.split(',');
