@@ -3,7 +3,12 @@
         <div class="swiper-wrapper draggable-element">
             {% for event_collection in eventCollectionsTop %}
                 <div class="swiper-slide">
-                    <a href="{{ path('app_event_collection_show_slug', {'slug' : event_collection.slug }) }}"><span class="caption">{{ event_collection.name }}</span></a>
+                    {% if event_collection.slug == 'contest' %}
+                        <a href="{{ path('app_contest') }}"><span class="caption">{{ event_collection.name }}</span></a>
+                    {% else %}
+                        <a href="{{ path('app_event_collection_show_slug', {'slug' : event_collection.slug }) }}"><span
+                                    class="caption">{{ event_collection.name }}</span></a>
+                    {% endif %}
                     <img src="/upload/images/{{ asset(event_collection.mainPhoto) }}" alt="{{ event_collection.name }}">
                 </div>
             {% endfor %}
