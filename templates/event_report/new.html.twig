@@ -14,6 +14,10 @@
                 padding: 10px !important;
             }
         }
+
+        .login-form .alert-danger li {
+            list-style: inside;
+        }
     </style>
     {{ parent() }}
 {% endblock %}
@@ -27,138 +31,180 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        {% if form_errors(form) %}
-                            <div class="alert alert-danger">{{ form_errors(form) }}</div>
-                        {% endif %}
-
                         <h1>Сообщить о предстоящем мероприятии</h1>
                         {{ form_start(form, {'method': 'POST'}) }}
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger">
+                                Исправьте следующие ошибки:<br>
+                                {{ form_errors(form) }}
+                                {% for children in form.children %}
+                                    {% if not children.vars.valid %}
+                                        {{ form_errors(children) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <form id="formNewReport" class="mb-3 unselectable" method="POST">
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.name) }}" class="form-label">Название <sup
-                                            class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.name) }}" id="{{ field_name(form.name) }}"
-                                       value="{{ field_value(form.name) }}"
-                                       class="form-control"
-                                       placeholder="Название мероприятия"
-                                       required autofocus tabindex="1">
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.name) }}" class="form-label">Название <sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.name) }}"
+                                           id="{{ field_name(form.name) }}"
+                                           value="{{ field_value(form.name) }}"
+                                           class="form-control"
+                                           placeholder="Название мероприятия"
+                                           required autofocus tabindex="1"></div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ field_name(form.category) }}">Категория<sup
+                                                class='red'>*</sup></label>
+                                    <select required name="{{ field_name(form.category) }}" class="form-control"
+                                            tabindex="2">
+                                        {% for label, value in field_choices(form.category) %}
+                                            <option {% if value == field_value(form.category) %}selected{% endif %}
+                                                    value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select></div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="{{ field_name(form.category) }}">Категория<sup
-                                            class='red'>*</sup></label>
-                                <select required name="{{ field_name(form.category) }}" class="form-control"
-                                        tabindex="6">
-                                    {% for label, value in field_choices(form.category) %}
-                                        <option value="{{ value }}">{{ label }}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="{{ field_name(form.startDate) }}" class="form-label">Дата начала <sup
+                                                class='red'>*</sup></label>
+                                    <input type="date" name="{{ field_name(form.startDate) }}"
+                                           id="{{ field_name(form.startDate) }}"
+                                           value="{{ field_value(form.startDate) }}"
+                                           class="form-control"
+                                           placeholder="2024-05-31"
+                                           required tabindex="3">
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label for="{{ field_name(form.duration) }}" class="form-label">Продолжительность, в
+                                        днях <sup class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.duration) }}"
+                                           id="{{ field_name(form.duration) }}"
+                                           value="{{ field_value(form.duration) }}" aria-describedby="durationHelp"
+                                           class="form-control"
+                                           placeholder="3"
+                                           required tabindex="4">
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ field_name(form.region) }}">Регион<sup
+                                                class='red'>*</sup></label>
+                                    <select required name="{{ field_name(form.region) }}" class="form-control"
+                                            tabindex="5">
+                                        {% for label, value in field_choices(form.region) %}
+                                            <option {% if value == field_value(form.region) %}selected{% endif %}
+                                                    value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div id="durationHelp" class="mb-3 form-text"><small>Если не указать
+                                        длительность - будем считать что оно бесконечно повторяется. Хороший пример -
+                                        "тренировки каждую среду"</small>
+                                </div>
+
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="{{ field_name(form.region) }}">Регион<sup
-                                            class='red'>*</sup></label>
-                                <select required name="{{ field_name(form.region) }}" class="form-control" tabindex="6">
-                                    {% for label, value in field_choices(form.region) %}
-                                        <option value="{{ value }}">{{ label }}</option>
-                                    {% endfor %}
-                                </select>
+
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.address) }}" class="form-label">Адрес проведения,
+                                        максимально подробно <sup class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.address) }}"
+                                           id="{{ field_name(form.address) }}"
+                                           value="{{ field_value(form.address) }}"
+                                           class="form-control"
+                                           placeholder="Московская область, деревня Куликово, справа от церкви"
+                                           required tabindex="6">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.link) }}" class="form-label">Ссылки <sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.link) }}"
+                                           id="{{ field_name(form.link) }}"
+                                           value="{{ field_value(form.link) }}"
+                                           class="form-control"
+                                           placeholder="https://kogda-igra.ru"
+                                           required tabindex="7">
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.startDate) }}" class="form-label">Дата начала <sup
-                                            class='red'>*</sup></label>
-                                <input type="date" name="{{ field_name(form.startDate) }}"
-                                       id="{{ field_name(form.startDate) }}"
-                                       value="{{ field_value(form.startDate) }}"
-                                       class="form-control"
-                                       placeholder="2024-05-31"
-                                       required autofocus tabindex="1">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="{{ field_name(form.description) }}" class="form-label">Описание,
+                                        подробности
+                                        <sup class='red'>*</sup></label>
+                                    <textarea rows="3" name="{{ field_name(form.description) }}"
+                                              id="{{ field_name(form.description) }}"
+                                              class="form-control"
+                                              placeholder="Замечательное мероприятие, вы должны о нем знать и рассказать всем"
+                                              required tabindex="8">{{ field_value(form.description) }}</textarea>
+                                </div>
                             </div>
-                            <div class="mb-1">
-                                <label for="{{ field_name(form.duration) }}" class="form-label">Продолжительность, в
-                                    днях <sup class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.duration) }}"
-                                       id="{{ field_name(form.duration) }}"
-                                       value="{{ field_value(form.duration) }}" aria-describedby="durationHelp"
-                                       class="form-control"
-                                       placeholder="3"
-                                       required autofocus tabindex="1">
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ field_name(form.mainPhotoFile) }}">Основное фото
+                                        (например логотип) <sup
+                                                class='red'>*</sup></label>
+                                    {{ field_value(form.mainPhotoFile) }}
+                                    <input type="file" name="{{ field_name(form.mainPhotoFile) }}"
+                                           id="{{ field_name(form.mainPhotoFile) }}"
+                                           value="{{ field_value(form.mainPhotoFile) }}"
+                                           class="form-control"
+                                           required tabindex="9">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ field_name(form.additionalPhotosFiles) }}">Дополнительные
+                                        фото (фото помещения, команды, итп)</label>
+                                    <input type="file" multiple name="{{ field_name(form.additionalPhotosFiles) }}"
+                                           id="{{ field_name(form.additionalPhotosFiles) }}"
+                                           value="{{ field_value(form.additionalPhotosFiles) }}"
+                                           class="form-control"
+                                           tabindex="10">
+                                </div>
                             </div>
-                            <div id="durationHelp" class="mb-3 form-text">Если не указать длительность - будем считать
-                                что оно бесконечно
-                                повторяется. Хороший пример - "тренировки каждую среду"
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.prequisites) }}" class="form-label">Условия участия
+                                        <sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.prequisites) }}"
+                                           id="{{ field_name(form.prequisites) }}"
+                                           value="{{ field_value(form.prequisites) }}"
+                                           aria-describedby="prequisitesHelp"
+                                           class="form-control"
+                                           placeholder="Одежда на 15 век Европа, никаких мобильных устройств"
+                                           required tabindex="11">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.toll) }}" class="form-label">Оплата участия <sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.toll) }}"
+                                           id="{{ field_name(form.toll) }}"
+                                           value="{{ field_value(form.toll) }}"
+                                           class="form-control"
+                                           placeholder="Любые варианты - '5000р', 'Бесплатно', 'За донат', итп"
+                                           required tabindex="12">
+                                </div>
+                                <div id="prequisitesHelp" class="form-text mb-3"><small>Если мероприятие предполагает
+                                        дресс-код - укажите это обязательно</small>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.address) }}" class="form-label">Адрес проведения,
-                                    максимально подробно <sup class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.address) }}"
-                                       id="{{ field_name(form.address) }}"
-                                       value="{{ field_value(form.address) }}"
-                                       class="form-control"
-                                       placeholder="Московская область, деревня Куликово, справа от церкви"
-                                       required autofocus tabindex="1">
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="event_report[captcha]" class="form-label">Защита от ботов<sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="event_report[captcha]" class="form-control">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    {{ form_widget(form.captcha) }}
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.link) }}" class="form-label">Ссылки <sup
-                                            class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.link) }}" id="{{ field_name(form.link) }}"
-                                       value="{{ field_value(form.link) }}"
-                                       class="form-control"
-                                       placeholder="https://kogda-igra.ru"
-                                       required autofocus tabindex="1">
+                            <div class="row mb-3">
+                                <div class="col-12 flex-center">
+                                    <button class="btn btn-primary d-grid" type="submit" tabindex="14">Отправить
+                                    </button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.description) }}" class="form-label">Описание, подробности
-                                    <sup class='red'>*</sup></label>
-                                <textarea rows="3" name="{{ field_name(form.description) }}"
-                                          id="{{ field_name(form.description) }}"
-                                          value="{{ field_value(form.description) }}"
-                                          class="form-control"
-                                          placeholder="Замечательное мероприятие, вы должны о нем знать и рассказать всем"
-                                          required autofocus tabindex="1"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="{{ field_name(form.mainPhotoFile) }}">Основное фото
-                                    (например логотип) <sup
-                                            class='red'>*</sup></label>
-                                <input type="file" name="{{ field_name(form.mainPhotoFile) }}"
-                                       id="{{ field_name(form.mainPhotoFile) }}"
-                                       value="{{ field_value(form.mainPhotoFile) }}"
-                                       class="form-control"
-                                       required tabindex="7">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="{{ field_name(form.additionalPhotosFiles) }}">Дополнительные
-                                    фото (фото помещения, команды, итп)</label>
-                                <input type="file" multiple name="{{ field_name(form.additionalPhotosFiles) }}"
-                                       id="{{ field_name(form.additionalPhotosFiles) }}"
-                                       value="{{ field_value(form.additionalPhotosFiles) }}"
-                                       class="form-control"
-                                       tabindex="8">
-                            </div>
-                            <div class="mb-1">
-                                <label for="{{ field_name(form.prequisites) }}" class="form-label">Условия участия <sup
-                                            class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.prequisites) }}"
-                                       id="{{ field_name(form.prequisites) }}"
-                                       value="{{ field_value(form.prequisites) }}" aria-describedby="prequisitesHelp"
-                                       class="form-control"
-                                       placeholder="Одежда на 15 век Европа, никаких мобильных устройств на виду"
-                                       required autofocus tabindex="1">
-                            </div>
-                            <div id="prequisitesHelp" class="form-text mb-3">Если мероприятие предполагает дресс-код -
-                                укажите это обязательно
-                            </div>
-                            <div class="mb-3">
-                                <label for="{{ field_name(form.toll) }}" class="form-label">Оплата участия <sup
-                                            class='red'>*</sup></label>
-                                <input type="text" name="{{ field_name(form.toll) }}" id="{{ field_name(form.toll) }}"
-                                       value="{{ field_value(form.toll) }}"
-                                       class="form-control"
-                                       placeholder="Любые варианты - '5000р', 'Бесплатно', 'За донат', итп"
-                                       required autofocus tabindex="1">
-                            </div>
-                            <div class="mb-3 flex-center">
-                                <button class="btn btn-primary d-grid" type="submit" tabindex="10">Отправить</button>
-                            </div>
+
 
                             {{ form_end(form) }}
                     </div>

@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Gregwar\CaptchaBundle\Type\CaptchaType;
 
 class EventReportType extends AbstractType
 {
@@ -92,7 +93,11 @@ class EventReportType extends AbstractType
                 'class' => Region::class,
                 'choice_label' => 'name',
                 'attr' => ['class' => 'form-select']
-            ]);
+            ])
+            ->add('captcha', CaptchaType::class, [
+                'required'=> true,
+                'attr' => ['class' => 'form-control']
+            ]);;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

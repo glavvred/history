@@ -17,14 +17,19 @@ class PublicEventStatistic
     #[ORM\JoinColumn(nullable: false)]
     private ?PublicEvent $publicEvent = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $map = null;
+    #[ORM\OneToOne(targetEntity: Organisation::class, inversedBy: 'statistic', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Organisation $managingOrganisation = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $organisation = null;
+    #[ORM\Column(name: 'map', nullable: true)]
+    private ?int $mapClick = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $button = null;
+    #[ORM\Column(name: 'org', nullable: true)]
+    private ?int $organisationClick = null;
+
+    #[ORM\Column(name: 'button', nullable: true)]
+    private ?int $buttonClick = null;
+
 
     public function getId(): ?int
     {
@@ -43,49 +48,32 @@ class PublicEventStatistic
         return $this;
     }
 
-    public function getMap(): ?string
+    public function getMapClick(): ?string
     {
-        return $this->map;
+        return $this->mapClick;
     }
 
-    public function setMap(?int $map): static
+    public function getButtonClick(): ?string
     {
-        $this->map = $map;
-
-        return $this;
+        return $this->buttonClick;
     }
 
-    public function getOrganisation(): ?string
+    public function getOrganisationClick(): ?int
     {
-        return $this->organisation;
+        return $this->organisationClick;
     }
 
+
+    /**
+     * @return Organisation|null
+     */
     public function getManagingOrganisation(): ?Organisation
     {
-        return $this->publicEvent->getOrganisation();
-    }
-
-    public function setOrganisation(?int $organisation): static
-    {
-        $this->organisation = $organisation;
-
-        return $this;
-    }
-
-    public function getButton(): ?string
-    {
-        return $this->button;
-    }
-
-    public function setButton(?int $button): static
-    {
-        $this->button = $button;
-
-        return $this;
+        return $this->managingOrganisation;
     }
 
     public function __toString(): string
     {
-        return 'map'. $this->getMap(). ' ';
+        return 'map ';
     }
 }

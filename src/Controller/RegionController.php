@@ -26,13 +26,15 @@ class RegionController extends AbstractController
         $location = (int)$request->getPayload()->get('location');
         $location = $managerRegistry->getRepository(Region::class)->find($location);
         if (empty($location)) {
-            $session->remove('location');
+            $location = $managerRegistry->getRepository(Region::class)->find(2);
         }
+
         $session->set('location', $location->getName());
         $session->set('location_admin_name', $location->getAdminName());
         $session->set('location_id', $location->getId());
         $session->set('location_slug', $location->getSlug());
         $session->set('coordinates', $location->getLng() . ',' . $location->getLat());
+
 
         /** @var User $currentUser */
         $currentUser = $security->getUser();

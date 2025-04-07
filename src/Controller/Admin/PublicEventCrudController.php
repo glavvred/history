@@ -106,6 +106,7 @@ class PublicEventCrudController extends AbstractCrudController
             $publicEvent->setAddress($eventReport->getAddress());
             $publicEvent->setDescription($eventReport->getDescription());
             $publicEvent->setMainPhoto($eventReport->getMainPhoto());
+            $publicEvent->setAdditionalPhotos($eventReport->getAdditionalPhotos());
             $publicEvent->setUrl($eventReport->getLink());
             $publicEvent->setPrequisites($eventReport->getPrequisites());
             $publicEvent->setToll($eventReport->getToll());

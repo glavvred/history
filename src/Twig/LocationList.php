@@ -103,9 +103,9 @@ class LocationList extends AbstractExtension
             return [
                 'refresh' => true,
                 'location_id' => 2,
-                'location' => 'Москва',
-                'location_slug' => 'msk',
-                'location_admin_name' => 'в Москве',
+                'location' => 'Москва и центральный регион',
+                'location_slug' => 'moskva-i-centralnyj-region',
+                'location_admin_name' => 'в центральном регионе',
                 'coordinates' => '55.76, 37.64'
             ];
         }

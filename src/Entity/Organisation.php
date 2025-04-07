@@ -20,7 +20,6 @@ class Organisation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -84,6 +83,10 @@ class Organisation
 
     #[ORM\Column(nullable: true)]
     private ?array $keywords = null;
+
+    #[ORM\OneToOne(targetEntity: PublicEventStatistic::class, mappedBy: 'managingOrganisation', cascade: ['persist', 'remove'])]
+    private ?PublicEventStatistic $statistic = null;
+
 
     public function __construct()
     {
@@ -360,6 +363,5 @@ class Organisation
         $this->keywords = $keywords;
     }
 
-    
 
 }

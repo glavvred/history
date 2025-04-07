@@ -19,7 +19,7 @@ class EventCollectionRepository extends ServiceEntityRepository
     public function getAllCollections(): array
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.id != :val')
+            ->where('e.id != :val and (e.mainPage != 0 or e.bottomPage != 0)')
             ->setParameter('val', 2) //убираем лучшее
             ->getQuery()
             ->getResult();

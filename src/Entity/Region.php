@@ -46,7 +46,7 @@ class Region
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'region')]
     private Collection $users;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
+    #[ORM\ManyToOne(targetEntity: self::class)]
     private ?self $parent = null;
 
     #[ORM\Column(length: 255)]

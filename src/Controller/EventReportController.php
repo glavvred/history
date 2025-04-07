@@ -81,6 +81,7 @@ class EventReportController extends AbstractController
             return $this->redirectToRoute('app_event_report_thanks', [], Response::HTTP_SEE_OTHER);
         }
 
+
         return $this->render('event_report/new.html.twig', [
             'user' => $this->getUser(),
             'event_report' => $eventReport,

@@ -93,7 +93,7 @@ class PublicEventController extends AbstractController
     }
 
 
-    #[Route('/{category}/{slug}', name: 'app_public_event_show_slug', methods: ['GET'])]
+    #[Route('/{category}/{slug}', name: 'app_public_event_show_slug', methods: ['GET'], priority: 0)]
     public function showBySlug(string                 $category,
                                string                 $slug,
                                CategoryRepository     $categoryRepository,

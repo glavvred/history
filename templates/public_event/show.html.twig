@@ -198,7 +198,13 @@
                 <div class="event-card-img-container"><a
                             onclick="outbound('map', 'https://yandex.ru/maps/?mode=search&text={{ public_event.address }}')"
                             href="https://yandex.ru/maps/?mode=search&text={{ public_event.address }}"><img
-                                src="{{ asset('img/event-card-map1.png') }}" alt="найти на яндекс картах"></a></div>
+                                {% if public_event.region.lat is not empty and public_event.region.lng is not empty %}
+                                    src="https://static-maps.yandex.ru/1.x/?ll={{ public_event.region.lat }},{{ public_event.region.lng }}&l=map&z=12&size=285,120"
+                                {% else %}
+                                    src="{{ asset('img/event-card-map1.png') }}"
+                                {% endif %}
+                                alt="найти на яндекс картах"></a>
+                </div>
                 <div class="event-card-location" itemscope itemtype="https://schema.org/Place" itemprop="location">
                     <a onclick="outbound('map', 'https://yandex.ru/maps/?mode=search&text={{ public_event.address }}')"
                        href="https://yandex.ru/maps/?mode=search&text={{ public_event.address }}">{{ public_event.address }}</a>
