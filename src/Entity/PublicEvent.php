@@ -699,7 +699,7 @@ class PublicEvent implements JsonSerializable
 
         return [
             'id' => $this->id,
-            'link' => '/event/' . $this->id,
+            'link' => '/' . $this->getCategory()->getShort().'/'.$this->getSlug(),
             'img' => '/upload/images/' . $this->mainPhoto,
             'tags' => $outputFilter,
             'title' => $this->name,

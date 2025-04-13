@@ -7,6 +7,7 @@ use App\Entity\Organisation;
 use App\Entity\Region;
 use App\Form\UserType;
 use App\Security\EmailVerifier;
+use DateMalformedStringException;
 use DateTime;
 use App\Entity\User;
 use App\Entity\PublicEvent;
@@ -197,6 +198,9 @@ class PagesController extends AbstractController
         return $this->render('pages/contest.html.twig', ['canonical' => $canonical ?? null]);
     }
 
+    /**
+     * @throws DateMalformedStringException
+     */
     #[Route('/loadmore', name: 'app_load_more')]
     public function loadMore(SessionInterface       $session,
                              Request                $request,
@@ -441,11 +445,12 @@ class PagesController extends AbstractController
         $criteria = $request->get('criteria');
 
         $rsm = new ResultSetMappingBuilder($this->entityManager);
-        $rsm->addRootEntityFromClassMetadata('App\Entity\Organisation', 'o0_');
+        $rsm->addRootEntityFromClassMetadata(Organisation::class, 'o0_');
         $selectClause = $rsm->generateSelectClause();
         $sql = 'SELECT ' . $selectClause . ', MATCH (o0_.name, o0_.description) AGAINST (:criteria) as score
                 FROM organisation AS o0_
                 WHERE o0_.verified = 1 
+                HAVING score > 0 
                 ORDER BY score DESC
                 LIMIT 6;';
 
@@ -455,27 +460,30 @@ class PagesController extends AbstractController
 
 
         $rsm = new ResultSetMappingBuilder($this->entityManager);
-        $rsm->addRootEntityFromClassMetadata('App\Entity\PublicEvent', 'pe');
+        $rsm->addRootEntityFromClassMetadata(PublicEvent::class, 'pe');
         $selectClause = $rsm->generateSelectClause();
         $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
                 FROM public_event AS pe
                 WHERE CURRENT_DATE() < DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
+                HAVING score > 0 
                 ORDER BY score DESC
                 LIMIT 30;";
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);
+
         $events = $query->getResult();
 
         $rsm = new ResultSetMappingBuilder($this->entityManager);
-        $rsm->addRootEntityFromClassMetadata('App\Entity\PublicEvent', 'pe');
+        $rsm->addRootEntityFromClassMetadata(PublicEvent::class, 'pe');
         $selectClause = $rsm->generateSelectClause();
         $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
                 FROM public_event AS pe
                 WHERE CURRENT_DATE() > DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
                 AND MATCH (pe.name, pe.description) AGAINST (:criteria) > 0
+                HAVING score > 0 
                 ORDER BY score DESC
                 LIMIT 30;";
 

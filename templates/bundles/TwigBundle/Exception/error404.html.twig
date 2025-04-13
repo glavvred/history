@@ -1,9 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h1>Не нашли</h1>
+{% block content %}
+    <div class="container main-section">
+        {% set first_crumb = 'Не найдено' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
 
-    <p>
-Что то пошло не так. Можно вернуться на <a href="{{ path('app_index') }}">главную</a>.
-    </p>
+        <!--collections list-->
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Страница не найдена</h3>
+                <p style="font-size: 13rem;font-weight: 600;color: #cccccc;">404</p>
+                <h4>
+                    Что то пошло не так. Можно вернуться на
+                    <button class="btn btn-success" href="{{ path('app_index') }}">главную</button>
+                </h4>
+                <h4>Проверьте правильность ввода адреса или обратитесь к администрации если уверены что все должно
+                    работать</h4>
+            </div>
+        </div>
+    </div>
 {% endblock %}

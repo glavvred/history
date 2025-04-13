@@ -9,6 +9,7 @@ use App\Repository\FilterRepository;
 use App\Repository\PublicEventRepository;
 use Doctrine\Common\Collections\Criteria;
 use App\Repository\EventCollectionRepository;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,7 +28,7 @@ class EventCollectionController extends AbstractController
 
     #[Route('/collection/{id}', name: 'app_event_collection_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[Route('/collection/{slug}', name: 'app_event_collection_show_slug', methods: ['GET'])]
-    public function show(EventCollection $eventCollection): Response
+    public function show(#[MapEntity(mapping: ['slug' => 'slug'])] EventCollection $eventCollection): Response
     {
         $eventCollectionSorted = $this->getNextAndPastEvents($eventCollection);
 
@@ -38,7 +39,7 @@ class EventCollectionController extends AbstractController
         ]);
     }
 
-    #[Route('/filter/{parameterName}', name: 'app_event_collection_parameter', methods: ['GET'])]
+    #[Route('/filter/{parameterName}', name: 'app_event_collection_parameter_no_value', methods: ['GET'])]
     #[Route('/filter/{parameterName}/{parameterValue}', name: 'app_event_collection_parameter', methods: ['GET'])]
     public function parameter(string                $parameterName,
                               PublicEventRepository $publicEventRepository,

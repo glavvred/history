@@ -7,6 +7,7 @@ use App\Entity\Organisation;
 use App\Form\OrganisationType;
 use App\Repository\OrganisationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -157,7 +158,7 @@ class OrganisationController extends AbstractController
     }
 
     #[Route('/organisation/{slug}', name: 'app_organisation_show_slug', methods: ['GET'])]
-    public function showSlug(Organisation $organisation, OrganisationRepository $organisationRepository): Response
+    public function showSlug(#[MapEntity(mapping: ['slug' => 'slug'])] Organisation $organisation, OrganisationRepository $organisationRepository): Response
     {
         if (!$organisation->isVerified()) {
             return $this->render('organisation/index.html.twig', [

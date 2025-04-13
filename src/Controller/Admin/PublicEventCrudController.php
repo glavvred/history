@@ -65,6 +65,7 @@ class PublicEventCrudController extends AbstractCrudController
 
 
         return $actions
+            ->add(Crud::PAGE_INDEX, $preview)
             ->add(Crud::PAGE_EDIT, $preview)
             ->add(Crud::PAGE_DETAIL, $preview);
     }
@@ -138,6 +139,7 @@ class PublicEventCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('События')
             ->setEntityLabelInSingular('событие')
             ->setPaginatorRangeSize(2)
+            ->setDefaultSort(['id' => 'DESC'])
             ->hideNullValues();
     }
 

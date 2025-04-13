@@ -1,12 +1,74 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}Где история: Смена пароля{% endblock %}
 
-{% block content %}
-    <h1>Reset your password</h1>
+{% block stylesheets %}
+    <style>
+        .card {
+            width: 50% !important;
+        }
 
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
-        <button class="btn btn-primary">Reset password</button>
-    {{ form_end(resetForm) }}
+        @media screen and (max-width: 500px) {
+            .card {
+                width: 95% !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    {{ parent() }}
 {% endblock %}
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Смена пароля' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1>Смена пароля</h1>
+                        {{ form_start(resetForm) }}
+                        <form id="formAuthentication" class="mb-3" method="POST">
+                            <div class="mb-3">
+                                {% if form_errors(resetForm.plainPassword.first) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(resetForm.plainPassword.first) }}</div>
+                                {% endif %}
+                                <label for="password.first" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="plainPassword.first" required
+                                       name="{{ field_name(resetForm.plainPassword.first) }}"
+                                       placeholder="Введите новый пароль, пожалуйста, используйте длинный и надежный :) "
+                                       autofocus="">
+                            </div>
+                            <div class="mb-3">
+                                {% if form_errors(resetForm.plainPassword.second) %}
+                                    <div class="alert alert-danger"
+                                         role="alert">{{ form_errors(resetForm.plainPassword.second) }}</div>
+                                {% endif %}
+                                <label for="plainPassword.second" class="form-label">Пароль</label>
+                                <input type="text" class="form-control" id="plainPassword.second" required
+                                       name="{{ field_name(resetForm.plainPassword.second) }}"
+                                       placeholder="Повторите новый пароль, чтобы не случайно не ошибиться "
+                                       autofocus="">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary d-grid w-100">Изменить пароль</button>
+
+                            {{ form_end(resetForm) }}
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock content %}
+
