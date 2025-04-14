@@ -12,6 +12,13 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libzip-dev \
     libevent-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libicu-dev \
+    libpq-dev \
+    nano \
     autoconf \
     build-essential \
     default-mysql-client \
@@ -20,7 +27,9 @@ RUN apt-get update && apt-get install -y \
     #libpq-dev \
 
 # Устанавливаем расширения PHP
-RUN docker-php-ext-install \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+    gd \
     pdo \
     pdo_mysql \
     zip \
@@ -39,6 +48,7 @@ WORKDIR /var/www/html
 
 # Копируем ТОЛЬКО файлы композера сначала
 COPY composer.json ./
+#COPY composer.lock ./
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -61,11 +71,15 @@ RUN echo '#!/bin/sh' > /start.sh \
     && echo 'php-fpm' >> /start.sh \
     && chmod +x /start.sh
 
+# Даем права на папку vendor
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor \
+    && chmod -R 775 /var/www/html/var /var/www/html/vendor
+
 # Открываем порт для встроенного сервера Symfony
 EXPOSE 8000
 
-RUN chown -R 1000:1000 vendor
-RUN chmod -R 775 vendor
+#RUN chown -R 1000:1000 vendor
+#RUN chmod -R 775 vendor
 
 # Команда запуска миграций и сервера
 CMD ["/start.sh"]
