@@ -12,8 +12,9 @@
                                             alt="{{ event.name }}"
                                             src="{{ asset('upload/images/') }}{{ event.mainPhoto }}"/></a>
                                 <div class="event-card-image-tag-list">
+                                    <a href="#" class="event-card-tag-link active">Завершилось</a>
                                     <a href="{{ path('app_event_list', {'category' :  event.category.short}) }}"
-                                       class="event-card-tag-link active">{{ event.category.name }}</a>
+                                       class="event-card-tag-link">{{ event.category.name }}</a>
                                     {% set letter_count = event.category.name|length %}
                                     {% for filter in event.filter %}
                                         {% set letter_count = letter_count + filter.name|length %}

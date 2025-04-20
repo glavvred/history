@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -46,7 +47,7 @@ class UserCrudController extends AbstractCrudController
             ->setPageTitle('new', 'Создание нового пользователя')
             ->setPageTitle('edit', 'Редактирование пользователя')
             ->setHelp('new', 'Тут будет какой то хелп')
-            ->hideNullValues();
+            ->hideNullValues(true);
     }
 
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
@@ -88,11 +89,14 @@ class UserCrudController extends AbstractCrudController
                 ->allowMultipleChoices()
                 ->setChoices([
                         'пользователь' => User::ROLE_USER,
-                        'администратор' => User::ROLE_SUPER_ADMIN,
-                        'администратор проекта' => User::ROLE_ADMIN,
+                        'АДМИНИСТРАТОР' => User::ROLE_SUPER_ADMIN,
+                        'администратор организации' => User::ROLE_ADMIN,
                     ]
                 )
                 ->renderAsBadges(),
+            ArrayField::new('organisations', 'Организации')
+                ->onlyOnIndex()
+                ->setDisabled(),
             ImageField::new('avatar', 'Аватар')
                 ->setSortable(false)
                 ->setHelp('макс 250кб, и и только jpeg, png, svg, webp')

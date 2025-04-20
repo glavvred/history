@@ -199,7 +199,7 @@
                             onclick="outbound('map', 'https://yandex.ru/maps/?mode=search&text={{ public_event.address }}')"
                             href="https://yandex.ru/maps/?mode=search&text={{ public_event.address }}"><img
                                 {% if public_event.region.lat is not empty and public_event.region.lng is not empty %}
-                                    src="https://static-maps.yandex.ru/1.x/?ll={{ public_event.region.lat }},{{ public_event.region.lng }}&l=map&z=12&size=285,120"
+                                    src="https://static-maps.yandex.ru/1.x/?ll={{ public_event.region.lat|trim }},{{ public_event.region.lng|trim }}&l=map&z=12&size=285,120"
                                 {% else %}
                                     src="{{ asset('img/event-card-map1.png') }}"
                                 {% endif %}

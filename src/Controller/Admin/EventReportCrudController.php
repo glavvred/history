@@ -67,7 +67,7 @@ class EventReportCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[contenthash].[extension]')
                 ->setFormTypeOption('multiple', true)
                 ->setRequired(false),
-            TextField::new('description', 'Описание'),
+            TextField::new('description', 'Описание')->renderAsHtml(false),
             AssociationField::new('reporter', 'Кто сообщил')
                 ->setCrudController(UserCrudController::class),
             BooleanField::new('used', 'Использовано')

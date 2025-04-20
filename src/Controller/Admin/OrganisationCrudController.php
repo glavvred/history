@@ -2,10 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\News;
 use App\Entity\Organisation;
 use App\Entity\OrganisationCategory;
-use App\Entity\User;
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -21,8 +21,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Image;
 
 class OrganisationCrudController extends AbstractCrudController
@@ -140,4 +138,25 @@ class OrganisationCrudController extends AbstractCrudController
                 ->onlyOnForms(),
         ];
     }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $isSlugTaken = $entityManager->getRepository(Organisation::class)->findBy(['slug' => $entityInstance->getSlug()]);
+        if (count($isSlugTaken) > 0) {
+            $entityInstance->setSlug($entityInstance->getSlug() . '-' . ($isSlugTaken[0]->getId() + 1));
+        }
+        parent::updateEntity($entityManager, $entityInstance);
+
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $isSlugTaken = $entityManager->getRepository(Organisation::class)->findOneBy(['slug' => $entityInstance->getSlug()]);
+        if (!empty($isSlugTaken)) {
+            $entityInstance->setSlug($entityInstance->getSlug() . '-' . ($isSlugTaken->getId() + 1));
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+
+    }
+
 }

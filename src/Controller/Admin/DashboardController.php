@@ -19,16 +19,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 
 #[AdminDashboard(routePath: '/admin/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
     private $unusedReportCount;
+    private $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->em = $entityManager;
         $this->unusedReportCount = $entityManager->getRepository(EventReport::class)->count(['used' => false]);
 
     }

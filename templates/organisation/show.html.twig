@@ -118,13 +118,12 @@
                     <ul class="list-unstyled" style="white-space: nowrap;">
                         {% for contact in organisation.contacts %}
                             <li>
-                                {% set contact_splitted = contact|split('(') %}
-
                                 {% if contact matches '{^http}' %}
                                     <a itemprop="url" href="{{ contact }}">{{ contact|length > 45 ? contact|slice(0, 45) ~ '...' : contact }}</a>
                                 {% elseif contact matches '/@/' %}
                                     <a itemprop="email" href="mailto:{{ contact }}">{{ contact }}</a>
-                                {% elseif contact_splitted is iterable %}
+                                {% elseif contact matches '~^[+|\\d]\\d{1,4}~' %}
+                                    {% set contact_splitted = contact|split('(') %}
                                     {% set phone = contact_splitted[0]|trim %}
                                     {% if contact_splitted[1] is defined %}
                                         {% set info = contact_splitted[1]|replace({')':''})|trim %}
@@ -133,7 +132,7 @@
                                         <a itemprop="telephone" href="tel:{{ phone|replace({' ': ''}) }}">{{ phone }}</a>
                                     {% endif %}
                                 {% else %}
-                                    {{ contact }}
+                                    <a href="#">{{ contact }}</a>
                                 {% endif %}
                             </li>
                         {% endfor %}
@@ -231,8 +230,9 @@
                                         <a href="{{ path('app_public_event_show_slug', {'category': event.category.short, 'slug': event.slug }) }}"><img
                                                     src="{{ asset('upload/images/' ~ event.mainPhoto ) }}"></a>
                                         <div class="event-card-image-tag-list">
+                                            <a href="#" class="event-card-tag-link active">Завершилось</a>
                                             <a href="/event/list/{{ event.category.short }}"
-                                               class="event-card-tag-link active">{{ event.category.name }}</a>
+                                               class="event-card-tag-link">{{ event.category.name }}</a>
                                             {% set letter_count = event.category.name|length %}
                                             {% for filter in event.filter %}
                                                 {% set letter_count = letter_count + filter.name|length %}

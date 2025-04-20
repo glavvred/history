@@ -53,10 +53,17 @@ class Region
     #[Groups(['region'])]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, ExcursionRoute>
+     */
+    #[ORM\OneToMany(targetEntity: ExcursionRoute::class, mappedBy: 'region')]
+    private Collection $excursionRoutes;
+
     public function __construct()
     {
         $this->publicEvents = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->excursionRoutes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,6 +226,36 @@ class Region
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExcursionRoute>
+     */
+    public function getExcursionRoutes(): Collection
+    {
+        return $this->excursionRoutes;
+    }
+
+    public function addExcursionRoute(ExcursionRoute $excursionRoute): static
+    {
+        if (!$this->excursionRoutes->contains($excursionRoute)) {
+            $this->excursionRoutes->add($excursionRoute);
+            $excursionRoute->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExcursionRoute(ExcursionRoute $excursionRoute): static
+    {
+        if ($this->excursionRoutes->removeElement($excursionRoute)) {
+            // set the owning side to null (unless already changed)
+            if ($excursionRoute->getRegion() === $this) {
+                $excursionRoute->setRegion(null);
+            }
+        }
 
         return $this;
     }

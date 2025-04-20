@@ -49,7 +49,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
     paginationItemsPerPage: 10,
 )]
 #[ORM\Index(name: 'event_fulltext_idx', columns: ['name', 'description'], flags: ['fulltext'])]
-
 class PublicEvent implements JsonSerializable
 {
     #[ORM\Id]
@@ -432,7 +431,7 @@ class PublicEvent implements JsonSerializable
     #[Groups(['event:list', 'event:item'])]
     public function getCategoryUrl(): string
     {
-        return '/event/list/'.$this->category->getShort();
+        return '/event/list/' . $this->category->getShort();
     }
 
     #[Groups(['event:list', 'event:item'])]
@@ -678,28 +677,19 @@ class PublicEvent implements JsonSerializable
         $startDate = clone $this->startDate;
 
         $duration = $this->duration . ' ' . $this->getDurationEnding($this->duration);
-        if ($this->startDate->format('Y') != (new DateTime())->format('Y')) {
-            $startDatePrintable = $this->startDate->format('Y') . ' ' . $this->getDayAndMonthName($this->startDate);
-        } else {
-            $startDatePrintable = $this->getDayAndMonthName($this->startDate);
-        }
-
-
+        $startDatePrintable = $this->getDayAndMonthName($this->startDate);
+        
         $endDate = $startDate->modify($this->duration . ' day');
 
         if ($this->duration == 1) {
             $endDatePrintable = '';
         } else {
-            if ($endDate->format('Y') != (new DateTime())->format('Y')) {
-                $endDatePrintable = $endDate->format('Y') . ' ' . $this->getDayAndMonthName($endDate);
-            } else {
-                $endDatePrintable = $this->getDayAndMonthName($endDate);
-            }
+            $endDatePrintable = $this->getDayAndMonthName($endDate);
         }
 
         return [
             'id' => $this->id,
-            'link' => '/' . $this->getCategory()->getShort().'/'.$this->getSlug(),
+            'link' => '/' . $this->getCategory()->getShort() . '/' . $this->getSlug(),
             'img' => '/upload/images/' . $this->mainPhoto,
             'tags' => $outputFilter,
             'title' => $this->name,

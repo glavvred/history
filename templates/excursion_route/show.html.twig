@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{# {% block title %} #}
+{#    {% if route.title is not empty %}{{ route.title }}{% else %} #}
+{#        Где история: маршрут: {{ route.name }} #}
+{#    {% endif %} #}
+{# {% endblock %} #}
+
+{# {% block description %}{% if route.seoDescription  is not null %}{{ route.seoDescription|striptags }}{% endif %}{% endblock %} #}
+
+{# {% block keywords %} #}
+{#    {% if route.keywords is not null %}{{ route.keywords|join(', ') }}{% endif %} #}
+{# {% endblock %} #}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section">
+        {% set first_crumb = '<a href="' ~ path('app_routes_list') ~'">Все маршруты</a>' %}
+        {% if route.name is not empty %}
+            {% set second_crumb = route.name %}
+        {% endif %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row event-search-header" itemprop="name">
+            <div class="col-md-12">
+                <h2>{{ route.name }}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <div class="event-card-dates">
+                    Полный маршрут займет: 14 часов &middot; 2 дня
+                </div>
+            </div>
+        </div>
+        <div class="row event-gallery">
+            <div class="col-md-12">
+                <div class="container gallery-container">
+                    <div class="active-slide" data-id="1" data-header="{{ route.name }}"
+                         style="background-image: url({{ asset('upload/images/') }}{{ route.mainPhoto }})">
+                        <div class="blur-layer"></div>
+                        <img itemprop="image" src="{{ asset('upload/images/') }}{{ route.mainPhoto }}"
+                             alt="{{ route.name }}">
+                    </div>
+                    {% if route.additionalPhotos|length > 0 %}
+                        <div class="slide-container">
+                            <ul class="slides">
+                                {# повтор первого фото #}
+                                <li class="slide" data-id="1"
+                                    style="background-image: url({{ asset('upload/images/') }}{{ route.mainPhoto }})">
+                                    <img src="{{ asset('upload/images/') }}{{ route.mainPhoto }}"
+                                         alt="{{ route.name }}">
+                                </li>
+
+                                {% for additional_photo in route.additionalPhotos %}
+                                    <li class="slide" data-id="{{ route.id }}"
+                                        style="background-image: url({{ asset('upload/images/') }}{{ additional_photo }})">
+                                        <img src="{{ asset('upload/images/') }}{{ additional_photo }}"
+                                             alt="{{ route.name }}">
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="arrow-left"><img src="{{ asset('img/red-arrow-left.svg') }}" alt="left">
+                            </div>
+                            <div class="arrow-right"><img src="{{ asset('img/red-arrow-right.svg') }}" alt="right">
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row event-content">
+            <div class="col-md-6">
+                <p class="card-text">
+                    {{ route.description }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <script type="text/javascript" charset="utf-8" async
+                        src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um={{ route.route }}&amp;width=500&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
