@@ -96,7 +96,7 @@
         <div class="row gallery-container">
             <div class="col-md-3">
                 <div class="organization-img-container active-slide" data-id="1" data-header="{{ organisation.name }}"
-                     style="background-image: url({{ asset('upload/images/' ~ organisation.mainPhoto) }});">
+                     style="background-image: url({{ asset('upload/images/' ~ organisation.mainPhoto) }}); background-color: rgb(255 255 255 / 50%); background-blend-mode: overlay;">
                     <div class="blur-layer"></div>
                     <img itemprop="image" src="{{ asset('upload/images/' ~ organisation.mainPhoto) }}" alt="{{ organisation.name }}">
                 </div>

@@ -53,6 +53,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: EventReport::class, mappedBy: 'reporter')]
     private Collection $eventReports;
 
+    /**
+     * @var Collection<int, PublicEvent>
+     */
+    #[ORM\OneToMany(targetEntity: ExcursionRouteReport::class, mappedBy: 'reporter')]
+    private Collection $routeReports;
+
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -306,4 +312,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getRouteReports(): Collection
+    {
+        return $this->routeReports;
+    }
+
+    public function setRouteReports(Collection $routeReports): void
+    {
+        $this->routeReports = $routeReports;
+    }
+
+    
 }

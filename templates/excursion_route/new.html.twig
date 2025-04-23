@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Где история: Новый экскурсионный маршрут{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .card {
+            width: 75% !important;
+        }
+
+        @media screen and (max-width: 500px) {
+            .card {
+                width: auto !important;
+                padding: 10px !important;
+            }
+        }
+
+        .login-form .alert-danger li {
+            list-style: inside;
+        }
+    </style>
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            document.getElementById("excursion_report[route]").addEventListener("input", function () {
+                const rawCode = this.value;
+                const container = document.getElementById("map-container");
+                container.innerHTML = ""; // Очистка предыдущей карты
+
+                const match = rawCode.match(/src="([^"]+)"/);
+                if (!match) return;
+
+                let src = match[1];
+
+                // Обновим параметры
+                try {
+                    const url = new URL(src);
+                    url.searchParams.set("width", "350");
+                    url.searchParams.set("height", "250");
+                    src = url.toString();
+                } catch (e) {
+                    console.error("Неверный src:", e);
+                    return;
+                }
+
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.charset = "utf-8";
+                script.async = true;
+                script.src = src;
+
+                container.appendChild(script);
+
+                // script.onload = function () {
+                //     if (window.ymaps) {
+                //         ymaps.ready(function () {
+                //             const mapInstances = ymaps.Map ? ymaps.Map.instances : [];
+                //             if (mapInstances && mapInstances.length) {
+                //                 const center = mapInstances[0].getCenter();
+                //                 document.getElementById("map-center").value = center.join(", ");
+                //             }
+                //         });
+                //     }
+                // };
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = 'Новый экскурсионный маршрут' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Новый экскурсионный маршрут</h1>
+                        {{ form_start(form, {'method': 'POST'}) }}
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger">
+                                Исправьте следующие ошибки:<br>
+                                {{ form_errors(form) }}
+                                {% for children in form.children %}
+                                    {% if not children.vars.valid %}
+                                        {{ form_errors(children) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form id="formNewReport" class="mb-3 unselectable" method="POST">
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="{{ field_name(form.name) }}" class="form-label">Название <sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="{{ field_name(form.name) }}"
+                                           id="{{ field_name(form.name) }}"
+                                           value="{{ field_value(form.name) }}"
+                                           class="form-control"
+                                           placeholder="Название маршрута"
+                                           required autofocus tabindex="1">
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label" for="{{ field_name(form.region) }}">Регион<sup
+                                                class='red'>*</sup></label>
+                                    <select required name="{{ field_name(form.region) }}" class="form-control"
+                                            tabindex="5">
+                                        {% for label, value in field_choices(form.region) %}
+                                            <option {% if value == field_value(form.region) %}selected{% endif %}
+                                                    value="{{ value }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="{{ field_name(form.shortDescription) }}" class="form-label">Описание,
+                                        кратко <sup class='red'>*</sup></label>
+                                    <textarea class="form-control" id="shortDescription" rows="3"
+                                              name="{{ field_name(form.shortDescription) }}"
+                                              placeholder="О нашем замечательном мероприятии, кратко"></textarea>
+                                </div>
+                                <div class="col-7">
+                                    <label for="{{ field_name(form.description) }}" class="form-label">Описание,
+                                        подробности
+                                        <sup class='red'>*</sup></label>
+                                    <textarea rows="3" name="{{ field_name(form.description) }}"
+                                              id="{{ field_name(form.description) }}"
+                                              class="form-control"
+                                              placeholder="Замечательное мероприятие, вы должны о нем знать и рассказать всем"
+                                              required tabindex="8">{{ field_value(form.description) }}</textarea>
+                                </div>
+                                <div class="col-6">
+                                    <label for="{{ field_name(form.route) }}" class="form-label">Маршрут из <a
+                                                target="new" href="https://yandex.ru/map-constructor">конструктора
+                                            Яндекс.Карт</a>
+                                        <sup class='red'>*</sup></label>
+                                    <textarea rows="4" name="{{ field_name(form.route) }}"
+                                              id="{{ field_name(form.route) }}"
+                                              class="form-control"
+                                              placeholder="Пример: <script type='text/javascript' charset='utf-8' async src='https://api-maps.yandex.ru/services/constructor/1.0/js/?um=mymaps%3AU-865hu9h3Nx3SGY7SXxSbST0KJBh-NP&amp;width=500&amp;height=500&amp;lang=ru_RU&amp;scroll=true'></script>"
+                                              required tabindex="8">{{ field_value(form.description) }}</textarea>
+                                </div>
+                                <div class="col-6">
+                                    <label for="" class="form-label">Предварительный просмотр</label>
+                                    <div id="map-container"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ field_name(form.mainPhotoFile) }}">Основное фото
+                                        (например логотип) <sup
+                                                class='red'>*</sup></label>
+                                    {{ field_value(form.mainPhotoFile) }}
+                                    <input type="file" name="{{ field_name(form.mainPhotoFile) }}"
+                                           id="{{ field_name(form.mainPhotoFile) }}"
+                                           value="{{ field_value(form.mainPhotoFile) }}"
+                                           class="form-control"
+                                           required tabindex="9">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ field_name(form.additionalPhotosFiles) }}">Дополнительные
+                                        фото (фото помещения, команды, итп)</label>
+                                    <input type="file" multiple name="{{ field_name(form.additionalPhotosFiles) }}"
+                                           id="{{ field_name(form.additionalPhotosFiles) }}"
+                                           value="{{ field_value(form.additionalPhotosFiles) }}"
+                                           class="form-control"
+                                           tabindex="10">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="excursion_report[captcha]" class="form-label">Защита от ботов<sup
+                                                class='red'>*</sup></label>
+                                    <input type="text" name="excursion_report[captcha]" class="form-control">
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    {{ form_widget(form.captcha) }}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12 flex-center">
+                                    <button class="btn btn-primary d-grid" type="submit" tabindex="14">Отправить
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include('pages/news_row.html.twig') %}
+
+{% endblock %}

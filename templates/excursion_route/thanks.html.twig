@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Спасибо!{% endblock %}
+
+{% block content %}
+    <div class="container main-section login-form">
+        {% set first_crumb = '<a href="/report/">Сообщение о мероприятии</a>' %}
+        {% include ('pages/base/breadcrumbs.html.twig') %}
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Сообщение принято!</h5>
+                        <div>
+                            <p>
+                                Ваше маршрут поступил на модерацию. После проверки мы опубликуем его на сайте, чтобы больше людей узнало о вашей работе.
+                                Спасибо за вклад в популяризацию истории!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include('pages/news_row.html.twig') %}
+{% endblock %}

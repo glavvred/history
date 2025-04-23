@@ -8,8 +8,8 @@
                     {% else %}
                         <a href="{{ path('app_event_collection_show_slug', {'slug' : event_collection.slug }) }}"><span
                                     class="caption">{{ event_collection.name }}</span></a>
+                        <img src="/upload/images/{{ asset(event_collection.mainPhoto) }}" alt="{{ event_collection.name }}">
                     {% endif %}
-                    <img src="/upload/images/{{ asset(event_collection.mainPhoto) }}" alt="{{ event_collection.name }}">
                 </div>
             {% endfor %}
         </div>

@@ -165,13 +165,12 @@ class PagesController extends AbstractController
             $canonical = '';
         }
 
-        $banner = new EventCollection();
-        $banner->setName('Конкурс для организаторов мероприятий');
-        $banner->setMainPhoto('vintage_paper_background.png');
-        $banner->setTitle('title');
-        $banner->setSlug('contest');
-
-        array_splice($eventCollectionsTop, 3, 0, array($banner));
+//        $banner = new EventCollection();
+//        $banner->setName('Конкурс для организаторов мероприятий');
+//        $banner->setMainPhoto('vintage_paper_background.png');
+//        $banner->setTitle('title');
+//        $banner->setSlug('contest');
+//        array_splice($eventCollectionsTop, 3, 0, array($banner));
 
         return $this->render('pages/index.html.twig', [
             'canonical' => $canonical ?? null,

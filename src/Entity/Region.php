@@ -54,7 +54,13 @@ class Region
     private ?string $slug = null;
 
     /**
-     * @var Collection<int, ExcursionRoute>
+     * @var Collection<ExcursionRouteReport>
+     */
+    #[ORM\OneToMany(targetEntity: ExcursionRouteReport::class, mappedBy: 'region')]
+    private Collection $routeReports;
+
+    /**
+     * @var Collection<ExcursionRoute>
      */
     #[ORM\OneToMany(targetEntity: ExcursionRoute::class, mappedBy: 'region')]
     private Collection $excursionRoutes;
@@ -258,6 +264,16 @@ class Region
         }
 
         return $this;
+    }
+
+    public function getRouteReports(): Collection
+    {
+        return $this->routeReports;
+    }
+
+    public function setRouteReports(Collection $routeReports): void
+    {
+        $this->routeReports = $routeReports;
     }
 
 

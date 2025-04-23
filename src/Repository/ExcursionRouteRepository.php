@@ -16,20 +16,17 @@ class ExcursionRouteRepository extends ServiceEntityRepository
         parent::__construct($registry, ExcursionRoute::class);
     }
 
-    //    /**
-    //     * @return ExcursionRoute[] Returns an array of ExcursionRoute objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        /**
+         * @return ExcursionRoute[] Returns an array of ExcursionRoute objects
+         */
+        public function getList(): array
+        {
+            return $this->createQueryBuilder('e')
+                ->andWhere('e.published = true')
+                ->getQuery()
+                ->getResult()
+            ;
+        }
 
     //    public function findOneBySomeField($value): ?ExcursionRoute
     //    {

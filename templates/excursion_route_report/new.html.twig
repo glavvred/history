@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ExcursionRouteReport{% endblock %}
+
+{% block body %}
+    <h1>Create new ExcursionRouteReport</h1>
+
+    {{ include('excursion_route_report/_form.html.twig') }}
+
+    <a href="{{ path('app_excursion_route_report_index') }}">back to list</a>
+{% endblock %}

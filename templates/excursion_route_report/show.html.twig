@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ExcursionRouteReport{% endblock %}
+
+{% block body %}
+    <h1>ExcursionRouteReport</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ excursion_route_report.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ excursion_route_report.name }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ excursion_route_report.description }}</td>
+            </tr>
+            <tr>
+                <th>MainPhoto</th>
+                <td>{{ excursion_route_report.mainPhoto }}</td>
+            </tr>
+            <tr>
+                <th>AdditionalPhotos</th>
+                <td>{{ excursion_route_report.additionalPhotos ? excursion_route_report.additionalPhotos|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Route</th>
+                <td>{{ excursion_route_report.route }}</td>
+            </tr>
+            <tr>
+                <th>Used</th>
+                <td>{{ excursion_route_report.used ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_excursion_route_report_index') }}">back to list</a>
+
+    <a href="{{ path('app_excursion_route_report_edit', {'id': excursion_route_report.id}) }}">edit</a>
+
+    {{ include('excursion_route_report/_delete_form.html.twig') }}
+{% endblock %}

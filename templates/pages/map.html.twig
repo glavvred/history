@@ -212,7 +212,7 @@
                     <div class="dropdown-menu" aria-labelledby="locationHeaderDropdown">
                         {% for location in locationList() %}
                             <a class="dropdown-item" href="#"
-                               data-location-id="{{ location.id }}">{{ location.name }}</a>
+                               data-location-id="{{ location.region.name }}">{{ location.region.adminName }}</a>
                         {% endfor %}
                     </div>
                 </h2>
