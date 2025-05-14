@@ -52,6 +52,7 @@ class ExcursionRouteReportCrudController extends AbstractCrudController
                     ]
                 ]),
             TextField::new('region', 'Регион'),
+            TextField::new('coordinates', 'Координаты'),
             ImageField::new('main_photo', 'Картинка')
                 ->setBasePath('upload/images/'),
             ImageField::new('additionalPhotos', 'Дополнительные картинки')
@@ -63,6 +64,8 @@ class ExcursionRouteReportCrudController extends AbstractCrudController
                 ->setRequired(false)
                 ->hideOnIndex(),
             TextField::new('route', 'Маршрут'),
+            TextField::new('coordinates', 'Координаты начала маршрута')
+                ->setHelp('Если не заполнено - будет координата региона'),
             TextField::new('description', 'Описание')->renderAsHtml(false),
             AssociationField::new('reporter', 'Кто сообщил')
                 ->setCrudController(UserCrudController::class),

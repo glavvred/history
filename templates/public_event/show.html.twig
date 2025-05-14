@@ -31,23 +31,31 @@
             <div class="col-md-7">
                 <div class="event-card-dates">
                     {% set startDate = public_event.getStartDate %}
+                    {% set organisation = public_event.organisation %}
 
+                    {% if public_event.followTime is not empty %}
+                        {% set event_time = organisation.timeOpen|date('H:i') ~ ' - ' ~ organisation.timeClose|date('H:i') %}
+                    {% else %}
+                        {% if public_event.time is not empty %}
+                            {% set event_time = public_event.time|date('H:i') %}
+                        {% endif %}
+                    {% endif %}
 
                     {% if public_event.duration is not empty and public_event.duration != 0 %}
                         {% if public_event.duration == 1 %}
-                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }} {% if event_time is defined %}  &middot; {{ event_time  }} {% endif %}
                         {% else %}
-                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &mdash; {{ public_event.getEndDate }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                            {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &mdash; {{ public_event.getEndDate }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }} {% if event_time is defined %}  &middot; {{ event_time  }} {% endif %}
                         {% endif %}
                     {% else %}
-                        {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }}
+                        {{ startDate ? public_event.getDayAndMonthName(startDate) : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }} {% if event_time is defined %}  &middot; {{ event_time  }} {% endif %}
                     {% endif %}
                 </div>
                 <div class="event-card-dates-short">
                     {% if public_event.duration is not empty and public_event.duration != 0 %}
-                        {{ startDate ? startDate|date("m/d") : '' }} &mdash; {{ public_event.getEndDate(true)|date("m/d") }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }}
+                        {{ startDate ? startDate|date("m/d") : '' }} &mdash; {{ public_event.getEndDate(true)|date("m/d") }} &middot; {{ public_event.duration }} {{ public_event.getDurationEnding(public_event.duration) }} {% if event_time is defined %}  &middot; {{ event_time  }} {% endif %}
                     {% else %}
-                        {{ startDate ? startDate|date("m/d") : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }}
+                        {{ startDate ? startDate|date("m/d") : '' }} &middot; {{ public_event.getDurationEnding(public_event.duration) }} {% if event_time is defined %}  &middot; {{ event_time  }} {% endif %}
                     {% endif %}
                 </div>
 

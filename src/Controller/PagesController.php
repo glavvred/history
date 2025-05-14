@@ -446,10 +446,14 @@ class PagesController extends AbstractController
         $rsm = new ResultSetMappingBuilder($this->entityManager);
         $rsm->addRootEntityFromClassMetadata(Organisation::class, 'o0_');
         $selectClause = $rsm->generateSelectClause();
-        $sql = 'SELECT ' . $selectClause . ', MATCH (o0_.name, o0_.description) AGAINST (:criteria) as score
+        $sql = 'SELECT ' . $selectClause . ', 
+                MATCH (o0_.name, o0_.description) AGAINST (:criteria) as score
                 FROM organisation AS o0_
                 WHERE o0_.verified = 1 
-                HAVING score > 0 
+                    AND (
+                        MATCH (o0_.name, o0_.description) AGAINST (:criteria) > 0
+                        OR JSON_SEARCH(o0_.alternate_names, "one", :criteria) IS NOT NULL
+                    )
                 ORDER BY score DESC
                 LIMIT 6;';
 

@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 use Symfony\Component\Validator\Constraints\Image;
 
 class OrganisationCrudController extends AbstractCrudController
@@ -91,6 +92,10 @@ class OrganisationCrudController extends AbstractCrudController
                     ]
                 ])
                 ->setHelp('255 макс'),
+            TimeField::new('timeOpen', 'Время открытия')
+                ->hideOnIndex(),
+            TimeField::new('timeClose', 'Время закрытия')
+                ->hideOnIndex(),
             ArrayField::new('contacts', label: 'Контакты')
                 ->hideOnIndex()
                 ->setHelp('Формат телефона +7хххххх (имя). Формат ссылки - ссылка :) ')
@@ -135,6 +140,8 @@ class OrganisationCrudController extends AbstractCrudController
             TextField::new('seoDescription', 'Описание сео')
                 ->onlyOnForms(),
             ArrayField::new('keywords', 'Ключевые слова')
+                ->onlyOnForms(),
+            ArrayField::new('alternateNames', 'Альтернативные написания')
                 ->onlyOnForms(),
         ];
     }

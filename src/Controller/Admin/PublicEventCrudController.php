@@ -27,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
@@ -161,6 +162,8 @@ class PublicEventCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->hideOnIndex(),
             DateField::new('startDate', label: 'Дата начала')->setRequired(true),
+            TimeField::new('time', label: 'Время начала')->onlyOnForms(),
+            BooleanField::new('follow_time', label: 'Наследовать время события от часов работы организации')->onlyOnForms(),
             IntegerField::new('duration', label: 'Продолжительность'),
             BooleanField::new('constant', label: 'Постоянное мероприятие')->hideOnIndex(),
             AssociationField::new('region', label: 'Регион')

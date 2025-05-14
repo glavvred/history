@@ -43,6 +43,9 @@ class ExcursionRouteReport
     #[ORM\Column(nullable: false)]
     private bool $used = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coordinates = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,5 +149,17 @@ class ExcursionRouteReport
     public function setShortDescription(?string $shortDescription): void
     {
         $this->shortDescription = $shortDescription;
+    }
+
+    public function getCoordinates(): ?string
+    {
+        return $this->coordinates;
+    }
+
+    public function setCoordinates(?string $coordinates): static
+    {
+        $this->coordinates = $coordinates;
+
+        return $this;
     }
 }

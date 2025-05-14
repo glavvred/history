@@ -87,6 +87,15 @@ class Organisation
     #[ORM\OneToOne(targetEntity: PublicEventStatistic::class, mappedBy: 'managingOrganisation', cascade: ['persist', 'remove'])]
     private ?PublicEventStatistic $statistic = null;
 
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $timeOpen = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $timeClose = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $alternateNames = null;
+
 
     public function __construct()
     {
@@ -361,6 +370,42 @@ class Organisation
     public function setKeywords(?array $keywords): void
     {
         $this->keywords = $keywords;
+    }
+
+    public function getTimeOpen(): ?\DateTimeInterface
+    {
+        return $this->timeOpen;
+    }
+
+    public function setTimeOpen(?\DateTimeInterface $timeOpen): static
+    {
+        $this->timeOpen = $timeOpen;
+
+        return $this;
+    }
+
+    public function getTimeClose(): ?\DateTimeInterface
+    {
+        return $this->timeClose;
+    }
+
+    public function setTimeClose(?\DateTimeInterface $timeClose): static
+    {
+        $this->timeClose = $timeClose;
+
+        return $this;
+    }
+
+    public function getAlternateNames(): ?array
+    {
+        return $this->alternateNames;
+    }
+
+    public function setAlternateNames(?array $alternateNames): static
+    {
+        $this->alternateNames = $alternateNames;
+
+        return $this;
     }
 
 

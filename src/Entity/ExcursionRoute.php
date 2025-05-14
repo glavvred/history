@@ -42,6 +42,9 @@ class ExcursionRoute
     #[ORM\JoinColumn(nullable: false)]
     private ?Region $region = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coordinates = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -158,6 +161,21 @@ class ExcursionRoute
     public function setRegion(?Region $region): static
     {
         $this->region = $region;
+
+        return $this;
+    }
+
+    public function getCoordinates(): ?string
+    {
+        if (empty($this->coordinates)) {
+            return  $this->getRegion()->getLng() . ',' .$this->getRegion()->getLat();
+        }
+        return $this->coordinates;
+    }
+
+    public function setCoordinates(?string $coordinates): static
+    {
+        $this->coordinates = $coordinates;
 
         return $this;
     }

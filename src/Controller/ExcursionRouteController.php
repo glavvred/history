@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\EventCollection;
 use App\Entity\ExcursionRouteReport;
 use App\Entity\User;
 use App\Form\ExcursionReportType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,10 +23,17 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class ExcursionRouteController extends AbstractController
 {
+    private $entityManager;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->entityManager = $managerRegistry->getManager();
+    }
+
     #[Route('/routes', name: 'app_routes_list', priority: 10)]
     public function index(ExcursionRouteRepository $excursionRouteRepository): Response
     {
-        return $this->render('excursion_route/index.html.twig', [
+        return $this->render('excursion_route/map.html.twig', [
             'routes_type' => 'Все',
             'routes_collection' => $excursionRouteRepository->findAll(),
         ]);
@@ -77,7 +86,7 @@ final class ExcursionRouteController extends AbstractController
             }
 
             $routeScript = $form->get('route')->getData();
-            if (!empty($routeScript)){
+            if (!empty($routeScript)) {
                 //$scriptTag = '<script type="text/javascript" charset="utf-8" async
                 // src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=mymaps%3AU-865hu9h3Nx3SGY7SXxSbST0KJBh-NP&amp;width=500&amp;height=500&amp;lang=ru_RU&amp;scroll=true"></script>';
 

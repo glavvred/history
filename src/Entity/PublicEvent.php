@@ -166,6 +166,12 @@ class PublicEvent implements JsonSerializable
     #[Gedmo\Slug(fields: ['name'])]
     private $slug;
 
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $time = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $followTime = null;
+
     public function __construct()
     {
         $this->collections = new ArrayCollection();
@@ -878,5 +884,28 @@ class PublicEvent implements JsonSerializable
         $this->keywords = $keywords;
     }
 
+    public function getTime(): ?\DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(?\DateTimeInterface $time): static
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    public function isFollowTime(): ?bool
+    {
+        return $this->followTime;
+    }
+
+    public function setFollowTime(?bool $followTime): static
+    {
+        $this->followTime = $followTime;
+
+        return $this;
+    }
 
 }

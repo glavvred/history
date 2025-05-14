@@ -46,6 +46,7 @@ class ExcursionReportType extends AbstractType
                 ]
             ])
             ->add('route')
+            ->add('coordinates')
             ->add('region', EntityType::class, [
                 'required' => false,
                 'class' => Region::class,

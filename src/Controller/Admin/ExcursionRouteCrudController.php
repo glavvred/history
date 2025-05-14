@@ -86,6 +86,7 @@ class ExcursionRouteCrudController extends AbstractCrudController
             IntegerField::new('id', label: '#')
                 ->hideOnForm(),
             TextField::new('name', label: 'Название')->setRequired(true),
+            TextField::new('coordinates', 'Координаты'),
             TextField::new('short_description', label: 'Короткое описание')->setRequired(true),
             TextEditorField::new('description', label: 'Описание')
                 ->setTrixEditorConfig([

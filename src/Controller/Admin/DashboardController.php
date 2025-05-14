@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\EventCollection;
 use App\Entity\EventReport;
+use App\Entity\ExcursionRoute;
+use App\Entity\ExcursionRouteReport;
 use App\Entity\Filter;
 use App\Entity\News;
 use App\Entity\NewsLetter;
@@ -56,6 +58,8 @@ class DashboardController extends AbstractDashboardController
         return [
             MenuItem::section('На модерацию')->setPermission('ROLE_SUPER_ADMIN'),
             MenuItem::linkToCrud('События(' . ($this->unusedReportCount) . ')', 'fa fa-child', EventReport::class)->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('Новые маршруты', 'fa fa-folder-o', ExcursionRouteReport::class)->setPermission('ROLE_SUPER_ADMIN'),
+
 
             MenuItem::section('Опубликованные'),
             MenuItem::linkToCrud('События', 'fa fa-child', PublicEvent::class),
@@ -68,6 +72,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Новости', 'fa fa-folder-o', News::class)->setPermission('ROLE_SUPER_ADMIN'),
             MenuItem::linkToCrud('Рассылки', 'fa fa-folder-o', NewsLetter::class)->setPermission('ROLE_SUPER_ADMIN'),
             MenuItem::linkToCrud('Статистика', 'fa fa-folder-o', PublicEventStatistic::class)->setPermission('ROLE_SUPER_ADMIN'),
+            MenuItem::linkToCrud('Маршруты', 'fa fa-folder-o', ExcursionRoute::class)->setPermission('ROLE_SUPER_ADMIN'),
 
             MenuItem::section('Пользователи')->setPermission('ROLE_SUPER_ADMIN'),
             MenuItem::linkToCrud('Пользователи', 'fa fa-user', User::class)->setPermission('ROLE_SUPER_ADMIN'),
