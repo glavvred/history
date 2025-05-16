@@ -5,10 +5,12 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
+#        app_user_provider:
+#            entity:
+#                class: App\Entity\User
+#                property: name
         app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: name
+            id: App\Security\UsernameOrEmailUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,6 +22,9 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                provider: app_user_provider
+                username_parameter: username
+                password_parameter: password
             logout:
                 path: app_logout
                 # where to redirect after logout
