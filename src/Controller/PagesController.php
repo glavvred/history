@@ -447,15 +447,15 @@ class PagesController extends AbstractController
         $rsm->addRootEntityFromClassMetadata(Organisation::class, 'o0_');
         $selectClause = $rsm->generateSelectClause();
         $sql = 'SELECT ' . $selectClause . ', 
-                MATCH (o0_.name, o0_.description) AGAINST (:criteria) as score
+                MATCH (o0_.name, o0_.description, o0_.address) AGAINST (:criteria) as score
                 FROM organisation AS o0_
                 WHERE o0_.verified = 1 
                     AND (
-                        MATCH (o0_.name, o0_.description) AGAINST (:criteria) > 0
+                        MATCH (o0_.name, o0_.description, o0_.address) AGAINST (:criteria) > 0
                         OR JSON_SEARCH(o0_.alternate_names, "one", :criteria) IS NOT NULL
                     )
                 ORDER BY score DESC
-                LIMIT 6;';
+                LIMIT 8;';
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);
@@ -465,13 +465,13 @@ class PagesController extends AbstractController
         $rsm = new ResultSetMappingBuilder($this->entityManager);
         $rsm->addRootEntityFromClassMetadata(PublicEvent::class, 'pe');
         $selectClause = $rsm->generateSelectClause();
-        $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
+        $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description, pe.address) AGAINST (:criteria) as score
                 FROM public_event AS pe
                 WHERE CURRENT_DATE() < DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
                 HAVING score > 0 
                 ORDER BY score DESC
-                LIMIT 30;";
+                LIMIT 28;";
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);
@@ -481,14 +481,14 @@ class PagesController extends AbstractController
         $rsm = new ResultSetMappingBuilder($this->entityManager);
         $rsm->addRootEntityFromClassMetadata(PublicEvent::class, 'pe');
         $selectClause = $rsm->generateSelectClause();
-        $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description) AGAINST (:criteria) as score
+        $sql = "SELECT " . $selectClause . ", MATCH (pe.name, pe.description, pe.address) AGAINST (:criteria) as score
                 FROM public_event AS pe
                 WHERE CURRENT_DATE() > DATE_ADD(pe.start_date, INTERVAL pe.duration DAY)
                 AND pe.duration != 0
-                AND MATCH (pe.name, pe.description) AGAINST (:criteria) > 0
+                AND MATCH (pe.name, pe.description, pe.address) AGAINST (:criteria) > 0
                 HAVING score > 0 
                 ORDER BY score DESC
-                LIMIT 30;";
+                LIMIT 28;";
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('criteria', $criteria);
