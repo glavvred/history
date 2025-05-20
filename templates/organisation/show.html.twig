@@ -200,7 +200,11 @@
                                                 class="event-card-caption">{{ event.shortDescription }}</p></a>
                                     <div class="event-card-dates">
                                         {% if event.duration is not empty and event.duration != 0 %}
-                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% if event.duration == 1 %}
+                                                {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% else %}
+                                                {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% endif %}
                                         {% else %}
                                             {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.getDurationEnding(event.duration) }}
                                         {% endif %}
@@ -249,7 +253,11 @@
                                                 class="event-card-caption">{{ event.shortDescription }}</p></a>
                                     <div class="event-card-dates">
                                         {% if event.duration is not empty and event.duration != 0 %}
-                                            {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% if event.duration == 1 %}
+                                                {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% else %}
+                                                {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &mdash; {{ event.getEndDate }} &middot; {{ event.duration }} {{ event.getDurationEnding(event.duration) }}
+                                            {% endif %}
                                         {% else %}
                                             {{ event.startDate ? event.getDayAndMonthName(event.startDate) : '' }} &middot; {{ event.getDurationEnding(event.duration) }}
                                         {% endif %}

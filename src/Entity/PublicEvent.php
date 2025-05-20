@@ -595,7 +595,11 @@ class PublicEvent implements JsonSerializable
     public function getEndDate(bool $short = false): string|DateTime
     {
         $startDate = clone $this->getStartDate();
-        $endDate = $startDate->modify($this->getDuration() . ' days');
+        if ($this->getDuration() == 1){
+            $endDate = $startDate;
+        } else {
+            $endDate = $startDate->modify($this->getDuration() . ' days');
+        }
         if ($short) {
             return $endDate;
         }
